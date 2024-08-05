@@ -1,0 +1,61 @@
+
+import {
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Avatar, Typography, Box
+} from '@mui/material';
+
+// import emirpp from '../../images/emirpp.jpg';
+import { IPlayerProfile } from '../../models/IPlayerProfile';
+import dayjs from 'dayjs';
+
+function calculateAge(dob: string): number {
+    const birthDate = dayjs(dob);
+    const currentDate = dayjs();
+    return currentDate.diff(birthDate, 'year');
+}
+
+
+export default function RankList(props: { players: IPlayerProfile[] }) {
+    return (
+        <TableContainer component={Paper} >
+            <Table >
+                <TableHead >
+                    <TableRow >
+                        <TableCell align='center' sx={{ fontSize: '0.75rem', p: 1 }}>Rank</TableCell>
+                        <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>Player</TableCell>
+                        <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>Age</TableCell>
+                        <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>Official Rating</TableCell>
+                        <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>+/−</TableCell>
+                        <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>Match Played</TableCell>
+                        <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>Win</TableCell>
+                        <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>Lose</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {props.players.map((player, index) => (
+                        <TableRow key={player.email}>
+                            <TableCell align='center'>{index + 1}</TableCell>
+                            <TableCell>
+                                <Box display="flex" alignItems="center">
+                                    <Avatar alt={player.firstname} src={player.avatarImage} sx={{ width: 50, height: 50, objectFit: 'cover', objectPosition: 'top', border: '1px solid' }} />
+                                    <Box ml={2}>
+                                        <Typography>{player.firstname} {player.lastname}</Typography>
+                                    </Box>
+                                </Box>
+                            </TableCell>
+                            <TableCell >{player.dob ? calculateAge(player.dob) : 'N/A'}</TableCell>
+                            <TableCell>{player.rating != null ? player.rating : 'N/A'}</TableCell>
+                            <TableCell>{1}</TableCell>
+                            <TableCell align='center'>{player.matchPlayed != null ? player.matchPlayed : 'N/A'}</TableCell>
+                            <TableCell align='center'>{player.win != null ? player.win : 'N/A'}</TableCell>
+                            <TableCell align='center'>{player.lose != null ? player.lose : 'N/A'}</TableCell>
+
+
+
+
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    );
+};
