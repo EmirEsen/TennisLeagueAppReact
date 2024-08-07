@@ -65,7 +65,7 @@ export default function Home() {
                             ))
                         )}
                         {playerList.length > 2 && (
-                            <PlayerCard player={playerList[2]} />
+                            <PlayerCard player={playerList[0]} />
                         )}
                     </Grid>
                 </Grid>
