@@ -11,7 +11,7 @@ import Menu from '@mui/material/Menu';
 import { Avatar, Button, Container, ThemeProvider, createTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../store';
+import { AppDispatch, useAppSelector } from '../../store';
 import { logout } from '../../store/feature/authSlice';
 
 const tennis = createTheme({
@@ -30,13 +30,12 @@ const settings = {
 
 
 export default function NavBar() {
+    const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
+
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-
-    const token = localStorage.getItem('token');
-    const dispatch = useDispatch<AppDispatch>();
-
-    const navigate = useNavigate();
+    const isAuth = useAppSelector(state => state.auth.isAuth)
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -172,7 +171,7 @@ export default function NavBar() {
                         </Box>
 
                         <Box sx={{ flexGrow: 0 }}>
-                            {token ? (
+                            {isAuth ? (
                                 <>
                                     <Tooltip title="Open settings">
                                         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

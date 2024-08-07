@@ -69,6 +69,7 @@ const authSlice = createSlice({
         logout(state) {
             state.isAuth = false;
             state.token = ''
+            localStorage.removeItem('token')
         }
     },
     extraReducers: (builder) => {
@@ -85,7 +86,7 @@ const authSlice = createSlice({
                 state.message = 'Error fetching data';
             })
             .addCase(fetchLogin.pending, (state) => {
-                state.isLoading = true;                
+                state.isLoading = true;
             })
             .addCase(fetchLogin.fulfilled, (state, action) => {
                 state.isLoading = false;

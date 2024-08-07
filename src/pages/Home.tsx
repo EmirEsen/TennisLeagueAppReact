@@ -11,6 +11,7 @@ import { addNewMatch, getMatchList } from '../store/feature/matchSlice';
 import PlayerCard from '../components/molecules/PlayerCard';
 import { logout } from '../store/feature/authSlice';
 import { IResponse } from '../models/IResponse';
+import ModalAddNewMatch from '../components/molecules/ModalAddNewMatch';
 
 export default function Home() {
 
@@ -29,52 +30,32 @@ export default function Home() {
         dispatch(getPlayerProfileList());
     }, [dispatch, matchList]);
 
-    const match = {
-        "court": "Kosuyolu",
-        "date": "2024-07-28",
-        "time": "19:30:00",
-        "player1Id": "66af464cb4084015ea4655c0",
-        "player2Id": "66af67fc90dd291d8bc377f3",
-        "score": [
-            {
-                "player1Id": "66af464cb4084015ea4655c0",
-                "player1Score": 6,
-                "player2Id": "66af67fc90dd291d8bc377f3",
-                "player2Score": 2
-            }, {
-                "player1Id": "66af464cb4084015ea4655c0",
-                "player1Score": 6,
-                "player2Id": "66af67fc90dd291d8bc377f3",
-                "player2Score": 3
-            }
-        ]
-    }
 
-    const addMatch = () => {
-        dispatch(addNewMatch(match)).then((returnData) => {
-            const payload = returnData.payload as IResponse | undefined;
+    // const addMatch = () => {
+    //     dispatch(addNewMatch(match)).then((returnData) => {
+    //         const payload = returnData.payload as IResponse | undefined;
 
-            console.log(returnData);
-            console.log(payload);
-            if (payload) {
-                if (payload.code !== 200) {
-                    localStorage.removeItem('token');
-                    dispatch(logout());
-                }
-            } else {
-                console.error("Unexpected response:", returnData.payload);
-            }
-        })
-    }
-
-
-    // if (isPlayersLoading || isMatchesLoading) {
-    //     return (
-    //         <Container maxWidth="lg" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
-    //             <CircularProgress />
-    //         </Container>
-    //     );
+    //         console.log(returnData);
+    //         console.log(payload);
+    //         if (payload) {
+    //             if (payload.code !== 200) {
+    //                 localStorage.removeItem('token');
+    //                 dispatch(logout());
+    //             }
+    //         } else {
+    //             console.error("Unexpected response:", returnData.payload);
+    //         }
+    //     })
     // }
+
+
+    if (isPlayersLoading || isMatchesLoading) {
+        return (
+            <Container maxWidth="lg" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+                <CircularProgress />
+            </Container>
+        );
+    }
 
     return (
         <>
@@ -89,7 +70,7 @@ export default function Home() {
                             </Container>
                         ) : (
                             <>
-                                {isAuth ? <Button onClick={addMatch}>Add MAtch</Button> : <></>}
+                                {isAuth ? <ModalAddNewMatch /> : <></>}
                                 <RankList players={playerList} />
                             </>
                         )}

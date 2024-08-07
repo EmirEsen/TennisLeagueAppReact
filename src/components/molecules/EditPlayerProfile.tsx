@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store';
 import { fetchUpdatePlayerProfile } from '../../store/feature/playerSlice';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../../store/feature/authSlice';
 
 
 
@@ -60,6 +61,8 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
         } catch (error) {
             console.error('Failed to update profile:', error);
             alert('Failed to update profile.');
+            localStorage.removeItem('token');
+            dispatch(logout())
             navigate('/login');
         }
     };

@@ -43,7 +43,7 @@ export default function RankList(props: { players: IPlayerProfile[] }) {
                                 </Box>
                             </TableCell>
                             <TableCell >{player.dob ? calculateAge(player.dob) : 'N/A'}</TableCell>
-                            <TableCell>{player.rating != null ? player.rating : 'N/A'}</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>{player.rating != null ? player.rating : 'N/A'}</TableCell>
                             <TableCell>{1}</TableCell>
                             <TableCell align='center'>{player.matchPlayed != null ? player.matchPlayed : 'N/A'}</TableCell>
                             <TableCell align='center'>{player.win != null ? player.win : 'N/A'}</TableCell>

@@ -1,4 +1,4 @@
-interface score {
+export interface score {
     player1Id: string
     player1Score: number
     player2Id: string
