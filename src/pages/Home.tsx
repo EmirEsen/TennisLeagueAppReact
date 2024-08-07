@@ -1,5 +1,5 @@
 
-import { Button, CircularProgress, Container, Grid } from '@mui/material'
+import { CircularProgress, Container, Grid } from '@mui/material'
 import NavBar from '../components/organisms/NavBar'
 import RankList from '../components/molecules/RankList'
 import MatchInfo from '../components/atoms/MatchInfo'
@@ -7,10 +7,8 @@ import { AppDispatch, useAppSelector } from '../store';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { fetchPlayerProfile, getPlayerProfileList } from '../store/feature/playerSlice';
-import { addNewMatch, getMatchList } from '../store/feature/matchSlice';
+import { getMatchList } from '../store/feature/matchSlice';
 import PlayerCard from '../components/molecules/PlayerCard';
-import { logout } from '../store/feature/authSlice';
-import { IResponse } from '../models/IResponse';
 import ModalAddNewMatch from '../components/molecules/ModalAddNewMatch';
 
 export default function Home() {
@@ -29,24 +27,6 @@ export default function Home() {
     useEffect(() => {
         dispatch(getPlayerProfileList());
     }, [dispatch, matchList]);
-
-
-    // const addMatch = () => {
-    //     dispatch(addNewMatch(match)).then((returnData) => {
-    //         const payload = returnData.payload as IResponse | undefined;
-
-    //         console.log(returnData);
-    //         console.log(payload);
-    //         if (payload) {
-    //             if (payload.code !== 200) {
-    //                 localStorage.removeItem('token');
-    //                 dispatch(logout());
-    //             }
-    //         } else {
-    //             console.error("Unexpected response:", returnData.payload);
-    //         }
-    //     })
-    // }
 
 
     if (isPlayersLoading || isMatchesLoading) {

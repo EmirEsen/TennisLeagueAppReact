@@ -8,7 +8,7 @@ import { AppDispatch, useAppSelector } from '../../store';
 import { addNewMatch } from '../../store/feature/matchSlice';
 import { useNavigate } from 'react-router-dom';
 import { IPostMatch, score } from '../../models/IPostMatch';
-import SelectAvatarInput from '../atoms/SelectAvatarInput';
+import SelectPlayerInput from '../atoms/SelectPlayerInput';
 import { logout } from '../../store/feature/authSlice';
 
 
@@ -153,13 +153,14 @@ const AddNewMatch = () => {
                                     <TimePicker
                                         label="Time"
                                         value={timeValue}
+                                        timeSteps={{ minutes: 30 }}
                                         onChange={handleTimeChange}
                                         ampm={false}
                                     />
                                 </LocalizationProvider>
                             </Grid>
                             <Grid item xs={12}>
-                                <SelectAvatarInput
+                                <SelectPlayerInput
                                     selectedPlayer={formState.player2Id}
                                     onChange={handlePlayer2Change} />
                             </Grid>

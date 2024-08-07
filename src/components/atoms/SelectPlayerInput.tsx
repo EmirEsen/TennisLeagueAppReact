@@ -7,8 +7,9 @@ interface SelectAvatarInputProps {
     onChange: (playerId: string) => void;
 }
 
-export default function SelectAvatarInput({ selectedPlayer, onChange }: SelectAvatarInputProps) {
+export default function SelectPlayerInput({ selectedPlayer, onChange }: SelectAvatarInputProps) {
     const players = useAppSelector(state => state.player.playerList);
+    const loggedInPlayer = useAppSelector(state => state.player.loggedInProfile?.id)
 
     const handleChange = (event: SelectChangeEvent<string>) => {
         onChange(event.target.value);
@@ -27,11 +28,12 @@ export default function SelectAvatarInput({ selectedPlayer, onChange }: SelectAv
                     label="Select Opponent"
                 >
                     <MenuItem value="" disabled> <em>Select Player</em></MenuItem>
-                    {players.map((player: IPlayerProfile) => (
-                        <MenuItem key={player.id} value={player.id}>
-                            {player.firstname} {player.lastname}
-                        </MenuItem>
-                    ))}
+                    {players.filter(player => player.id !== loggedInPlayer)
+                        .map((player: IPlayerProfile) => (
+                            <MenuItem key={player.id} value={player.id}>
+                                {player.firstname} {player.lastname}
+                            </MenuItem>
+                        ))}
                 </Select>
             </FormControl>
 
