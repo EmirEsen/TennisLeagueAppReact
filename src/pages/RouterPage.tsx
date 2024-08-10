@@ -27,20 +27,20 @@ function RouterPage() {
                 .unwrap()
                 .then(data => {
                     setProfile(data);
-                    setLoading(false); // Set loading to false once profile is fetched
+                    setLoading(false);
                 })
                 .catch(error => {
                     console.error('Failed to fetch profile:', error);
                     dispatch(logout());
-                    setLoading(false); // Set loading to false even on error
+                    setLoading(false);
                 });
         } else {
-            setLoading(false); // Set loading to false if no token
+            setLoading(false);
         }
     }, [dispatch, token]);
 
     if (loading) {
-        return <div>Loading...</div>; // Or any other loading indication
+        return <div>Loading...</div>;
     }
 
     return (

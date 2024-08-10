@@ -14,6 +14,7 @@ export interface IGetMatch {
     player2Id: string
     score: score[]
     winnerId: string
+    createdAt: string
 }
 
 

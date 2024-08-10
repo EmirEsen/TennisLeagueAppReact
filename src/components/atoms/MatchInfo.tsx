@@ -25,7 +25,7 @@ function MatchInfo({ match }: { match: IGetMatch }) {
     const winner = winnerId === player1.id ? player1 : player2;
 
     return (
-        <Paper elevation={2} sx={{ padding: 2, mb: 2 }}>
+        <Paper elevation={2} sx={{ padding: 2, mb: 2, borderRadius: '16px' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="subtitle1">{court}</Typography>
                 <Typography variant="body2" color="text.secondary" align="right">

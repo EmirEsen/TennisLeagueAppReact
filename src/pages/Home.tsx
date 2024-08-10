@@ -1,5 +1,5 @@
 
-import { CircularProgress, Container, Grid } from '@mui/material'
+import { CircularProgress, Container, Grid, LinearProgress } from '@mui/material'
 import NavBar from '../components/organisms/NavBar'
 import RankList from '../components/molecules/RankList'
 import MatchInfo from '../components/atoms/MatchInfo'
@@ -10,6 +10,7 @@ import { fetchPlayerProfile, getPlayerProfileList } from '../store/feature/playe
 import { getMatchList } from '../store/feature/matchSlice';
 import PlayerCard from '../components/molecules/PlayerCard';
 import ModalAddNewMatch from '../components/molecules/ModalAddNewMatch';
+import { Toaster } from 'react-hot-toast';
 
 export default function Home() {
 
@@ -24,6 +25,10 @@ export default function Home() {
         dispatch(fetchPlayerProfile())
     }, [isAuth]);
 
+    const sortedMatchList = [...matchList].sort((a, b) => {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+
     useEffect(() => {
         dispatch(getPlayerProfileList());
     }, [dispatch, matchList]);
@@ -32,18 +37,19 @@ export default function Home() {
     if (isPlayersLoading || isMatchesLoading) {
         return (
             <Container maxWidth="lg" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
-                <CircularProgress />
+                <LinearProgress />
             </Container>
         );
     }
 
     return (
         <>
+            <Toaster />
             <NavBar />
 
             <Container maxWidth="lg" style={{ marginTop: '20px' }}>
-                <Grid container spacing={2}>
-                    <Grid item xs={9}>
+                <Grid container spacing={2} flexDirection={{ md: 'row', xs: 'column' }}>
+                    <Grid item xs={12} md={9}>
                         {isPlayersLoading ? (
                             <Container maxWidth="lg" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
                                 <CircularProgress />
@@ -56,11 +62,11 @@ export default function Home() {
                         )}
 
                     </Grid>
-                    <Grid item xs={3} >
+                    <Grid item xs={9} md={3} style={{ margin: 'auto' }} >
                         {isMatchesLoading ? (
                             <div>Loading...</div>
                         ) : (
-                            matchList.map((match, index) => (
+                            sortedMatchList.map((match, index) => (
                                 <MatchInfo key={index} match={match} />
                             ))
                         )}
@@ -70,8 +76,6 @@ export default function Home() {
                     </Grid>
                 </Grid>
             </Container>
-
-
 
         </>
     )

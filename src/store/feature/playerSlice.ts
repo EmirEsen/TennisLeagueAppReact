@@ -60,6 +60,22 @@ export const fetchUpdatePlayerProfile = createAsyncThunk<IPlayerProfile, IUpdate
     }
 );
 
+export const uploadPlayerProfileImage = createAsyncThunk<string, FormData, { rejectValue: string }>(
+    'player/uploadImage',
+    async (formData, { rejectWithValue }) => {
+        const response = await fetch('http://localhost:8080/api/v1/player/profile-image', {
+            method: 'POST',
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem('token')}`
+            },
+            body: formData
+        });
+        if (!response.ok) {
+            return rejectWithValue('Failed to upload image');
+        }
+        return await response.text();
+    }
+);
 
 const playerSlice = createSlice({
     name: 'player',

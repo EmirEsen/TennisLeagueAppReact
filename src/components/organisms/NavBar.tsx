@@ -36,6 +36,7 @@ export default function NavBar() {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
     const isAuth = useAppSelector(state => state.auth.isAuth)
+    const loggedInPlayer = useAppSelector(state => state.player.loggedInProfile)
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -175,7 +176,7 @@ export default function NavBar() {
                                 <>
                                     <Tooltip title="Open settings">
                                         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                            <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                                            <Avatar alt={loggedInPlayer?.firstname[0]} src={loggedInPlayer?.profileImageUrl} />
                                         </IconButton>
                                     </Tooltip>
                                     <Menu

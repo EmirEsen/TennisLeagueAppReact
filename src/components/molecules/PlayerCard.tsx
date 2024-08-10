@@ -1,7 +1,6 @@
 import { Badge, Box, Card, CardMedia, Chip, Grid, Typography } from "@mui/material";
 import { ArrowDropDownOutlined, EmojiEventsOutlined, SportsTennis, StarRateOutlined } from "@mui/icons-material";
 import { IPlayerProfile } from "../../models/IPlayerProfile";
-import emirpp from '../../images/emirpp.jpg'
 
 const badgeColors: Record<number, string> = {
     1: 'gold',     // First position color
@@ -13,7 +12,7 @@ export default function PlayerCard(props: { player: IPlayerProfile }) {
 
     const badgeColor = badgeColors[1] || 'grey';
     return (
-        <Card sx={{ width: '100%', marginTop: 2, maxWidth: 950 }} elevation={2}>
+        <Card sx={{ width: '100%', marginTop: 2, maxWidth: 950, borderRadius: '16px' }} elevation={2}>
             <Grid container direction="row" justifyContent="center" alignItems="center" >
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center' }}>
                     <Badge
@@ -32,7 +31,7 @@ export default function PlayerCard(props: { player: IPlayerProfile }) {
                             }
                         }}
                     >
-                        <CardMedia component="img" image={`${emirpp}`} sx={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '1px solid', marginTop: '5px' }} alt='emiresen' />
+                        <CardMedia component="img" image={props.player.profileImageUrl} sx={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '1px solid', marginTop: '5px' }} alt={props.player.lastname} />
                     </Badge>
                     <Typography variant="h5">{props.player.firstname} {props.player.lastname}</Typography>
                     <Chip variant="outlined" color="warning" icon={<StarRateOutlined />} label={`Rating ${props.player.rating}`} />

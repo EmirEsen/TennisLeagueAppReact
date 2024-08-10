@@ -36,7 +36,7 @@ export default function RankList(props: { players: IPlayerProfile[] }) {
                             <TableCell align='center'>{index + 1}</TableCell>
                             <TableCell>
                                 <Box display="flex" alignItems="center">
-                                    <Avatar alt={player.firstname} src={player.avatarImage} sx={{ width: 50, height: 50, objectFit: 'cover', objectPosition: 'top', border: '1px solid' }} />
+                                    <Avatar src={player.profileImageUrl} alt={player.firstname} sx={{ width: 50, height: 50, objectFit: 'cover', objectPosition: 'top', border: '1px solid' }} />
                                     <Box ml={2}>
                                         <Typography>{player.firstname} {player.lastname}</Typography>
                                     </Box>

@@ -3,5 +3,6 @@ export interface IUpdatePlayerProfile {
     lastname: string,
     dob: string,
     heightInCm: string,
-    weightInKg: string
+    weightInKg: string,
+    avatar: File | null
 }

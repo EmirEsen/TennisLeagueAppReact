@@ -5,11 +5,12 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import { useDispatch } from 'react-redux';
 import { AppDispatch, useAppSelector } from '../../store';
-import { addNewMatch } from '../../store/feature/matchSlice';
+import { addNewMatch, getMatchList } from '../../store/feature/matchSlice';
 import { useNavigate } from 'react-router-dom';
 import { IPostMatch, score } from '../../models/IPostMatch';
 import SelectPlayerInput from '../atoms/SelectPlayerInput';
 import { logout } from '../../store/feature/authSlice';
+import toast from 'react-hot-toast';
 
 
 
@@ -19,6 +20,8 @@ const AddNewMatch = () => {
     const navigate = useNavigate();
 
     const loggedInProfileId = useAppSelector(state => state.player.loggedInProfile?.id)
+
+    // const toast = useToaster();
 
     const [formState, setFormState] = useState<IPostMatch>({
         court: '',
@@ -104,14 +107,14 @@ const AddNewMatch = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // console.log(formState);
         try {
             await dispatch(addNewMatch(formState)).unwrap();
-            alert('Match added successfully!');
+            await dispatch(getMatchList());
+            toast.success('Match Added Succesfully!');
         } catch (error) {
             console.error('Failed to add match:', error);
             dispatch(logout());
-            alert('Failed to add match.');
+            toast.error('Failed to Add Match!');
             navigate('/login');
         }
     };

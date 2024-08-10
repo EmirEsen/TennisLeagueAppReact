@@ -1,4 +1,4 @@
-import { Button, Card, Container, Grid, styled, TextField, Typography } from '@mui/material';
+import { Button, Card, Container, FormControl, Grid, styled, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
@@ -7,14 +7,16 @@ import { CloudUpload } from '@mui/icons-material';
 import { IUpdatePlayerProfile } from '../../models/IUpdatePlayerProfile';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store';
-import { fetchUpdatePlayerProfile } from '../../store/feature/playerSlice';
+import { fetchUpdatePlayerProfile, uploadPlayerProfileImage } from '../../store/feature/playerSlice';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../store/feature/authSlice';
+import { IPlayerProfile } from '../../models/IPlayerProfile';
+import toast from 'react-hot-toast';
 
 
 
 interface EditPlayerProfileProps {
-    playerProfile: IUpdatePlayerProfile;
+    playerProfile: IPlayerProfile;
 }
 
 
@@ -25,7 +27,6 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
 
     const defaultDate = dayjs('1996-07-27');
 
-    // Initialize dob state. Use defaultDate if playerProfile.dob is empty or invalid.
     const initialDob = playerProfile.dob ? dayjs(playerProfile.dob) : defaultDate;
     const [dob, setDob] = useState<Dayjs | null>(initialDob);
 
@@ -34,8 +35,30 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
         lastname: playerProfile.lastname,
         dob: initialDob.toISOString(),
         heightInCm: playerProfile.heightInCm,
-        weightInKg: playerProfile.weightInKg
+        weightInKg: playerProfile.weightInKg,
+        avatar: null
     });
+
+    const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/heic']
+    const maxImageSize = 3073272
+    const [error, setError] = useState('');
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+
+            const file = e.target.files[0];
+            console.log(file);
+            if (!validImageTypes.find(fileType => fileType === file.type) || file.size > maxImageSize) {
+                setError('File must be in [jpg, png, heic] format. Max size 3.1 Mb!');
+                return;
+            }
+            console.log('not reachable')
+            setFormState({
+                ...formState,
+                avatar: e.target.files[0]
+            });
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -53,14 +76,24 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
         });
     };
 
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         try {
+            // Upload image first
+            if (formState.avatar) {
+                const formData = new FormData();
+                formData.append('file', formState.avatar);
+                console.log(formData)
+                await dispatch(uploadPlayerProfileImage(formData)).unwrap();
+            }
             await dispatch(fetchUpdatePlayerProfile(formState)).unwrap();
-            alert('Profile updated successfully!');
+
+            toast.success('Profile Updated!')
         } catch (error) {
             console.error('Failed to update profile:', error);
-            alert('Failed to update profile.');
+            toast.error('Failed to update profile.');
             localStorage.removeItem('token');
             dispatch(logout())
             navigate('/login');
@@ -80,12 +113,12 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
     });
 
     return (
-        <Card sx={{ width: '100%', marginTop: 2, maxWidth: 950, padding: 4 }} elevation={2}>
+        <Card sx={{ width: '100%', marginTop: 2, maxWidth: 950, padding: 4, borderRadius: '16px' }} elevation={2}>
             <Container maxWidth="sm">
                 <Typography variant="h4" gutterBottom align='center'>
                     Update Player Profile
                 </Typography>
-                <form onSubmit={handleSubmit}>
+                <FormControl component="form" onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
                             <TextField
@@ -116,8 +149,11 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
                                 startIcon={<CloudUpload />}
                             >
                                 Upload Image
-                                <VisuallyHiddenInput type="file" />
+                                <VisuallyHiddenInput type="file" onChange={handleFileChange} />
                             </Button>
+                            {error && (
+                                <Typography color="error">{error}</Typography>
+                            )}
                         </Grid>
                         <Grid item xs={6}>
                             <TextField
@@ -154,9 +190,9 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
                             </Button>
                         </Grid>
                     </Grid>
-                </form>
+                </FormControl>
             </Container>
-        </Card>
+        </Card >
     );
 };
 

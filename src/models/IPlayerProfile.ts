@@ -7,10 +7,10 @@ export interface IPlayerProfile {
     heightInCm: string
     weightInKg: string
     rating: number
-    avatarImage: string
     matchPlayed: number
     win: number
     lose: number
+    profileImageUrl: string
 }
 
 
