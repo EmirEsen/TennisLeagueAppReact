@@ -56,11 +56,13 @@ export default function Home() {
                             </Container>
                         ) : (
                             <>
-                                {isAuth ? <ModalAddNewMatch /> : <></>}
+                                {isAuth ? <ModalAddNewMatch isActive={true} infoText='Add New Match' /> : <ModalAddNewMatch isActive={false} infoText='Sign In Required to Adding Match Record' />}
                                 <RankList players={playerList} />
                             </>
                         )}
-
+                        {playerList.length > 2 && (
+                            <PlayerCard player={playerList[0]} />
+                        )}
                     </Grid>
                     <Grid item xs={9} md={3} style={{ margin: 'auto' }} >
                         {isMatchesLoading ? (
@@ -69,9 +71,6 @@ export default function Home() {
                             sortedMatchList.map((match, index) => (
                                 <MatchInfo key={index} match={match} />
                             ))
-                        )}
-                        {playerList.length > 2 && (
-                            <PlayerCard player={playerList[0]} />
                         )}
                     </Grid>
                 </Grid>

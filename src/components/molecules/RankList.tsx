@@ -13,6 +13,14 @@ function calculateAge(dob: string): number {
     return currentDate.diff(birthDate, 'year');
 }
 
+const calculateWinLossRatio = (wins: number, losses: number): string => {
+    if (losses === 0) {
+        return wins > 0 ? '100%' : '0%';
+    }
+    const ratio = (wins / (wins + losses)) * 100;
+    return `${ratio.toFixed(0)}%`;
+};
+
 
 export default function RankList(props: { players: IPlayerProfile[] }) {
     return (
@@ -22,17 +30,17 @@ export default function RankList(props: { players: IPlayerProfile[] }) {
                     <TableRow >
                         <TableCell align='center' sx={{ fontSize: '0.75rem', p: 1 }}>Rank</TableCell>
                         <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>Player</TableCell>
-                        <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>Age</TableCell>
+                        <TableCell sx={{ fontSize: '0.75rem', p: 1, display: { xs: 'none', sm: 'table-cell' } }}>Age</TableCell>
                         <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>Official Rating</TableCell>
-                        <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>+/−</TableCell>
-                        <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>Match Played</TableCell>
-                        <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>Win</TableCell>
-                        <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>Lose</TableCell>
+                        <TableCell sx={{ fontSize: '0.75rem', p: 1, display: { xs: 'none', sm: 'table-cell' } }}>Win/Lose</TableCell>
+                        <TableCell sx={{ fontSize: '0.75rem', p: 1, display: { xs: 'none', sm: 'table-cell' } }}>Match Played</TableCell>
+                        <TableCell sx={{ fontSize: '0.75rem', p: 1, display: { xs: 'none', sm: 'table-cell' } }}>Win</TableCell>
+                        <TableCell sx={{ fontSize: '0.75rem', p: 1, display: { xs: 'none', sm: 'table-cell' } }}>Lose</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {props.players.map((player, index) => (
-                        <TableRow key={player.email}>
+                        <TableRow key={player.email} >
                             <TableCell align='center'>{index + 1}</TableCell>
                             <TableCell>
                                 <Box display="flex" alignItems="center">
@@ -42,20 +50,28 @@ export default function RankList(props: { players: IPlayerProfile[] }) {
                                     </Box>
                                 </Box>
                             </TableCell>
-                            <TableCell >{player.dob ? calculateAge(player.dob) : 'N/A'}</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>{player.rating != null ? player.rating : 'N/A'}</TableCell>
-                            <TableCell>{1}</TableCell>
-                            <TableCell align='center'>{player.matchPlayed != null ? player.matchPlayed : 'N/A'}</TableCell>
-                            <TableCell align='center'>{player.win != null ? player.win : 'N/A'}</TableCell>
-                            <TableCell align='center'>{player.lose != null ? player.lose : 'N/A'}</TableCell>
-
-
-
-
+                            <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }} >
+                                {player.dob ? calculateAge(player.dob) : 'N/A'}
+                            </TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>
+                                {player.rating != null ? player.rating : 'N/A'}
+                            </TableCell>
+                            <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                                {calculateWinLossRatio(player.win, player.lose)}
+                            </TableCell>
+                            <TableCell align='center' sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                                {player.matchPlayed != null ? player.matchPlayed : 'N/A'}
+                            </TableCell>
+                            <TableCell align='center' sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                                {player.win != null ? player.win : 'N/A'}
+                            </TableCell>
+                            <TableCell align='center' sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                                {player.lose != null ? player.lose : 'N/A'}
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
-        </TableContainer>
+        </TableContainer >
     );
 };

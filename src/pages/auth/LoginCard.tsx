@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store';
 import { fetchLogin } from '../../store/feature/authSlice';
+import { Toaster } from 'react-hot-toast';
 
 
 function Copyright(props: any) {
@@ -64,6 +65,7 @@ export default function LoginCard() {
 
     return (
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+            <Toaster />
             <Box
                 sx={{
                     my: 8,

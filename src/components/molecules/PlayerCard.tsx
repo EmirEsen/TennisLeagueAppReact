@@ -31,7 +31,7 @@ export default function PlayerCard(props: { player: IPlayerProfile }) {
                             }
                         }}
                     >
-                        <CardMedia component="img" image={props.player.profileImageUrl} sx={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '1px solid', marginTop: '5px' }} alt={props.player.lastname} />
+                        <CardMedia component="img" image={props.player.profileImageUrl} sx={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top 2', border: '1px solid', marginTop: '5px' }} alt={props.player.lastname} />
                     </Badge>
                     <Typography variant="h5">{props.player.firstname} {props.player.lastname}</Typography>
                     <Chip variant="outlined" color="warning" icon={<StarRateOutlined />} label={`Rating ${props.player.rating}`} />

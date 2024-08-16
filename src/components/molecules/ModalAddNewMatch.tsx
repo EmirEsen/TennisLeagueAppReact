@@ -10,22 +10,27 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 500,
+    // width: 500,
+    width: {
+        xs: '90%',  // 90% width on extra-small screens
+        sm: 500,    // 400px width on small screens and above
+    },
     bgcolor: 'background',
     boxShadow: 24,
     p: 0.5,
     borderRadius: '16px'
 };
 
-export default function ModalAddNewMatch() {
+export default function ModalAddNewMatch({ isActive, infoText }: { isActive?: boolean, infoText?: string }) {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
     return (
-        <div>
+        <>
 
-            <Chip label="Add New Match" color="info" icon={<Add />} variant="outlined" onClick={handleOpen} sx={{ mb: 2 }} />
+            <Chip disabled={!isActive} label={infoText} color="info"
+                icon={<Add />} variant="outlined" onClick={handleOpen} sx={{ mb: 2 }} />
 
             <Modal
                 open={open}
@@ -37,6 +42,6 @@ export default function ModalAddNewMatch() {
                     <AddNewMatch />
                 </Box>
             </Modal>
-        </div>
+        </>
     );
 }

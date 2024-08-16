@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Container, Grid, TextField, Typography, Card, Box, FormControl } from '@mui/material';
-import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
+import { Button, Container, Grid, TextField, Typography, Card, Box, FormControl, Autocomplete } from '@mui/material';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import { useDispatch } from 'react-redux';
@@ -52,10 +52,11 @@ const AddNewMatch = () => {
         });
     };
 
-    const handleTimeChange = (time: Dayjs | null) => {
+    const handleTimeChange = (_: any, value: string | null) => {
         setFormState({
             ...formState,
-            time: time ? time.format('HH:mm') : 'N/A'
+            time: value || 'N/A'
+            // time: time ? time.format('HH:mm') : 'N/A'
         });
     };
 
@@ -119,10 +120,16 @@ const AddNewMatch = () => {
         }
     };
 
-    const timeParts = formState.time !== 'N/A' && formState.time !== undefined ? formState.time.split(':') : ['00', '00'];
-    const timeValue = formState.time !== 'N/A'
-        ? dayjs().set('hour', parseInt(timeParts[0])).set('minute', parseInt(timeParts[1]))
-        : null;
+    // const timeParts = formState.time !== 'N/A' && formState.time !== undefined ? formState.time.split(':') : ['00', '00'];
+    // const timeValue = formState.time !== 'N/A'
+    //     ? dayjs().set('hour', parseInt(timeParts[0])).set('minute', parseInt(timeParts[1]))
+    //     : null;
+
+    const timeSlots = Array.from(new Array(24 * 2)).map(
+        (_, index) =>
+            `${index < 20 ? '0' : ''}${Math.floor(index / 2)}:${index % 2 === 0 ? '00' : '30'
+            }`,
+    );
 
     return (
         <>
@@ -148,19 +155,28 @@ const AddNewMatch = () => {
                                         label="Date"
                                         value={dayjs(formState.date)}
                                         onChange={handleDateChange}
+                                        maxDate={dayjs()}
                                     />
                                 </LocalizationProvider>
                             </Grid>
                             <Grid item xs={6}>
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <Autocomplete
+                                    options={timeSlots}
+                                    value={formState.time === 'N/A' ? null : formState.time}
+                                    onChange={(_, value) => handleTimeChange(null, value)}
+                                    renderInput={(params) => <TextField {...params} label="Play Time" />}
+                                    freeSolo
+                                />
+                                {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <TimePicker
                                         label="Time"
                                         value={timeValue}
                                         timeSteps={{ minutes: 30 }}
                                         onChange={handleTimeChange}
                                         ampm={false}
+                                        disableOpenPicker
                                     />
-                                </LocalizationProvider>
+                                </LocalizationProvider> */}
                             </Grid>
                             <Grid item xs={12}>
                                 <SelectPlayerInput
@@ -175,7 +191,7 @@ const AddNewMatch = () => {
                             {formState.score.length > 1 && (
                                 <Grid item xs={6}>
                                     <Button variant="outlined" color="secondary" fullWidth onClick={removeLastSet}>
-                                        Remove Last Set
+                                        Remove Set
                                     </Button>
                                 </Grid>
                             )}
