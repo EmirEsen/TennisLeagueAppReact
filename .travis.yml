@@ -1,13 +1,9 @@
-dist: bionic
-
 sudo: required
 
 services:
   - docker
 
-language: node_js
-node_js:
-  - 18
+language: generic
 
 before_install:
   - docker build -t emiresen/tennisleague-react -f Dockerfile.dev .
