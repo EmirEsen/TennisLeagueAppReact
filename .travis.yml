@@ -3,9 +3,13 @@ sudo: required
 services:
   - docker
 
+language: node_js
+node_js:
+  - "21"
+
 before_install:
   - docker build -t emiresen/tennisleague-react -f Dockerfile.dev .
-  
+
 
 # script:
   # -docker run -e CI=true emiresen/tennisleague-react npm run test
