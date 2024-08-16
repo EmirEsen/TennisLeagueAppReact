@@ -16,7 +16,7 @@ deploy:
   provider: elasticbeanstalk
   region: "eu-north-1"
   app: "tennisleague-react"
-  env: "Tennisleague-react-env"
+  env: "tennisleague-react-env"
   bucket_name: "elasticbeanstalk-eu-north-1-026090522719"
   bucket_path: "tennisleague-react"
   on:
