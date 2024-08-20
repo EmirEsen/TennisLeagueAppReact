@@ -13,12 +13,9 @@ import { logout } from '../../store/feature/authSlice';
 import { IPlayerProfile } from '../../models/IPlayerProfile';
 import toast from 'react-hot-toast';
 
-
-
 interface EditPlayerProfileProps {
     playerProfile: IPlayerProfile;
 }
-
 
 const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
 

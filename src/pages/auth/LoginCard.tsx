@@ -53,6 +53,7 @@ export default function LoginCard() {
             password: formData.password
         })).then((returnData) => {
             if (returnData.payload) {
+
                 navigate('/');
             }
         });

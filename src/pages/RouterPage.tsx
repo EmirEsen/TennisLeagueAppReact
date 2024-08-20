@@ -16,6 +16,7 @@ import Home from "./Home";
 function RouterPage() {
     const dispatch = useDispatch<AppDispatch>();
     const [profile, setProfile] = useState<IPlayerProfile | null>(null);
+    // const profile = useAppSelector((state) => state.player.loggedInProfile);
     const [loading, setLoading] = useState(true);
     const isLogin = useAppSelector((state) => state.auth.isAuth);
     const token = localStorage.getItem('token');

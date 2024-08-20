@@ -56,7 +56,7 @@ function MatchInfo({ match }: { match: IGetMatch }) {
             <Divider sx={{ marginY: 1 }} />
             <Typography variant="body2" color="text.secondary" sx={{ marginTop: 1 }}>
                 Game Set and Match {winner.firstname} {winner.lastname}.<br /> {winner.firstname[0]}. {winner.lastname} wins the match {' '}
-                {score.map((score) => score.player1Score).join('-')}.
+                {winnerId === player1Id ? score.map((score) => score.player1Score).join('-') : score.map((score) => score.player2Score).join('-')}.
             </Typography>
         </Paper>
 
