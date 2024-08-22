@@ -28,7 +28,6 @@ export default function ModalAddNewMatch({ isActive, infoText }: { isActive?: bo
 
     return (
         <>
-
             <Chip disabled={!isActive} label={infoText} color="info"
                 icon={<Add />} variant="outlined" onClick={handleOpen} sx={{ mb: 2 }} />
 

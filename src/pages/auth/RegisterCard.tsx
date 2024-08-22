@@ -14,6 +14,7 @@ import { AppDispatch } from '../../store';
 import { useDispatch } from 'react-redux';
 import { fetchRegister } from '../../store/feature/authSlice';
 import { Alert, Collapse, Link as MUILink } from '@mui/material'
+import toast from 'react-hot-toast';
 
 
 function Copyright(props: any) {
@@ -75,6 +76,13 @@ export default function RegisterCard() {
             const payload = res.payload;
             if (payload && typeof payload === 'object' && 'code' in payload && payload.code === 200) {
                 navigate('/login');
+                toast(
+                    payload.message,
+                    {
+                        icon: '🎉',
+                        duration: 6000
+                    }
+                );
             } else if (payload && typeof payload === 'object' && 'code' in payload && payload.code > 1000) {
                 setIsError(true);
                 setError(payload.message);

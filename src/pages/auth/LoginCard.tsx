@@ -62,7 +62,6 @@ export default function LoginCard() {
             .then((res) => {
                 console.log(res)
                 const payload = res.payload;
-
                 if (payload && typeof payload === 'object' && 'code' in payload && payload.code === 200) {
                     navigate('/');
                 } else if (payload && typeof payload === 'object' && 'code' in payload && payload.code > 1000) {

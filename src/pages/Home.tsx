@@ -22,7 +22,9 @@ export default function Home() {
     useEffect(() => {
         dispatch(getPlayerProfileList())
         dispatch(getMatchList())
-        dispatch(fetchPlayerProfile())
+        if (isAuth) {
+            dispatch(fetchPlayerProfile());
+        }
     }, [isAuth]);
 
     const sortedMatchList = [...matchList].sort((a, b) => {
