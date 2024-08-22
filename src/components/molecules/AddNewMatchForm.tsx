@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Container, Grid, TextField, Typography, Card, Box, FormControl, Autocomplete } from '@mui/material';
+import { Button, Container, Grid, TextField, Typography, Card, Box, FormControl, Autocomplete, Alert } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
@@ -21,8 +21,6 @@ const AddNewMatch = () => {
 
     const loggedInProfileId = useAppSelector(state => state.player.loggedInProfile?.id)
 
-    // const toast = useToaster();
-
     const [formState, setFormState] = useState<IPostMatch>({
         court: '',
         date: dayjs().format('YYYY-MM-DD'),
@@ -36,6 +34,20 @@ const AddNewMatch = () => {
             player2Score: 0
         }]
     });
+
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const validateForm = () => {
+        const newErrors: Record<string, string> = {};
+        if (!formState.court) newErrors.court = 'Court is required.';
+        if (!formState.date) newErrors.date = 'Date is required.';
+        if (!formState.player2Id) newErrors.player2Id = 'Select Opponent!';
+        if (formState.score.length === 0 || formState.score[0].player1Score === 0 && formState.score[0].player2Score === 0) {
+            newErrors.score = 'All sets must have valid scores';
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -108,6 +120,7 @@ const AddNewMatch = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!validateForm()) return;
         try {
             await dispatch(addNewMatch(formState)).unwrap();
             await dispatch(getMatchList());
@@ -147,6 +160,8 @@ const AddNewMatch = () => {
                                     value={formState.court}
                                     onChange={handleChange}
                                     fullWidth
+                                    error={!!errors.court}
+                                    helperText={errors.court}
                                 />
                             </Grid>
                             <Grid item xs={6}>
@@ -164,24 +179,26 @@ const AddNewMatch = () => {
                                     options={timeSlots}
                                     value={formState.time === 'N/A' ? null : formState.time}
                                     onChange={(_, value) => handleTimeChange(null, value)}
-                                    renderInput={(params) => <TextField {...params} label="Play Time" />}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label="Play Time"
+                                            error={!!errors.time}
+                                            helperText={errors.time}
+                                        />
+                                    )}
                                     freeSolo
                                 />
-                                {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <TimePicker
-                                        label="Time"
-                                        value={timeValue}
-                                        timeSteps={{ minutes: 30 }}
-                                        onChange={handleTimeChange}
-                                        ampm={false}
-                                        disableOpenPicker
-                                    />
-                                </LocalizationProvider> */}
                             </Grid>
                             <Grid item xs={12}>
                                 <SelectPlayerInput
                                     selectedPlayer={formState.player2Id}
                                     onChange={handlePlayer2Change} />
+                                {errors.player2Id && (
+                                    <Typography color="error" variant="caption">
+                                        {errors.player2Id}
+                                    </Typography>
+                                )}
                             </Grid>
                             <Grid item xs={6}>
                                 <Button variant="outlined" color="primary" fullWidth onClick={addNewSet}>
@@ -193,6 +210,15 @@ const AddNewMatch = () => {
                                     <Button variant="outlined" color="secondary" fullWidth onClick={removeLastSet}>
                                         Remove Set
                                     </Button>
+                                </Grid>
+                            )}
+                            {errors.score && (
+                                <Grid item xs={12} mt={-3}>
+                                    <Box sx={{ width: '100%', mt: 2 }}>
+                                        <Alert severity="error">
+                                            {errors.score}
+                                        </Alert>
+                                    </Box>
                                 </Grid>
                             )}
                             <Grid item xs={12} mt={-3}>

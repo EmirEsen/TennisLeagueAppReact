@@ -39,23 +39,18 @@ export const fetchRegister = createAsyncThunk<IResponse, IRegister, { rejectValu
 export const fetchLogin = createAsyncThunk<IResponse, ILogin, { rejectValue: string }>(
     'auth/login',
     async (payload: ILogin) => {
-        try {
-            const response = await fetch(`${config.BASE_URL}/api/v1/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    'email': payload.email,
-                    'password': payload.password
-                })
-            }).then(data => data.json())
-            return response;
+        const response = await fetch(`${config.BASE_URL}/api/v1/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'email': payload.email,
+                'password': payload.password
+            })
+        })
 
-        } catch (err) {
-            console.log('err...: ', err);
-        }
-
+        return response.json();
     }
 );
 
@@ -94,14 +89,10 @@ const authSlice = createSlice({
                 if (action.payload.data) {
                     state.isAuth = true;
                     state.token = action.payload.data;
-                    console.log('logged in auth true and token set to local stoage', action.payload.data, action.payload.message)
+                    console.log('logged in auth true and token set to local storage', action.payload.data, action.payload.message)
                     localStorage.setItem('token', action.payload.data)
                 }
             })
-            .addCase(fetchLogin.rejected, (state, action) => {
-                console.log(action.payload);
-                console.log(state)
-            });
     }
 });
 

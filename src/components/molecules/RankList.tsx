@@ -14,8 +14,11 @@ function calculateAge(dob: string): number {
 }
 
 const calculateWinLossRatio = (wins: number, losses: number): string => {
+    if (!wins && !losses) {
+        return 'N/A';
+    }
     if (losses === 0) {
-        return wins > 0 ? '100%' : '0%';
+        return '100%';
     }
     const ratio = (wins / (wins + losses)) * 100;
     return `${ratio.toFixed(0)}%`;

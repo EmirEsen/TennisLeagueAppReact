@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect, useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -14,15 +14,21 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store';
 import { fetchLogin } from '../../store/feature/authSlice';
 import { Toaster } from 'react-hot-toast';
+import { Alert, Collapse, Link as MUILink } from '@mui/material'
 
 
 function Copyright(props: any) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
             {'Copyright © '}
-            <Link color="inherit" to="https://www.linkedin.com/in/emir-esen-767452148/">
+            <MUILink
+                color="inherit"
+                href="https://www.linkedin.com/in/emir-esen-767452148/"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
                 Emir Esen
-            </Link>{' '}
+            </MUILink>{' '}
             {new Date().getFullYear()}
             {'.'}
         </Typography>
@@ -30,9 +36,11 @@ function Copyright(props: any) {
 }
 
 export default function LoginCard() {
+    const [error, setError] = useState('');
+    const [isError, setIsError] = useState(false);
 
     const dispatch: AppDispatch = useDispatch();
-    const [formData, setFormData] = React.useState({
+    const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
@@ -44,20 +52,38 @@ export default function LoginCard() {
             ...formData,
             [name]: value
         });
-
     };
 
     const login = () => {
         dispatch(fetchLogin({
             email: formData.email,
             password: formData.password
-        })).then((returnData) => {
-            if (returnData.payload) {
+        }))
+            .then((res) => {
+                console.log(res)
+                const payload = res.payload;
 
-                navigate('/');
-            }
-        });
+                if (payload && typeof payload === 'object' && 'code' in payload && payload.code === 200) {
+                    navigate('/');
+                } else if (payload && typeof payload === 'object' && 'code' in payload && payload.code > 1000) {
+                    setIsError(true);
+                    setError(payload.message);
+                } else {
+                    setIsError(true);
+                    setError('An unexpected error occurred, Try again later.');
+                }
+            })
     }
+
+    useEffect(() => {
+        if (isError) {
+            const timer = setTimeout(() => {
+                setIsError(false);
+            }, 2000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [isError, setIsError]);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -82,6 +108,13 @@ export default function LoginCard() {
                 <Typography component="h1" variant="h5">
                     Log in
                 </Typography>
+                <Collapse sx={{ width: '100%' }} in={isError}>
+                    <Box sx={{ width: '100%', mt: 2 }}>
+                        <Alert severity="error">
+                            {error}
+                        </Alert>
+                    </Box>
+                </Collapse>
                 <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
                     <TextField
                         margin="normal"

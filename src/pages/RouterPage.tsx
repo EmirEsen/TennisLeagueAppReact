@@ -11,6 +11,7 @@ import { AppDispatch, useAppSelector } from "../store";
 import { fetchPlayerProfile } from "../store/feature/playerSlice";
 import { IPlayerProfile } from "../models/IPlayerProfile";
 import Home from "./Home";
+import { LinearProgress } from "@mui/material";
 
 
 function RouterPage() {
@@ -41,7 +42,7 @@ function RouterPage() {
     }, [dispatch, token]);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <LinearProgress />
     }
 
     return (

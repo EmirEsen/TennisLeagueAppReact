@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -13,15 +13,21 @@ import { SportsTennis } from '@mui/icons-material';
 import { AppDispatch } from '../../store';
 import { useDispatch } from 'react-redux';
 import { fetchRegister } from '../../store/feature/authSlice';
+import { Alert, Collapse, Link as MUILink } from '@mui/material'
 
 
 function Copyright(props: any) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
             {'Copyright © '}
-            <Link color="inherit" to="https://www.linkedin.com/in/emir-esen-767452148/">
+            <MUILink
+                color="inherit"
+                href="https://www.linkedin.com/in/emir-esen-767452148/"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
                 Emir Esen
-            </Link>{' '}
+            </MUILink>{' '}
             {new Date().getFullYear()}
             {'.'}
         </Typography>
@@ -30,11 +36,13 @@ function Copyright(props: any) {
 
 
 export default function RegisterCard() {
+    const [error, setError] = useState('');
+    const [isError, setIsError] = useState(false);
 
     const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
 
-    const [formData, setFormData] = React.useState({
+    const [formData, setFormData] = useState({
         firstname: '',
         lastname: '',
         email: '',
@@ -42,7 +50,7 @@ export default function RegisterCard() {
         rePassword: ''
     });
 
-    const [isPasswordMatch, setIsPasswordMatch] = React.useState(true)
+    const [isPasswordMatch, setIsPasswordMatch] = useState(true)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -62,12 +70,30 @@ export default function RegisterCard() {
             lastname: formData.lastname,
             email: formData.email,
             password: formData.password
-        })).then((returnData) => {
-            if (returnData.payload) {
+        })).then((res) => {
+            console.log(res)
+            const payload = res.payload;
+            if (payload && typeof payload === 'object' && 'code' in payload && payload.code === 200) {
                 navigate('/login');
+            } else if (payload && typeof payload === 'object' && 'code' in payload && payload.code > 1000) {
+                setIsError(true);
+                setError(payload.message);
+            } else {
+                setIsError(true);
+                setError('An unexpected error occurred, Try again later.');
             }
         });
     }
+
+    useEffect(() => {
+        if (isError) {
+            const timer = setTimeout(() => {
+                setIsError(false);
+            }, 2000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [isError, setIsError]);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -94,6 +120,13 @@ export default function RegisterCard() {
                 <Typography component="h1" variant="h5">
                     Register
                 </Typography>
+                <Collapse sx={{ width: '100%' }} in={isError}>
+                    <Box sx={{ width: '100%', mt: 2 }}>
+                        <Alert severity="error">
+                            {error}
+                        </Alert>
+                    </Box>
+                </Collapse>
                 <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
