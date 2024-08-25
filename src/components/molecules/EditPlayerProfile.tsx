@@ -1,9 +1,9 @@
-import { Button, Card, Container, FormControl, Grid, styled, TextField, Typography } from '@mui/material';
+import { Avatar, Badge, Box, Button, Card, Container, FormControl, Grid, Modal, styled, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { CloudUpload } from '@mui/icons-material';
+import { AddAPhoto, Close, CloudUploadOutlined } from '@mui/icons-material';
 import { IUpdatePlayerProfile } from '../../models/IUpdatePlayerProfile';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store';
@@ -12,6 +12,8 @@ import { useNavigate } from 'react-router-dom';
 import { logout } from '../../store/feature/authSlice';
 import { IPlayerProfile } from '../../models/IPlayerProfile';
 import toast from 'react-hot-toast';
+import { blue } from '@mui/material/colors';
+import { IconButton } from '@mui/joy';
 
 interface EditPlayerProfileProps {
     playerProfile: IPlayerProfile;
@@ -26,6 +28,9 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
 
     const initialDob = playerProfile.dob ? dayjs(playerProfile.dob) : defaultDate;
     const [dob, setDob] = useState<Dayjs | null>(initialDob);
+    const [isUploading, setIsUploading] = useState(false);
+    const [isSelected, setIsSelected] = useState(false);
+    const [open, setOpen] = useState(false);
 
     const [formState, setFormState] = useState<IUpdatePlayerProfile>({
         firstname: playerProfile.firstname,
@@ -54,6 +59,7 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
                 ...formState,
                 avatar: e.target.files[0]
             });
+            setIsSelected(true)
         }
     };
 
@@ -88,6 +94,7 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
             await dispatch(fetchUpdatePlayerProfile(formState)).unwrap();
 
             toast.success('Profile Updated!')
+            setOpen(false);
         } catch (error) {
             console.error('Failed to update profile:', error);
             toast.error('Failed to update profile.');
@@ -96,6 +103,9 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
             navigate('/login');
         }
     };
+
+    const handleModalOpen = () => setOpen(true);
+    const handleModalClose = () => setOpen(false);
 
     const VisuallyHiddenInput = styled('input')({
         clip: 'rect(0 0 0 0)',
@@ -115,6 +125,61 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
                 <Typography variant="h4" gutterBottom align='center'>
                     Update Player Profile
                 </Typography>
+                <Grid item xs={12}>
+                    <Box
+                        component="form"
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            maxWidth: 800,
+                            margin: 'auto',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Badge
+                            badgeContent={
+                                <AddAPhoto sx={{ fontSize: 20, color: blue[500] }} />
+                            }
+                            color="primary"
+                            overlap="circular"
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'right',
+                            }}
+                        >
+                            <Avatar
+                                src={isSelected ? URL.createObjectURL(formState.avatar!) : playerProfile.profileImageUrl}
+                                alt={playerProfile.firstname + ' ' + playerProfile.lastname}
+                                sx={{
+                                    width: 100,
+                                    height: 100,
+                                    objectFit: 'cover',
+                                    objectPosition: 'top',
+                                    border: '1px solid',
+                                    cursor: 'pointer',
+                                }}
+                                onClick={handleModalOpen}
+                            />
+                        </Badge>
+                    </Box>
+                </Grid>
+                <Grid sx={{ justifyContent: 'center', marginY: 3, marginLeft: 0.8 }} container spacing={2}>
+                    <Grid item>
+                        {error && (
+                            <Typography color="error">{error}</Typography>
+                        )}
+                        <Button
+                            component="label"
+                            variant="contained"
+                            tabIndex={-1}
+                            startIcon={<CloudUploadOutlined />}
+                            onClick={handleSubmit}
+                            disabled={isUploading || !isSelected}
+                        >
+                            {isUploading ? 'Uploading...' : 'Upload Image'}
+                        </Button>
+                    </Grid>
+                </Grid>
                 <FormControl component="form" onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
@@ -136,21 +201,6 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
                                 fullWidth
                                 required
                             />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button
-                                component="label"
-                                role={undefined}
-                                variant="contained"
-                                tabIndex={-1}
-                                startIcon={<CloudUpload />}
-                            >
-                                Upload Image
-                                <VisuallyHiddenInput type="file" onChange={handleFileChange} />
-                            </Button>
-                            {error && (
-                                <Typography color="error">{error}</Typography>
-                            )}
                         </Grid>
                         <Grid item xs={6}>
                             <TextField
@@ -176,10 +226,10 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DatePicker
                                     label="Date of Birth"
-                                    value={dayjs(dob)}
+                                    value={dob}
                                     onChange={handleDateChange}
                                 />
-                            </LocalizationProvider >
+                            </LocalizationProvider>
                         </Grid>
                         <Grid item xs={12}>
                             <Button type="submit" variant="contained" color="primary" fullWidth>
@@ -189,7 +239,66 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
                     </Grid>
                 </FormControl>
             </Container>
-        </Card >
+
+            <Modal open={open}
+                onClose={handleModalClose}
+                aria-labelledby="edit-photo-modal"
+                aria-describedby="edit-photo-modal-description"
+
+            >
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: 300,
+                        bgcolor: 'background.paper',
+                        boxShadow: 24,
+                        p: 4,
+                        borderRadius: 2,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <IconButton
+                        sx={{ position: 'absolute', top: 10, right: 10 }}
+                        onClick={handleModalClose}
+                    >
+                        <Close />
+                    </IconButton>
+                    <Typography variant="h6" id="edit-photo-modal" sx={{ mb: 2 }}>
+                        Profile Photo
+                    </Typography>
+                    <Avatar
+                        src={isSelected ? URL.createObjectURL(formState.avatar!) : playerProfile.profileImageUrl}
+                        alt={playerProfile.firstname + ' ' + playerProfile.lastname}
+                        sx={{
+                            width: 150,
+                            height: 150,
+                            objectFit: 'cover',
+                            objectPosition: 'bottom',
+                            border: '1px solid',
+                            marginBottom: 2
+                        }}
+                    />
+                    <Button component="label" variant="contained">
+                        Add Photo
+                        <VisuallyHiddenInput
+                            accept=".jpg,.jpeg,.png,.heic"
+                            type="file"
+                            onChange={handleFileChange}
+                        />
+                    </Button>
+                    <Button disabled={!isSelected} component="label" variant="contained">
+                        Save
+                    </Button>
+
+                </Box>
+            </Modal>
+        </Card>
     );
 };
 
