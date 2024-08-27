@@ -5,7 +5,7 @@ import Login from "./auth/Login";
 import Register from "./auth/Register";
 import Profile from "./Profile";
 import { useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { logout, setToken } from "../store/feature/authSlice";
 import { AppDispatch, useAppSelector } from "../store";
 import { fetchPlayerProfile } from "../store/feature/playerSlice";
