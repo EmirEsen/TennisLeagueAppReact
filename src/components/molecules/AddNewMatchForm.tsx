@@ -11,6 +11,8 @@ import { IPostMatch, score } from '../../models/IPostMatch';
 import SelectPlayerInput from '../atoms/SelectPlayerInput';
 import { logout } from '../../store/feature/authSlice';
 import toast from 'react-hot-toast';
+import { fetchPlayerProfile } from '../../store/feature/playerSlice';
+
 
 
 
@@ -19,16 +21,16 @@ const AddNewMatch = () => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
-    const loggedInProfileId = useAppSelector(state => state.player.loggedInProfile?.id)
+    const loggedInProfile = useAppSelector(state => state.player.loggedInProfile)
 
     const [formState, setFormState] = useState<IPostMatch>({
         court: '',
         date: dayjs().format('YYYY-MM-DD'),
-        time: 'N/A', // Default value for time
-        player1Id: loggedInProfileId || '',
+        time: 'N/A',
+        player1Id: loggedInProfile?.id || '',
         player2Id: '',
         score: [{
-            player1Id: loggedInProfileId || '',
+            player1Id: loggedInProfile?.id || '',
             player1Score: 0,
             player2Id: '',
             player2Score: 0
@@ -122,9 +124,31 @@ const AddNewMatch = () => {
         e.preventDefault();
         if (!validateForm()) return;
         try {
-            await dispatch(addNewMatch(formState)).unwrap();
+            await dispatch(addNewMatch(formState)).unwrap()
+
             await dispatch(getMatchList());
             toast.success('Match Added Succesfully!');
+
+            const updatedProfile = await dispatch(fetchPlayerProfile()).unwrap();
+
+            if (updatedProfile.matchPlayed < 3) {
+                toast((t) => (
+                    <Grid container justifyContent={'space-between'}>
+                        <Grid item>
+                            Congrats! 📣, {updatedProfile?.firstname}. After {3 - updatedProfile.matchPlayed} more matches, your Rating will be set!
+                            <Button onClick={() => toast.dismiss(t.id)}>
+                                Dismiss
+                            </Button>
+                        </Grid>
+                    </Grid>
+                ), {
+                    duration: 6000
+                });
+            } else if (updatedProfile.matchPlayed === 3) {
+                toast(`Your rating has been revealed, ${updatedProfile?.rating}`, {
+                    icon: '✨',
+                });
+            }
         } catch (error) {
             console.error('Failed to add match:', error);
             dispatch(logout());
