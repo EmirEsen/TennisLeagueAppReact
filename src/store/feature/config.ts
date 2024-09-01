@@ -1,6 +1,6 @@
-const SERVER_LOCAL = 'http://localhost:9090'
+const SERVER_RENDER = 'https://tennisspringrender-v0-0.onrender.com'
 
-const server = SERVER_LOCAL;
+const server = SERVER_RENDER;
 const config = {
     BASE_URL: server
 };
