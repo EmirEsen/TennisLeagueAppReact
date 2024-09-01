@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { IPlayerProfile } from "../../models/IPlayerProfile"
 import { IUpdatePlayerProfile } from "../../models/IUpdatePlayerProfile"
-import config from "./config"
 
 export interface IPlayerState {
     playerList: IPlayerProfile[],
@@ -21,7 +20,7 @@ const initialPlayerState: IPlayerState = {
 export const getPlayerProfileList = createAsyncThunk<IPlayerProfile[], void, { rejectValue: string }>(
     'player/getPlayers',
     async () => {
-        const result = await fetch(`${config.BASE_URL}/api/v1/player/profiles`)
+        const result = await fetch(`/api/v1/player/profiles`)
             .then(data => data.json())
         return result;
     }
@@ -30,7 +29,7 @@ export const getPlayerProfileList = createAsyncThunk<IPlayerProfile[], void, { r
 export const fetchPlayerProfile = createAsyncThunk<IPlayerProfile, void, { rejectValue: string }>(
     'player/getProfile',
     async (_) => {
-        const response = await fetch(`${config.BASE_URL}/api/v1/player/profile`, {
+        const response = await fetch(`/api/v1/player/profile`, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem('token')}`
@@ -46,7 +45,7 @@ export const fetchPlayerProfile = createAsyncThunk<IPlayerProfile, void, { rejec
 export const fetchUpdatePlayerProfile = createAsyncThunk<IPlayerProfile, IUpdatePlayerProfile, { rejectValue: string }>(
     'player/updateProfile',
     async (payload: IUpdatePlayerProfile) => {
-        const response = await fetch(`${config.BASE_URL}/api/v1/player/profile/update`, {
+        const response = await fetch(`/api/v1/player/profile/update`, {
             method: 'PUT',
             headers: {
                 "Content-Type": "application/json",
@@ -64,7 +63,7 @@ export const fetchUpdatePlayerProfile = createAsyncThunk<IPlayerProfile, IUpdate
 export const uploadPlayerProfileImage = createAsyncThunk<string, FormData, { rejectValue: string }>(
     'player/uploadImage',
     async (formData, { rejectWithValue }) => {
-        const response = await fetch(`${config.BASE_URL}/api/v1/player/profile-image`, {
+        const response = await fetch(`/api/v1/player/profile-image`, {
             method: 'POST',
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem('token')}`

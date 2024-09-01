@@ -11,7 +11,7 @@ RUN npm run build
 
 # CMD ["npm", "run", "dev"]
 
-FROM nginx
+FROM nginx:1.21.0-alpine
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 
