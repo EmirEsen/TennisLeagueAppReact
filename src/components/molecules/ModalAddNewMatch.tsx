@@ -2,23 +2,30 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import AddNewMatch from './AddNewMatchForm';
-import { Chip } from '@mui/material';
-import { Add } from '@mui/icons-material';
+import { Chip, IconButton } from '@mui/material';
+import { Add, Close } from '@mui/icons-material';
 
 const style = {
     position: 'absolute' as 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    // width: 500,
     width: {
         xs: '90%',  // 90% width on extra-small screens
-        sm: 500,    // 400px width on small screens and above
+        sm: 500,    // 500px width on small screens and above
     },
+    maxHeight: '90vh',
     bgcolor: 'background',
     boxShadow: 24,
     p: 0.5,
-    borderRadius: '16px'
+    borderRadius: '16px',
+    overflowY: 'auto',
+};
+
+const closeButtonStyle = {
+    position: 'absolute',
+    top: 8,
+    right: 8,
 };
 
 export default function ModalAddNewMatch({ isActive, infoText }: { isActive?: boolean, infoText?: string }) {
@@ -38,6 +45,9 @@ export default function ModalAddNewMatch({ isActive, infoText }: { isActive?: bo
                 aria-describedby="adding-new-match-record"
             >
                 <Box sx={style}>
+                    <IconButton onClick={handleClose} sx={closeButtonStyle}>
+                        <Close />
+                    </IconButton>
                     <AddNewMatch />
                 </Box>
             </Modal>
