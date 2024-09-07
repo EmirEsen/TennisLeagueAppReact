@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { IGetMatch } from "../../models/IGetMatch"
 import { IPostMatch } from "../../models/IPostMatch"
 import { IResponse } from "../../models/IResponse"
-import config from "./config"
 
 export interface IMatchState {
     matchList: IGetMatch[],
@@ -18,7 +17,7 @@ const initialMatchState: IMatchState = {
 export const getMatchList = createAsyncThunk<IGetMatch[], void, { rejectValue: string }>(
     'match/getMatchs',
     async () => {
-        const result = await fetch(`${config.BASE_URL}/api/v1/match/matches`)
+        const result = await fetch(`/api/v1/match/matches`)
             .then(data => data.json())
         return result;
     }
@@ -28,7 +27,7 @@ export const addNewMatch = createAsyncThunk<IResponse, IPostMatch, { rejectValue
     'match/addNewMatch',
     async (payload: IPostMatch, { rejectWithValue }) => {
         try {
-            const response = await fetch(`${config.BASE_URL}/api/v1/match/save`, {
+            const response = await fetch(`/api/v1/match/save`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

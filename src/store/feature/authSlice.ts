@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { IRegister } from "../../models/auth/IRegister";
 import { IResponse } from "../../models/IResponse";
 import { ILogin } from "../../models/auth/ILogin";
-import config from "./config";
 
 export interface IAuthState {
     data: string
@@ -25,7 +24,7 @@ const initialAuthState: IAuthState = {
 export const fetchRegister = createAsyncThunk<IResponse, IRegister, { rejectValue: string }>(
     'auth/register',
     async (payload: IRegister) => {
-        const response = await fetch(`${config.BASE_URL}/api/v1/auth/register`, {
+        const response = await fetch(`/api/v1/auth/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -39,7 +38,7 @@ export const fetchRegister = createAsyncThunk<IResponse, IRegister, { rejectValu
 export const fetchLogin = createAsyncThunk<IResponse, ILogin, { rejectValue: string }>(
     'auth/login',
     async (payload: ILogin) => {
-        const response = await fetch(`${config.BASE_URL}/api/v1/auth/login`, {
+        const response = await fetch(`/api/v1/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
