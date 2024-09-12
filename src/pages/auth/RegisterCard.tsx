@@ -205,7 +205,7 @@ export default function RegisterCard() {
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
                     >
-                        {loading ? <CircularProgress size={24} color="success" /> : 'Register'}
+                        {loading ? <CircularProgress size={24} color="inherit" /> : 'Register'}
                     </Button>
                     <Grid container>
                         <Grid item xs>
