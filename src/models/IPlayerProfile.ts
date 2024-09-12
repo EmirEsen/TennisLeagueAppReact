@@ -11,6 +11,7 @@ export interface IPlayerProfile {
     win: number
     lose: number
     profileImageUrl: string
+    isEmailVerified: boolean
 }
 
 

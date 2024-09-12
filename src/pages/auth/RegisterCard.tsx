@@ -10,12 +10,10 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { SportsTennis } from '@mui/icons-material';
-import { AppDispatch } from '../../store';
+import { AppDispatch, useAppSelector } from '../../store';
 import { useDispatch } from 'react-redux';
 import { fetchRegister } from '../../store/feature/authSlice';
-import { Alert, Collapse, Link as MUILink } from '@mui/material'
-import toast from 'react-hot-toast';
-
+import { Alert, CircularProgress, Collapse, Link as MUILink } from '@mui/material'
 
 function Copyright(props: any) {
     return (
@@ -39,6 +37,7 @@ function Copyright(props: any) {
 export default function RegisterCard() {
     const [error, setError] = useState('');
     const [isError, setIsError] = useState(false);
+    const loading = useAppSelector(state => state.auth.isLoading)
 
     const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
@@ -76,13 +75,6 @@ export default function RegisterCard() {
             const payload = res.payload;
             if (payload && typeof payload === 'object' && 'code' in payload && payload.code === 200) {
                 navigate('/login');
-                toast(
-                    payload.message,
-                    {
-                        icon: '🎉',
-                        duration: 6000
-                    }
-                );
             } else if (payload && typeof payload === 'object' && 'code' in payload && payload.code > 1000) {
                 setIsError(true);
                 setError(payload.message);
@@ -213,7 +205,7 @@ export default function RegisterCard() {
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
                     >
-                        Register
+                        {loading ? <CircularProgress size={24} color="success" /> : 'Register'}
                     </Button>
                     <Grid container>
                         <Grid item xs>

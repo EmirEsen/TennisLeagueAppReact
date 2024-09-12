@@ -10,6 +10,7 @@ import { logout, setToken } from "../store/feature/authSlice";
 import { AppDispatch, useAppSelector } from "../store";
 import { fetchPlayerProfile } from "../store/feature/playerSlice";
 import Home from "./Home";
+import VerifyEmail from "./auth/VerifyEmail";
 
 function RouterPage() {
     const dispatch = useDispatch<AppDispatch>();
@@ -52,6 +53,7 @@ function RouterPage() {
                 <Route
                     path="/profile"
                     element={isLogin ? (profile ? <Profile profile={profile} /> : <div>Loading profile...</div>) : <Navigate to="/login" />} />
+                <Route path="/verify-email" element={<VerifyEmail />} />
             </Routes>
         </BrowserRouter>
     );
