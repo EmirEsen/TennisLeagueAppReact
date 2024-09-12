@@ -111,6 +111,12 @@ const authSlice = createSlice({
                     localStorage.setItem('token', action.payload.data)
                 }
             })
+            .addCase(fetchSendConfirmationEmail.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(fetchSendConfirmationEmail.fulfilled, (state) => {
+                state.isLoading = false;
+            })
     }
 });
 
