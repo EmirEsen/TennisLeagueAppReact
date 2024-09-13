@@ -18,6 +18,25 @@ const initialAuthState: IAuthState = {
     token: undefined,
     isAuth: false
 }
+
+
+export const fetchSendConfirmationEmail = createAsyncThunk<IResponse, String, { rejectValue: string }>(
+    'auth/sendConfirmationEmail',
+    async (email: String) => {
+        const response = await fetch(`${config.BASE_URL}/api/v1/auth/send-confirmation-email`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'email': email
+            })
+        })
+
+        return response.json();
+    }
+);
+
 /**
  * @param {firstname, lastname, email, password} payload
  */
@@ -88,9 +107,14 @@ const authSlice = createSlice({
                 if (action.payload.data) {
                     state.isAuth = true;
                     state.token = action.payload.data;
-                    console.log('logged in auth true and token set to local storage', action.payload.data, action.payload.message)
                     localStorage.setItem('token', action.payload.data)
                 }
+            })
+            .addCase(fetchSendConfirmationEmail.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(fetchSendConfirmationEmail.fulfilled, (state) => {
+                state.isLoading = false;
             })
     }
 });
