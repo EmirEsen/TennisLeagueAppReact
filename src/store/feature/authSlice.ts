@@ -23,7 +23,7 @@ const initialAuthState: IAuthState = {
 export const fetchSendConfirmationEmail = createAsyncThunk<IResponse, String, { rejectValue: string }>(
     'auth/sendConfirmationEmail',
     async (email: String) => {
-        const response = await fetch(`${config.BASE_URL}/api/v1/auth/send-confirmation-email`, {
+        const response = await fetch(`/api/v1/auth/send-confirmation-email`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
