@@ -53,7 +53,9 @@ function RouterPage() {
                 <Route
                     path="/profile"
                     element={isLogin ? (profile ? <Profile profile={profile} /> : <div>Loading profile...</div>) : <Navigate to="/login" />} />
-                <Route path="/verify-email" element={<VerifyEmail />} />
+                <Route
+                    path="/api/v1/auth/verify-email"
+                    element={<VerifyEmail />} />
             </Routes>
         </BrowserRouter>
     );

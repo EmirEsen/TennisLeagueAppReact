@@ -21,6 +21,32 @@ const initialAuthState: IAuthState = {
 }
 
 
+export const fetchVerifyAccount = createAsyncThunk(
+    'auth/fetchVerifyAccount',
+    async (token: string, { rejectWithValue }) => {
+        try {
+            const response = await fetch(`${config.BASE_URL}/api/v1/auth/verify-email?token=${token}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                return rejectWithValue(errorData);
+            }
+
+            const data = await response.json();
+            console.log(data);
+            return data;
+        } catch (error) {
+            return rejectWithValue({ message: 'An error occurred during the verification process.' });
+        }
+    }
+);
+
+
 export const fetchSendConfirmationEmail = createAsyncThunk<IResponse, String, { rejectValue: string }>(
     'auth/sendConfirmationEmail',
     async (email: String) => {
