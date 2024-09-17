@@ -24,7 +24,7 @@ export const fetchVerifyAccount = createAsyncThunk(
     'auth/fetchVerifyAccount',
     async (token: string, { rejectWithValue }) => {
         try {
-            const response = await fetch(`${config.BASE_URL}/api/v1/auth/verify-email?token=${token}`, {
+            const response = await fetch(`/api/v1/auth/verify-email?token=${token}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

@@ -17,7 +17,7 @@ const VerifyEmail = () => {
         const token = query.get('token');
         if (token) {
             dispatch(fetchVerifyAccount(token))
-                .unwrap() // unwrap to handle success/failure without thunk action wrappers
+                .unwrap()
                 .then(() => {
                     toast.success(<>
                         Account verified successfully!<br />
@@ -27,7 +27,7 @@ const VerifyEmail = () => {
                         icon: '🎉'
                     });
                     setLoading(false);
-                    navigate('/'); // redirect to home page
+                    navigate('/');
                 })
                 .catch((err: any) => {
                     toast.error('Account verification failed. Please try again.');
