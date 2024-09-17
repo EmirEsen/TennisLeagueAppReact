@@ -1,46 +1,52 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import config from '../../store/feature/config';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../store';
+import { fetchVerifyAccount } from '../../store/feature/authSlice';
+import toast from 'react-hot-toast';
 
 const VerifyEmail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
+    const dispatch: AppDispatch = useDispatch();
 
     useEffect(() => {
         const query = new URLSearchParams(location.search);
         const token = query.get('token');
-
-        const verifyEmail = async () => {
-            try {
-                const response = await fetch(`${config.BASE_URL}/api/v1/verify-email`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ token }),
+        if (token) {
+            dispatch(fetchVerifyAccount(token))
+                .unwrap() // unwrap to handle success/failure without thunk action wrappers
+                .then(() => {
+                    toast.success(<>
+                        Account verified successfully!<br />
+                        You can sign-in!
+                    </>, {
+                        duration: 5000,
+                        icon: '🎉'
+                    });
+                    setLoading(false);
+                    navigate('/'); // redirect to home page
+                })
+                .catch((err: any) => {
+                    toast.error('Account verification failed. Please try again.');
+                    setError(err?.message || 'Verification failed');
+                    setLoading(false);
                 });
-
-                if (!response.ok) {
-                    throw new Error('Verification failed');
-                }
-
-                navigate('/'); // Redirect to home page on success
-            } catch (err) {
-                setError('Verification failed.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        verifyEmail();
-    }, [location.search, navigate]);
+        } else {
+            setError('Invalid verification token.');
+            setLoading(false);
+        }
+    }, [location.search, navigate, dispatch]);
 
     return (
         <div>
-            {loading && <p>Verifying...</p>}
-            {error && <p>{error}</p>}
+            {loading ? (
+                <p>Verifying your account...</p>
+            ) : error ? (
+                <p>{error}</p>
+            ) : null}
         </div>
     );
 };
