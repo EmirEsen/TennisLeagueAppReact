@@ -1,6 +1,7 @@
 import { Box, Divider, Grid, Paper, Typography } from '@mui/material'
 import { IGetMatch } from '../../models/IGetMatch'
 import { useAppSelector } from '../../store'
+import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
 
 function excludeSeconds(timeString: string): string {
     const parts = timeString.split(':');
@@ -10,6 +11,26 @@ function excludeSeconds(timeString: string): string {
     }
 
     return timeString;
+}
+
+function getRatingChangeDisplay(ratingChange: number) {
+    if (ratingChange > 0) {
+        return (
+            <Typography variant="body2" color="green" sx={{ display: 'flex', alignItems: 'center', marginRight: 0.7 }}>
+                <ArrowDropUp fontSize="small" />
+                {ratingChange}
+            </Typography>
+        );
+    } else if (ratingChange < 0) {
+        return (
+            <Typography variant="body2" color="red" sx={{ display: 'flex', alignItems: 'center', marginRight: 0.7 }}>
+                <ArrowDropDown fontSize="small" />
+                {Math.abs(ratingChange)}
+            </Typography>
+        );
+    } else {
+        return null; // No change
+    }
 }
 
 function MatchInfo({ match }: { match: IGetMatch }) {
@@ -35,6 +56,7 @@ function MatchInfo({ match }: { match: IGetMatch }) {
             <Divider sx={{ marginY: 1 }} />
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
+                    {getRatingChangeDisplay(match.player1RatingChange)}
                     <Typography variant="body1" fontWeight="bold" color="primary" sx={{ flexGrow: 1 }}>
                         {player1.firstname[0]}. {player1.lastname}
                         {winner === player1 && <span style={{ color: 'green' }}> ✔</span>}
@@ -44,6 +66,7 @@ function MatchInfo({ match }: { match: IGetMatch }) {
                     </Typography>
                 </Grid>
                 <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
+                    {getRatingChangeDisplay(match.player2RatingChange)}
                     <Typography variant="body1" fontWeight="bold" color="primary" sx={{ flexGrow: 1 }}>
                         {player2.firstname[0]}. {player2.lastname}
                         {winner === player2 && <span style={{ color: 'green' }}> ✔</span>}

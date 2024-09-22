@@ -28,15 +28,27 @@ const closeButtonStyle = {
     right: 8,
 };
 
-export default function ModalAddNewMatch({ isActive, infoText }: { isActive?: boolean, infoText?: string }) {
+export default function ModalAddNewMatch({
+    isActive,
+    infoText,
+    customButton
+}: {
+    isActive?: boolean,
+    infoText?: string,
+    customButton?: React.ReactNode
+}) {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
     return (
         <>
-            <Chip disabled={!isActive} label={infoText} color="info"
-                icon={<Add />} variant="outlined" onClick={handleOpen} sx={{ mb: 2 }} />
+            {customButton ? (
+                React.cloneElement(customButton as React.ReactElement, { onClick: handleOpen })
+            ) : (
+                <Chip disabled={!isActive} label={infoText} color="info"
+                    icon={<Add />} variant="outlined" onClick={handleOpen} sx={{ mb: 2 }} />
+            )}
 
             <Modal
                 open={open}

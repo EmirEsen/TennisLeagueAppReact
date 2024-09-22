@@ -15,6 +15,8 @@ export interface IGetMatch {
     score: score[]
     winnerId: string
     createdAt: string
+    player1RatingChange: number
+    player2RatingChange: number
 }
 
 
