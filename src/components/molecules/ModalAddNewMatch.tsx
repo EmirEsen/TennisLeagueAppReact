@@ -60,7 +60,7 @@ export default function ModalAddNewMatch({
                     <IconButton onClick={handleClose} sx={closeButtonStyle}>
                         <Close />
                     </IconButton>
-                    <AddNewMatch />
+                    <AddNewMatch onClose={handleClose} />
                 </Box>
             </Modal>
         </>

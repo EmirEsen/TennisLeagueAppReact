@@ -14,10 +14,7 @@ import toast from 'react-hot-toast';
 import { fetchPlayerProfile } from '../../store/feature/playerSlice';
 
 
-
-
-
-const AddNewMatch = () => {
+const AddNewMatch = ({ onClose }: { onClose: () => void }) => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
@@ -124,10 +121,20 @@ const AddNewMatch = () => {
         e.preventDefault();
         if (!validateForm()) return;
         try {
-            await dispatch(addNewMatch(formState)).unwrap()
+            await dispatch(addNewMatch(formState))
+                .then((response) => {
+                    if (addNewMatch.fulfilled.match(response)) {
+                        toast.success('Match Added Successfully!');
+                    }
+                })
+                .catch((error) => {
+                    toast.error('Error adding match!');
+                    console.log(error);
+                });
 
             await dispatch(getMatchList());
-            toast.success('Match Added Succesfully!');
+
+            onClose();
 
             const updatedProfile = await dispatch(fetchPlayerProfile()).unwrap();
 
