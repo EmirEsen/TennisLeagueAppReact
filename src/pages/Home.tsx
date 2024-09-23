@@ -8,7 +8,6 @@ import { useDispatch } from 'react-redux';
 import { useEffect, useMemo, useState } from 'react';
 import { fetchPlayerProfile, getPlayerProfileList } from '../store/feature/playerSlice';
 import { getMatchList } from '../store/feature/matchSlice';
-import PlayerCard from '../components/molecules/PlayerCard';
 import ModalAddNewMatch from '../components/molecules/ModalAddNewMatch';
 import { Toaster } from 'react-hot-toast';
 import { fetchSendConfirmationEmail } from '../store/feature/authSlice';
@@ -118,9 +117,6 @@ export default function Home() {
                                 ) : <></>}
                                 <RankList players={playerList} />
                             </>
-                        )}
-                        {playerList.length > 2 && (
-                            <PlayerCard player={playerList[0]} />
                         )}
                     </Grid>
                     <Grid item xs={9} md={3} style={{ margin: 'auto' }} >
