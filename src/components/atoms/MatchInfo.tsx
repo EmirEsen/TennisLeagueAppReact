@@ -1,7 +1,7 @@
 import { Box, Divider, Grid, Paper, Typography } from '@mui/material'
 import { IGetMatch } from '../../models/IGetMatch'
 import { useAppSelector } from '../../store'
-import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
+import { ArrowDropDown, ArrowDropUp, ArrowRight } from '@mui/icons-material';
 
 function excludeSeconds(timeString: string): string {
     const parts = timeString.split(':');
@@ -29,7 +29,12 @@ function getRatingChangeDisplay(ratingChange: number) {
             </Typography>
         );
     } else {
-        return null; // No change
+        return (
+            <Typography variant="body2" color="grey" sx={{ display: 'flex', alignItems: 'center', marginRight: 0.7 }}>
+                <ArrowRight fontSize="small" />
+                {Math.abs(ratingChange)}
+            </Typography>
+        );
     }
 }
 
@@ -43,7 +48,9 @@ function MatchInfo({ match }: { match: IGetMatch }) {
         return <div>mathes not found</div>;
     }
 
-    const winner = winnerId === player1.id ? player1 : player2;
+    const isDraw = winnerId === 'draw';
+    const winner = isDraw ? null : winnerId === player1.id ? player1 : player2;
+
 
     return (
         <Paper elevation={2} sx={{ padding: 2, mb: 2, borderRadius: '16px' }}>
@@ -59,7 +66,7 @@ function MatchInfo({ match }: { match: IGetMatch }) {
                     {getRatingChangeDisplay(match.player1RatingChange)}
                     <Typography variant="body1" fontWeight="bold" color="primary" sx={{ flexGrow: 1 }}>
                         {player1.firstname[0]}. {player1.lastname}
-                        {winner === player1 && <span style={{ color: 'green' }}> ✔</span>}
+                        {!isDraw && winner === player1 && <span style={{ color: 'green' }}> ✔</span>}
                     </Typography>
                     <Typography variant="body1" sx={{ marginRight: 2 }}>
                         {score && Array.isArray(score) ? score.map(s => s.player1Score).join(' ') : 'N/A'}
@@ -69,7 +76,7 @@ function MatchInfo({ match }: { match: IGetMatch }) {
                     {getRatingChangeDisplay(match.player2RatingChange)}
                     <Typography variant="body1" fontWeight="bold" color="primary" sx={{ flexGrow: 1 }}>
                         {player2.firstname[0]}. {player2.lastname}
-                        {winner === player2 && <span style={{ color: 'green' }}> ✔</span>}
+                        {!isDraw && winner === player2 && <span style={{ color: 'green' }}> ✔</span>}
                     </Typography>
                     <Typography variant="body1" sx={{ marginRight: 2 }}>
                         {score && Array.isArray(score) ? score.map(s => s.player2Score).join(' ') : 'N/A'}
@@ -78,8 +85,9 @@ function MatchInfo({ match }: { match: IGetMatch }) {
             </Grid>
             <Divider sx={{ marginY: 1 }} />
             <Typography variant="body2" color="text.secondary" sx={{ marginTop: 1 }}>
-                Game Set and Match {winner.firstname} {winner.lastname}.<br /> {winner.firstname[0]}. {winner.lastname} wins the match {' '}
-                {winnerId === player1Id ? score.map((score) => score.player1Score).join('-') : score.map((score) => score.player2Score).join('-')}.
+                {isDraw ? 'The match ended in a draw.' : `Game Set and Match ${winner?.firstname} ${winner?.lastname}.`}<br />
+                {!isDraw ? `${winner?.firstname[0]}. ${winner?.lastname} wins the match ` : ''}
+                {isDraw ? '' : winnerId === player1Id ? score.map((score) => score.player1Score).join('-') : score.map((score) => score.player2Score).join('-')}
             </Typography>
         </Paper>
 
