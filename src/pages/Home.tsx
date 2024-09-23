@@ -1,17 +1,18 @@
 
-import { Alert, Button, CircularProgress, Container, Grid, LinearProgress } from '@mui/material'
+import { Alert, Button, CircularProgress, Container, Fab, Grid, LinearProgress, useMediaQuery } from '@mui/material'
 import NavBar from '../components/organisms/NavBar'
 import RankList from '../components/molecules/RankList'
 import MatchInfo from '../components/atoms/MatchInfo'
 import { AppDispatch, useAppSelector } from '../store';
 import { useDispatch } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { fetchPlayerProfile, getPlayerProfileList } from '../store/feature/playerSlice';
 import { getMatchList } from '../store/feature/matchSlice';
 import PlayerCard from '../components/molecules/PlayerCard';
 import ModalAddNewMatch from '../components/molecules/ModalAddNewMatch';
 import { Toaster } from 'react-hot-toast';
 import { fetchSendConfirmationEmail } from '../store/feature/authSlice';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function Home() {
 
@@ -21,6 +22,8 @@ export default function Home() {
     const [isEmailVerified, setIsEmailVerified] = useState(false);
     const isAuth = useAppSelector(state => state.auth.isAuth)
     const dispatch = useDispatch<AppDispatch>();
+    const isMobile = useMediaQuery('(max-width: 600px)');
+
 
     useEffect(() => {
         dispatch(getPlayerProfileList())
@@ -30,9 +33,15 @@ export default function Home() {
         }
     }, [isAuth]);
 
-    const sortedMatchList = [...matchList].sort((a, b) => {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
+    // const sortedMatchList = [...matchList].sort((a, b) => {
+    //     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    // });
+
+    const sortedMatchList = useMemo(() => {
+        return [...matchList].sort((a, b) => {
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
+    }, [matchList]);
 
     useEffect(() => {
         dispatch(getPlayerProfileList());
@@ -62,6 +71,11 @@ export default function Home() {
             });
     }
 
+
+
+    const isFeaturesAvailable = () => {
+        return isAuth && isEmailVerified;
+    }
 
     if (isPlayersLoading || isMatchesLoading) {
         return (
@@ -96,15 +110,12 @@ export default function Home() {
                             </Container>
                         ) : (
                             <>
-                                {isAuth ? (
-                                    isEmailVerified ? (
-                                        <ModalAddNewMatch isActive={true} infoText='Add New Match' />
-                                    ) : (
-                                        <ModalAddNewMatch isActive={false} infoText='Email Verification Required to Add a Match' />
-                                    )
-                                ) : (
-                                    <ModalAddNewMatch isActive={false} infoText='Sign In Required to Add Match Record' />
-                                )}
+                                {!isMobile ? (
+                                    <ModalAddNewMatch
+                                        isActive={isFeaturesAvailable()}
+                                        infoText={isFeaturesAvailable() ? 'Add New Match' : 'Sign in to add new match'}
+                                    />
+                                ) : <></>}
                                 <RankList players={playerList} />
                             </>
                         )}
@@ -123,6 +134,20 @@ export default function Home() {
                     </Grid>
                 </Grid>
             </Container>
+
+            {isMobile && (
+                <ModalAddNewMatch
+                    isActive={isFeaturesAvailable()}
+                    customButton={
+                        <Fab color="primary"
+                            aria-label="add"
+                            disabled={!isFeaturesAvailable()}
+                            style={{ position: 'fixed', bottom: 16, right: 16 }}>
+                            <AddIcon />
+                        </Fab>
+                    }
+                />
+            )}
         </>
     )
 }
