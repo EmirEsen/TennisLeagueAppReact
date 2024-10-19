@@ -80,21 +80,7 @@ const TournamentPage: React.FC = () => {
             try {
                 setLoading(true);
                 setError(null);
-
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    throw new Error('No authentication token found');
-                }
-
-                const response = await fetch(`${config.BASE_URL}/api/v1/tournament/${id}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error('Failed to fetch tournament');
-                }
+                const response = await fetch(`${config.BASE_URL}/api/v1/tournament/${id}`);
                 const data: ITournament = await response.json();
                 setTournament(data);
             } catch (error) {

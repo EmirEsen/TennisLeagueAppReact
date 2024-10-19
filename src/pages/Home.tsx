@@ -1,13 +1,10 @@
 import { Alert, Button, CircularProgress, Container, Fab, Grid, LinearProgress, useMediaQuery } from '@mui/material'
 import NavBar from '../components/organisms/NavBar'
-import RankList from '../components/molecules/RankList'
-import MatchInfo from '../components/atoms/MatchInfo'
 import { AppDispatch, useAppSelector } from '../store';
 import { useDispatch } from 'react-redux';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchPlayerProfile, getPlayerProfileList } from '../store/feature/playerSlice';
 import { getMatchList } from '../store/feature/matchSlice';
-import ModalAddNewMatch from '../components/molecules/Match/ModalAddNewMatch';
 import { Toaster } from 'react-hot-toast';
 import { fetchSendConfirmationEmail } from '../store/feature/authSlice';
 import AddIcon from '@mui/icons-material/Add';
@@ -34,12 +31,6 @@ export default function Home() {
             dispatch(fetchPlayerProfile())
         }
     }, [isAuth]);
-
-    const sortedMatchList = useMemo(() => {
-        return [...matchList].sort((a, b) => {
-            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        });
-    }, [matchList]);
 
     useEffect(() => {
         dispatch(getPlayerProfileList());
@@ -124,32 +115,6 @@ export default function Home() {
                             </Alert>
                         </Grid>
                     )}
-                    <Grid item xs={12} md={9}>
-                        {isPlayersLoading ? (
-                            <Container maxWidth="lg" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
-                                <CircularProgress />
-                            </Container>
-                        ) : (
-                            <>
-                                {!isMobile ? (
-                                    <ModalAddNewMatch
-                                        isActive={isFeaturesAvailable()}
-                                        infoText={isFeaturesAvailable() ? ' New Match' : 'Sign in to add new match'}
-                                    />
-                                ) : <></>}
-                                <RankList players={playerList} />
-                            </>
-                        )}
-                    </Grid>
-                    <Grid item xs={9} md={3} style={{ margin: 'auto' }} >
-                        {isMatchesLoading ? (
-                            <div>Loading...</div>
-                        ) : (
-                            sortedMatchList.map((match, index) => (
-                                <MatchInfo key={index} match={match} />
-                            ))
-                        )}
-                    </Grid>
                 </Grid>
             </Container>
 

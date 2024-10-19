@@ -6,6 +6,7 @@ export interface ITournament {
     info: string
     start: string
     end: string
+    status: "ONGOING" | "COMPLETED" | "UPCOMING";
     createdById: string
     participantIds: string[]
     managerIds: string[]

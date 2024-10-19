@@ -1,16 +1,8 @@
 import { Avatar, AvatarGroup, Box, Button, Card, Stack, Typography, useMediaQuery } from "@mui/material"
 import { ITournament } from "../../../models/ITournament"
 import { useNavigate } from "react-router-dom";
+import StatusDot from "../../atoms/StatusDot";
 
-function excludeSeconds(timeString: string): string {
-    const parts = timeString.split(':');
-
-    if (parts.length >= 3) {
-        return `${parts[0]}:${parts[1]}`;
-    }
-
-    return timeString;
-}
 
 interface TournamentProps {
     tournament: ITournament; // Expecting tournament as a prop
@@ -43,8 +35,12 @@ const Tournament: React.FC<TournamentProps> = ({ tournament }) => {
                     padding: 2,
                     marginBottom: 2,
                     borderRadius: 2,
-                    border: '1px solid #E0E0E0'
+                    border: '1px solid #E0E0E0',
+                    position: 'relative'
                 }}>
+
+                    <StatusDot status={tournament.status} />
+
                     {/* Left side: Logo and Tournament Info */}
                     <Stack direction="row" alignItems="center" spacing={2}>
                         {/* Tournament Logo */}
@@ -105,8 +101,12 @@ const Tournament: React.FC<TournamentProps> = ({ tournament }) => {
                     padding: 2,
                     marginBottom: 2,
                     borderRadius: 2,
-                    border: '1px solid #E0E0E0'
+                    border: '1px solid #E0E0E0',
+                    position: 'relative',
+                    minHeight: '110px'
                 }}>
+
+                    <StatusDot status={tournament.status} />
 
                     {/* Left side: Logo */}
                     <Stack direction="row" alignItems="center" spacing={2}
