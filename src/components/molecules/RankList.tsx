@@ -6,6 +6,7 @@ import {
 // import emirpp from '../../images/emirpp.jpg';
 import { IPlayerProfile } from '../../models/IPlayerProfile';
 import dayjs from 'dayjs';
+import { Link } from 'react-router-dom';
 
 function calculateAge(dob: string): number {
     const birthDate = dayjs(dob);
@@ -49,14 +50,26 @@ export default function RankList(props: { players: IPlayerProfile[] }) {
                                 <Box display="flex" alignItems="center">
                                     <Avatar src={player.profileImageUrl} alt={player.firstname} sx={{ width: 50, height: 50, objectFit: 'cover', objectPosition: 'top', border: '1px solid' }} />
                                     <Box ml={2}>
-                                        <Typography>{player.firstname} {player.lastname}</Typography>
+                                        <Link to={`/player-view?playerId=${player.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                                            <Typography sx={{
+                                                fontSize: '1rem',
+                                                '&:hover': {
+                                                    textDecoration: 'underline',
+                                                    color: '#121FFF'
+                                                }
+                                            }}>
+                                                {player.firstname} {player.lastname}
+                                            </Typography>
+                                        </Link>
                                     </Box>
                                 </Box>
                             </TableCell>
                             <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }} >
                                 {player.dob ? calculateAge(player.dob) : 'N/A'}
                             </TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>
+                            <TableCell sx={{
+                                fontWeight: 'bold'
+                            }}>
                                 {player.rating != null ? player.rating : 'N/A'}
                             </TableCell>
                             <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>

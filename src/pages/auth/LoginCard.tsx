@@ -14,7 +14,12 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store';
 import { fetchLogin } from '../../store/feature/authSlice';
 import { Toaster } from 'react-hot-toast';
-import { Alert, Collapse, Link as MUILink } from '@mui/material'
+import { Icon as Iconf } from '@iconify/react';
+
+import Links from '@mui/material/Link';
+
+import { Alert, Collapse, Icon, IconButton, InputAdornment, Link as MUILink } from '@mui/material'
+import PasswordResetPopup from './PasswordResetModal';
 
 
 function Copyright(props: any) {
@@ -38,6 +43,11 @@ function Copyright(props: any) {
 export default function LoginCard() {
     const [error, setError] = useState('');
     const [isError, setIsError] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [passwordResetOpen, setPasswordResetOpen] = useState(false);
+
+    const handleClosePasswordReset = () => setPasswordResetOpen(false);
+    const handleOpenPasswordReset = () => setPasswordResetOpen(true);
 
     const dispatch: AppDispatch = useDispatch();
     const [formData, setFormData] = useState({
@@ -138,16 +148,36 @@ export default function LoginCard() {
                         autoComplete="current-password"
                         value={formData.password}
                         onChange={handleChange}
+                        type={showPassword ? 'text' : 'password'}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                                        <Iconf icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
                     />
-                    <FormControlLabel
-                        control={<Checkbox value="remember" color="primary" />}
-                        label="Remember me"
-                    />
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                        <FormControlLabel
+                            control={<Checkbox value="remember" color="primary" />}
+                            label="Remember me"
+                        />
+                        <MUILink
+                            variant="body2"
+                            color="inherit"
+                            onClick={handleOpenPasswordReset}
+                            sx={{ cursor: 'pointer' }}  // Make it clickable
+                        >
+                            Forgot password?
+                        </MUILink>
+                    </Box>
                     <Button
                         type="submit"
                         fullWidth
                         variant="contained"
-                        sx={{ mt: 3, mb: 2 }}
+                        sx={{ mt: 2, mb: 2 }}
                     >
                         Log In
                     </Button>
@@ -168,6 +198,7 @@ export default function LoginCard() {
                     <Copyright sx={{ mt: 5 }} />
                 </Box>
             </Box>
+            <PasswordResetPopup open={passwordResetOpen} onClose={handleClosePasswordReset} />
         </Grid >
     );
 }

@@ -51,7 +51,6 @@ function MatchInfo({ match }: { match: IGetMatch }) {
     const isDraw = winnerId === 'draw';
     const winner = isDraw ? null : winnerId === player1.id ? player1 : player2;
 
-
     return (
         <Paper elevation={2} sx={{ padding: 2, mb: 2, borderRadius: '16px' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -90,7 +89,6 @@ function MatchInfo({ match }: { match: IGetMatch }) {
                 {isDraw ? '' : winnerId === player1Id ? score.map((score) => score.player1Score).join('-') : score.map((score) => score.player2Score).join('-')}
             </Typography>
         </Paper>
-
 
     )
 }

@@ -11,6 +11,8 @@ import { AppDispatch, useAppSelector } from "../store";
 import { fetchPlayerProfile } from "../store/feature/playerSlice";
 import Home from "./Home";
 import VerifyEmail from "./auth/VerifyEmail";
+import PlayerView from "./PlayerView";
+import TournamentPage from "./TournamentPage";
 
 function RouterPage() {
     const dispatch = useDispatch<AppDispatch>();
@@ -42,7 +44,9 @@ function RouterPage() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<Home />} />
+                <Route
+                    path="/"
+                    element={<Home />} />
                 <Route
                     path="/login"
                     element={isLogin && profile ? <Navigate to={'/profile'} /> : <Login />}
@@ -54,8 +58,14 @@ function RouterPage() {
                     path="/profile"
                     element={isLogin ? (profile ? <Profile profile={profile} /> : <div>Loading profile...</div>) : <Navigate to="/login" />} />
                 <Route
+                    path="/player-view"
+                    element={<PlayerView />} />
+                <Route
                     path="/api/v1/auth/verify-email"
                     element={<VerifyEmail />} />
+                <Route
+                    path="/tournament/:id"
+                    element={<TournamentPage />} />
             </Routes>
         </BrowserRouter>
     );

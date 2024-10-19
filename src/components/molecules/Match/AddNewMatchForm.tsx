@@ -4,14 +4,14 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import { useDispatch } from 'react-redux';
-import { AppDispatch, useAppSelector } from '../../store';
-import { addNewMatch, getMatchList } from '../../store/feature/matchSlice';
+import { AppDispatch, useAppSelector } from '../../../store';
+import { addNewMatch, getMatchList } from '../../../store/feature/matchSlice';
 import { useNavigate } from 'react-router-dom';
-import { IPostMatch, score } from '../../models/IPostMatch';
-import SelectPlayerInput from '../atoms/SelectPlayerInput';
-import { logout } from '../../store/feature/authSlice';
+import { IPostMatch, score } from '../../../models/IPostMatch';
+import SelectPlayerInput from '../../atoms/SelectPlayerInput';
+import { logout } from '../../../store/feature/authSlice';
 import toast from 'react-hot-toast';
-import { fetchPlayerProfile } from '../../store/feature/playerSlice';
+import { fetchPlayerProfile } from '../../../store/feature/playerSlice';
 
 
 const AddNewMatch = ({ onClose }: { onClose: () => void }) => {

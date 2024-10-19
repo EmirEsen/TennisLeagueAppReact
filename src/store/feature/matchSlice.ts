@@ -24,6 +24,15 @@ export const getMatchList = createAsyncThunk<IGetMatch[], void, { rejectValue: s
     }
 )
 
+export const getPlayerMatchList = createAsyncThunk<IGetMatch[], { playerId: string; page: number; size: number }, { rejectValue: string }>(
+    'match/getPlayerMatchs',
+    async ({ playerId, page, size }) => {
+        const result = await fetch(`${config.BASE_URL}/api/v1/match/matches?playerId=${playerId}?page=${page}&size=${size}`)
+            .then(data => data.json())
+        return result;
+    }
+)
+
 export const addNewMatch = createAsyncThunk<IResponse, IPostMatch, { rejectValue: string }>(
     'match/addNewMatch',
     async (payload: IPostMatch, { rejectWithValue }) => {
@@ -42,7 +51,6 @@ export const addNewMatch = createAsyncThunk<IResponse, IPostMatch, { rejectValue
         } catch (error) {
             return rejectWithValue("Network error");
         }
-
     }
 )
 

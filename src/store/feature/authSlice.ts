@@ -99,6 +99,32 @@ export const fetchLogin = createAsyncThunk<IResponse, ILogin, { rejectValue: str
     }
 );
 
+interface IFetchForgotPassword {
+    email: string;
+}
+
+export const fetchForgotPassword = createAsyncThunk(
+    'auth/fetchForgotPassword',
+    async (payload: IFetchForgotPassword, { rejectWithValue }) => {
+        try {
+            const response = await fetch(`${config.BASE_URL}/forget-password?email=${payload.email}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                return rejectWithValue(errorData);
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            return rejectWithValue({ message: 'Ooops, something went wrong' });
+        }
+    }
+);
+
 const authSlice = createSlice({
     name: 'auth',
     initialState: initialAuthState,

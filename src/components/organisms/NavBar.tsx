@@ -22,7 +22,7 @@ const tennis = createTheme({
     }
 })
 
-const pages = ['Rankings'];
+const pages = ['Rankings', 'Tournaments'];
 const settings = {
     signedIn: ['Profile', 'Logout'],
     signedOut: ['Sign In']

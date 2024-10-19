@@ -1,25 +1,26 @@
-import { Alert, Button, CircularProgress, Container, Fab, Grid, LinearProgress, useMediaQuery } from '@mui/material'
-import NavBar from '../components/organisms/NavBar'
-import RankList from '../components/molecules/RankList'
-import MatchInfo from '../components/atoms/MatchInfo'
-import { AppDispatch, useAppSelector } from '../store';
-import { useDispatch } from 'react-redux';
-import { useEffect, useMemo, useState } from 'react';
-import { fetchPlayerProfile, getPlayerProfileList } from '../store/feature/playerSlice';
-import { getMatchList } from '../store/feature/matchSlice';
-import ModalAddNewMatch from '../components/molecules/Match/ModalAddNewMatch';
-import { Toaster } from 'react-hot-toast';
-import { fetchSendConfirmationEmail } from '../store/feature/authSlice';
+import { Alert, Box, Button, CircularProgress, Container, Fab, Grid, Typography, useMediaQuery } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
+import { ITournament } from "../models/ITournament";
+import { Toaster } from "react-hot-toast";
+import NavBar from "../components/organisms/NavBar";
+import { AppDispatch, useAppSelector } from "../store";
+import { useDispatch } from "react-redux";
+import { fetchPlayerProfile, getPlayerProfileList } from "../store/feature/playerSlice";
+import { getMatchList } from "../store/feature/matchSlice";
+import { getTournamentList } from "../store/feature/tournamentSlice";
+import ModalAddNewMatch from "../components/molecules/Match/ModalAddNewMatch";
+import MatchInfo from "../components/atoms/MatchInfo";
 import AddIcon from '@mui/icons-material/Add';
-import Tournament from '../components/molecules/Tournament/Tournament';
-import { getTournamentList } from '../store/feature/tournamentSlice';
-import ModalAddNewTournament from '../components/molecules/Tournament/ModaNewTournament';
+import { fetchSendConfirmationEmail } from "../store/feature/authSlice";
+import RankList from "../components/molecules/RankList";
+import config from "../store/feature/config";
 
-export default function Home() {
+
+const TournamentPage: React.FC = () => {
 
     const { playerList, isLoading: isPlayersLoading } = useAppSelector(state => state.player)
     const { matchList, isLoading: isMatchesLoading } = useAppSelector(state => state.match)
-    const { tournamentList, isLoading: isTournamentLoading } = useAppSelector(state => state.tournament)
     const { loggedInProfile } = useAppSelector(state => state.player)
     const [isEmailVerified, setIsEmailVerified] = useState(false);
     const isAuth = useAppSelector(state => state.auth.isAuth)
@@ -51,6 +52,7 @@ export default function Home() {
         }
     }, [loggedInProfile]);
 
+
     const reSendConfirmationEmail = () => {
         dispatch(fetchSendConfirmationEmail(loggedInProfile?.email || ''))
             .then((res) => {
@@ -68,50 +70,81 @@ export default function Home() {
             });
     }
 
+    const { id } = useParams<{ id: string }>(); // Get the id from the URL
+    const [tournament, setTournament] = useState<ITournament | null>(null); // Tournament data state
+    const [loading, setLoading] = useState<boolean>(true); // Loading state
+    const [error, setError] = useState<string | null>(null); // Error state
+
+    useEffect(() => {
+        const fetchTournament = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    throw new Error('No authentication token found');
+                }
+
+                const response = await fetch(`${config.BASE_URL}/api/v1/tournament/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch tournament');
+                }
+                const data: ITournament = await response.json();
+                setTournament(data);
+            } catch (error) {
+                setError((error as Error).message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        if (id) {
+            fetchTournament();
+        }
+    }, [id]);
+
+
     const isFeaturesAvailable = () => {
         return isAuth && isEmailVerified;
     }
 
-    if (isPlayersLoading || isMatchesLoading) {
+    if (loading) {
         return (
-            <Container maxWidth="lg" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
-                <LinearProgress />
-            </Container>
+            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+                <CircularProgress />
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+                <Typography color="error">Error: {error}</Typography>
+            </Box>
+        );
+    }
+
+    if (!tournament) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+                <Typography>No tournament found</Typography>
+            </Box>
         );
     }
 
     return (
         <>
+
             <Toaster />
             <NavBar />
 
             <Container maxWidth="lg" style={{ marginTop: '20px' }}>
                 <Grid container spacing={2} flexDirection={{ md: 'row', xs: 'column' }}>
-
-                    <Grid item xs={12} md={9}>
-                        {isPlayersLoading ? (
-                            <Container maxWidth="lg" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
-                                <CircularProgress />
-                            </Container>
-                        ) : (
-                            <>
-                                {!isMobile ? (
-                                    <ModalAddNewTournament
-                                        isActive={isFeaturesAvailable()}
-                                        infoText={isFeaturesAvailable() ? ' New Tournament' : 'Sign In To Start New Tournament'}
-                                    />
-                                ) : <></>}
-                            </>
-                        )}
-                    </Grid>
-
-                    <Grid item xs={12} md={9}>
-                        {
-                            tournamentList.map((tournament) => (
-                                <Tournament key={tournament.id} tournament={tournament} />
-                            ))
-                        }
-                    </Grid>
 
                     {isAuth && !isEmailVerified && (
                         <Grid item xs={12} md={9}>
@@ -134,7 +167,7 @@ export default function Home() {
                                 {!isMobile ? (
                                     <ModalAddNewMatch
                                         isActive={isFeaturesAvailable()}
-                                        infoText={isFeaturesAvailable() ? ' New Match' : 'Sign in to add new match'}
+                                        infoText={isFeaturesAvailable() ? 'Add New Match' : 'Sign in to add new match'}
                                     />
                                 ) : <></>}
                                 <RankList players={playerList} />
@@ -154,7 +187,7 @@ export default function Home() {
             </Container>
 
             {isMobile && (
-                <ModalAddNewTournament
+                <ModalAddNewMatch
                     isActive={isFeaturesAvailable()}
                     customButton={
                         <Fab color="primary"
@@ -167,7 +200,8 @@ export default function Home() {
                 />
             )}
         </>
-    )
-}
 
+    );
+};
 
+export default TournamentPage;
