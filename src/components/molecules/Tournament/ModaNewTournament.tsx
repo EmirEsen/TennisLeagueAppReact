@@ -4,6 +4,7 @@ import Modal from '@mui/material/Modal';
 import { Chip, IconButton } from '@mui/material';
 import { Add, Close } from '@mui/icons-material';
 import AddNewTournament from './AddNewTournamentForm';
+import { toast } from 'react-hot-toast';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -31,15 +32,25 @@ const closeButtonStyle = {
 export default function ModalAddNewTournament({
     isActive,
     infoText,
-    customButton
+    customButton,
+    onTournamentAdded
 }: {
     isActive?: boolean,
     infoText?: string,
-    customButton?: React.ReactNode
+    customButton?: React.ReactNode,
+    onTournamentAdded?: () => void  // Add the prop
 }) {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const handleTournamentAdded = () => {
+        handleClose();
+        if (onTournamentAdded) {
+            onTournamentAdded();
+        }
+        toast.success('Tournament Added Successfully!');
+    };
 
     return (
         <>
@@ -60,7 +71,7 @@ export default function ModalAddNewTournament({
                     <IconButton onClick={handleClose} sx={closeButtonStyle}>
                         <Close />
                     </IconButton>
-                    <AddNewTournament onClose={handleClose} />
+                    <AddNewTournament onClose={handleTournamentAdded} />
                 </Box>
             </Modal>
         </>

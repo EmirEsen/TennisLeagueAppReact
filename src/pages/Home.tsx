@@ -63,6 +63,20 @@ export default function Home() {
         return isAuth && isEmailVerified;
     }
 
+    const getInfoText = () => {
+        if (!isAuth) {
+            return 'Sign In To Start New Tournament';
+        }
+        if (isAuth && !isEmailVerified) {
+            return 'Verify Email To Start New Tournament';
+        }
+        return 'Start New Tournament';
+    }
+
+    const refreshTournamentList = () => {
+        dispatch(getTournamentList());
+    };
+
     if (isPlayersLoading || isMatchesLoading) {
         return (
             <Container maxWidth="lg" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
@@ -79,6 +93,18 @@ export default function Home() {
             <Container maxWidth="lg" style={{ marginTop: '20px' }}>
                 <Grid container spacing={2} flexDirection={{ md: 'row', xs: 'column' }}>
 
+                    {isAuth && !isEmailVerified && (
+                        <Grid item xs={12} md={9}>
+                            <Alert severity="warning" action={
+                                <Button color="inherit" size="small" onClick={reSendConfirmationEmail}>
+                                    Resend Email
+                                </Button>
+                            }>
+                                Your email is not verified. Please verify your email to use all features.
+                            </Alert>
+                        </Grid>
+                    )}
+
                     <Grid item xs={12} md={9}>
                         {isPlayersLoading ? (
                             <Container maxWidth="lg" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
@@ -89,7 +115,8 @@ export default function Home() {
                                 {!isMobile ? (
                                     <ModalAddNewTournament
                                         isActive={isFeaturesAvailable()}
-                                        infoText={isFeaturesAvailable() ? ' New Tournament' : 'Sign In To Start New Tournament'}
+                                        infoText={getInfoText()}
+                                        onTournamentAdded={refreshTournamentList}
                                     />
                                 ) : <></>}
                             </>
@@ -103,18 +130,6 @@ export default function Home() {
                             ))
                         }
                     </Grid>
-
-                    {isAuth && !isEmailVerified && (
-                        <Grid item xs={12} md={9}>
-                            <Alert severity="warning" action={
-                                <Button color="inherit" size="small" onClick={reSendConfirmationEmail}>
-                                    Resend Email
-                                </Button>
-                            }>
-                                Your email is not verified. Please verify your email to use all features.
-                            </Alert>
-                        </Grid>
-                    )}
                 </Grid>
             </Container>
 

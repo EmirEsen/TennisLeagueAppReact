@@ -2,21 +2,21 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { IResponse } from "../../models/IResponse"
 import config from "./config"
 import { IPostTournament } from "../../models/post/IPostTournament"
-import { ITournament } from "../../models/ITournament"
 import { IPlayerProfile } from "../../models/IPlayerProfile"
+import { IGetTournamentPlayer } from "../../models/get/IGetTournamentPlayer"
 
-export interface ITournamentState {
-    tournamentList: ITournament[],
+export interface ITournamentPlayerState {
+    tournamentPlayerList: IGetTournamentPlayer[],
     isLoading: boolean
 }
 
-const initialTournamentState: ITournamentState = {
-    tournamentList: [],
+const initialTournamentState: ITournamentPlayerState = {
+    tournamentPlayerList: [],
     isLoading: false
 }
 
-export const addNewTournament = createAsyncThunk<IResponse, IPostTournament, { rejectValue: string }>(
-    'tournament/addNewTournament',
+export const addNewPlayer = createAsyncThunk<IResponse, IPostTournament, { rejectValue: string }>(
+    'tournamentPlayer/addNewPlayer',
     async (payload: IPostTournament, { rejectWithValue }) => {
         try {
             const response = await fetch(`${config.BASE_URL}/api/v1/tournament/save`, {
@@ -33,15 +33,6 @@ export const addNewTournament = createAsyncThunk<IResponse, IPostTournament, { r
         } catch (error) {
             return rejectWithValue("Network error");
         }
-    }
-)
-
-export const getTournamentList = createAsyncThunk<ITournament[], void, { rejectValue: string }>(
-    'tournament/getTournaments',
-    async () => {
-        const result = await fetch(`${config.BASE_URL}/api/v1/tournament/tournaments`)
-            .then(data => data.json())
-        return result;
     }
 )
 
@@ -69,33 +60,12 @@ export const getPlayersOfTournament = createAsyncThunk<IPlayerProfile[], string,
 );
 
 //trying to get players of the tournaments
-
 const tournamentSlice = createSlice({
-    name: 'tournament',
+    name: 'tournamentPlayer',
     initialState: initialTournamentState,
     reducers: {},
     extraReducers: (build) => {
         build
-            .addCase(addNewTournament.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(getTournamentList.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(getTournamentList.fulfilled, (state, action) => {
-                state.isLoading = false;
-                state.tournamentList = action.payload;
-                console.log(action.payload)
-            }).addCase(getPlayersOfTournament.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(getPlayersOfTournament.fulfilled, (state, action) => {
-                state.isLoading = false;
-                const tournament = state.tournamentList.find(t => t.id === action.meta.arg);
-                if (tournament) {
-                    tournament.players = action.payload;
-                }
-            })
             .addCase(getPlayersOfTournament.rejected, (state, action) => {
                 state.isLoading = false;
                 console.error(action.payload);

@@ -3,7 +3,6 @@ import { ITournament } from "../../../models/ITournament"
 import { useNavigate } from "react-router-dom";
 import StatusDot from "../../atoms/StatusDot";
 
-
 interface TournamentProps {
     tournament: ITournament; // Expecting tournament as a prop
 }

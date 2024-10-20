@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import { IGetMatch } from "../../models/IGetMatch"
-import { IPostMatch } from "../../models/IPostMatch"
+import { IGetMatch } from "../../models/get/IGetMatch"
+import { IPostMatch } from "../../models/post/IPostMatch"
 import { IResponse } from "../../models/IResponse"
 import config from "./config"
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getPlayerMatchList } from "../store/feature/matchSlice";
 import MatchInfo from "../components/atoms/MatchInfo";
-import { IGetMatch } from "../models/IGetMatch";
+import { IGetMatch } from "../models/get/IGetMatch";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
 import NavBar from "../components/organisms/NavBar";

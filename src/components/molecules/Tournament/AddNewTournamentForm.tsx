@@ -3,7 +3,7 @@ import { Button, Container, Grid, TextField, Typography, Card, FormControl } fro
 import dayjs from 'dayjs';
 import { useDispatch } from 'react-redux';
 import { AppDispatch, useAppSelector } from '../../../store';
-import { IPostTournament } from '../../../models/IPostTournament';
+import { IPostTournament } from '../../../models/post/IPostTournament';
 import { addNewTournament } from '../../../store/feature/tournamentSlice';
 import MultipleSelectCheckmarks from '../../atoms/MultipleSelectCheckmarks';
 

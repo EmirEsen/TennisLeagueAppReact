@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch, useAppSelector } from '../../../store';
 import { addNewMatch, getMatchList } from '../../../store/feature/matchSlice';
 import { useNavigate } from 'react-router-dom';
-import { IPostMatch, score } from '../../../models/IPostMatch';
+import { IPostMatch, score } from '../../../models/post/IPostMatch';
 import SelectPlayerInput from '../../atoms/SelectPlayerInput';
 import { logout } from '../../../store/feature/authSlice';
 import toast from 'react-hot-toast';

@@ -1,5 +1,5 @@
 import { Box, Divider, Grid, Paper, Typography } from '@mui/material'
-import { IGetMatch } from '../../models/IGetMatch'
+import { IGetMatch } from '../../models/get/IGetMatch'
 import { useAppSelector } from '../../store'
 import { ArrowDropDown, ArrowDropUp, ArrowRight } from '@mui/icons-material';
 
@@ -11,6 +11,12 @@ function excludeSeconds(timeString: string): string {
     }
 
     return timeString;
+}
+
+function formatMatchDate(start: string): string {
+    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
+    const formattedStart = new Date(start).toLocaleDateString('en-GB', options);
+    return `${formattedStart}`;
 }
 
 function getRatingChangeDisplay(ratingChange: number) {
@@ -56,7 +62,7 @@ function MatchInfo({ match }: { match: IGetMatch }) {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="subtitle1">{court}</Typography>
                 <Typography variant="body2" color="text.secondary" align="right">
-                    {date} | {time ? excludeSeconds(time) : ''}
+                    {formatMatchDate(date)} | {time ? excludeSeconds(time) : ''}
                 </Typography>
             </Box>
             <Divider sx={{ marginY: 1 }} />

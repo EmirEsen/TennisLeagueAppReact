@@ -1,20 +1,19 @@
 import { Alert, Box, Button, CircularProgress, Container, Fab, Grid, Typography, useMediaQuery } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ITournament } from "../models/ITournament";
 import { Toaster } from "react-hot-toast";
 import NavBar from "../components/organisms/NavBar";
 import { AppDispatch, useAppSelector } from "../store";
 import { useDispatch } from "react-redux";
 import { fetchPlayerProfile, getPlayerProfileList } from "../store/feature/playerSlice";
 import { getMatchList } from "../store/feature/matchSlice";
-import { getTournamentList } from "../store/feature/tournamentSlice";
 import ModalAddNewMatch from "../components/molecules/Match/ModalAddNewMatch";
 import MatchInfo from "../components/atoms/MatchInfo";
 import AddIcon from '@mui/icons-material/Add';
 import { fetchSendConfirmationEmail } from "../store/feature/authSlice";
 import RankList from "../components/molecules/RankList";
 import config from "../store/feature/config";
+import { IPlayerProfile } from "../models/IPlayerProfile";
 
 
 const TournamentPage: React.FC = () => {
@@ -30,7 +29,6 @@ const TournamentPage: React.FC = () => {
     useEffect(() => {
         dispatch(getPlayerProfileList())
         dispatch(getMatchList())
-        dispatch(getTournamentList())
         if (isAuth) {
             dispatch(fetchPlayerProfile())
         }
@@ -71,18 +69,22 @@ const TournamentPage: React.FC = () => {
     }
 
     const { id } = useParams<{ id: string }>(); // Get the id from the URL
-    const [tournament, setTournament] = useState<ITournament | null>(null); // Tournament data state
-    const [loading, setLoading] = useState<boolean>(true); // Loading state
-    const [error, setError] = useState<string | null>(null); // Error state
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchTournament = async () => {
             try {
                 setLoading(true);
                 setError(null);
-                const response = await fetch(`${config.BASE_URL}/api/v1/tournament/${id}`);
-                const data: ITournament = await response.json();
-                setTournament(data);
+                const response = await fetch(`${config.BASE_URL}/api/v1/tournament/players-of-tournament/${id}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    }
+                });
+                const data: IPlayerProfile = await response.json();
+
             } catch (error) {
                 setError((error as Error).message);
             } finally {
@@ -111,14 +113,6 @@ const TournamentPage: React.FC = () => {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
                 <Typography color="error">Error: {error}</Typography>
-            </Box>
-        );
-    }
-
-    if (!tournament) {
-        return (
-            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-                <Typography>No tournament found</Typography>
             </Box>
         );
     }
