@@ -26,6 +26,16 @@ const TournamentPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const isMobile = useMediaQuery('(max-width: 600px)');
 
+    const getInfoText = () => {
+        if (!isAuth) {
+            return 'Sign In To Start New Match';
+        }
+        if (isAuth && !isEmailVerified) {
+            return 'Verify Email To Add New Match';
+        }
+        return 'Start New Tournament';
+    }
+
     useEffect(() => {
         dispatch(getPlayerProfileList())
         dispatch(getMatchList())
@@ -77,12 +87,7 @@ const TournamentPage: React.FC = () => {
             try {
                 setLoading(true);
                 setError(null);
-                const response = await fetch(`${config.BASE_URL}/api/v1/tournament/players-of-tournament/${id}`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    }
-                });
+                const response = await fetch(`${config.BASE_URL}/api/v1/tournament-player/${id}/players`);
                 const data: IPlayerProfile = await response.json();
 
             } catch (error) {
@@ -147,7 +152,7 @@ const TournamentPage: React.FC = () => {
                                 {!isMobile ? (
                                     <ModalAddNewMatch
                                         isActive={isFeaturesAvailable()}
-                                        infoText={isFeaturesAvailable() ? 'Add New Match' : 'Sign in to add new match'}
+                                        infoText={getInfoText()}
                                     />
                                 ) : <></>}
                                 <RankList players={playerList} />
