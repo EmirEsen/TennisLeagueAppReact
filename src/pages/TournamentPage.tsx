@@ -21,6 +21,7 @@ const TournamentPage: React.FC = () => {
     const { playerList, isLoading: isPlayersLoading } = useAppSelector(state => state.player)
     const { matchList, isLoading: isMatchesLoading } = useAppSelector(state => state.match)
     const { loggedInProfile } = useAppSelector(state => state.player)
+    const [tournamentPlayers, setTournamentPlayers] = useState<IPlayerProfile[]>([]);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
     const isAuth = useAppSelector(state => state.auth.isAuth)
     const dispatch = useDispatch<AppDispatch>();
@@ -88,7 +89,8 @@ const TournamentPage: React.FC = () => {
                 setLoading(true);
                 setError(null);
                 const response = await fetch(`${config.BASE_URL}/api/v1/tournament-player/${id}/players`);
-                const data: IPlayerProfile = await response.json();
+                const data: IPlayerProfile[] = await response.json();
+                setTournamentPlayers(data);
 
             } catch (error) {
                 setError((error as Error).message);
@@ -155,7 +157,7 @@ const TournamentPage: React.FC = () => {
                                         infoText={getInfoText()}
                                     />
                                 ) : <></>}
-                                <RankList players={playerList} />
+                                <RankList players={tournamentPlayers} />
                             </>
                         )}
                     </Grid>
