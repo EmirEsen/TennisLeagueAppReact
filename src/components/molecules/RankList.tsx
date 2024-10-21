@@ -26,7 +26,7 @@ const calculateWinLossRatio = (wins: number, losses: number): string => {
 };
 
 
-export default function RankList(props: { players: IPlayerProfile[] }) {
+export default function RankList(props: { players: IPlayerProfile[], tournamentId: string }) {
     return (
         <TableContainer component={Paper} >
             <Table >
@@ -50,7 +50,7 @@ export default function RankList(props: { players: IPlayerProfile[] }) {
                                 <Box display="flex" alignItems="center">
                                     <Avatar src={player.profileImageUrl} alt={player.firstname} sx={{ width: 50, height: 50, objectFit: 'cover', objectPosition: 'top', border: '1px solid' }} />
                                     <Box ml={2}>
-                                        <Link to={`/player-view?playerId=${player.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                                        <Link to={`/player-view?tournamentId=${props.tournamentId}&playerId=${player.id}`} style={{ textDecoration: 'none', color: 'black' }}>
                                             <Typography sx={{
                                                 fontSize: '1rem',
                                                 '&:hover': {

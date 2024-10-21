@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import config from "./config";
 import { IPlayerProfile } from "../../models/IPlayerProfile";
+import { IGetTournamentPlayer } from "../../models/get/IGetTournamentPlayer";
 
 export interface ITournamentPlayerState {
     tournamentPlayerList: IPlayerProfile[],
@@ -14,7 +15,7 @@ const initialTournamentState: ITournamentPlayerState = {
     error: null
 };
 
-export const getPlayersOfTournament = createAsyncThunk<IPlayerProfile[], string, { rejectValue: string }>(
+export const getPlayersOfTournament = createAsyncThunk<IGetTournamentPlayer[], string, { rejectValue: string }>(
     'tournamentPlayer/getPlayersOfTournament',
     async (tournamentId, { rejectWithValue }) => {
         try {
@@ -25,7 +26,7 @@ export const getPlayersOfTournament = createAsyncThunk<IPlayerProfile[], string,
             if (!response.ok) {
                 throw new Error('Failed to fetch players');
             }
-            const result: IPlayerProfile[] = await response.json();
+            const result: IGetTournamentPlayer[] = await response.json();
             return result;
         } catch (error) {
             return rejectWithValue("Network error");

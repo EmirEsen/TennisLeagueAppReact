@@ -1,4 +1,4 @@
-import { Alert, Button, CircularProgress, Container, Fab, Grid, LinearProgress, useMediaQuery } from '@mui/material';
+import { Alert, Button, CircularProgress, Container, Fab, Grid, useMediaQuery } from '@mui/material';
 import NavBar from '../components/organisms/NavBar';
 import { AppDispatch, useAppSelector } from '../store';
 import { useDispatch } from 'react-redux';

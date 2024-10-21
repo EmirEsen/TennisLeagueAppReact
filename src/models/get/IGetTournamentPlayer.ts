@@ -1,5 +1,6 @@
 export interface IGetTournamentPlayer {
     id: string
+    playerId: string
     firstname: string
     lastname: string
     email: string

@@ -4,7 +4,7 @@ import Modal from '@mui/material/Modal';
 import AddNewMatch from './AddNewMatchForm';
 import { Chip, IconButton } from '@mui/material';
 import { Add, Close } from '@mui/icons-material';
-import { IPlayerProfile } from '../../../models/IPlayerProfile';
+import { IGetTournamentPlayer } from '../../../models/get/IGetTournamentPlayer';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -40,7 +40,7 @@ export default function ModalAddNewMatch({
     infoText?: string,
     customButton?: React.ReactNode,
     tournamentId?: string
-    tournamentPlayerList: IPlayerProfile[]
+    tournamentPlayerList: IGetTournamentPlayer[]
 }) {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);

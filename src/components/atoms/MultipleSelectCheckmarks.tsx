@@ -30,6 +30,7 @@ export default function MultipleSelectCheckmarks({
     label,
     onChange,
 }: MultipleSelectProps) {
+
     const players = useAppSelector(state => state.player.playerList);
 
     // Handle change event when a user selects or deselects players/managers

@@ -12,14 +12,14 @@ import SelectPlayerInput from '../../atoms/SelectPlayerInput';
 import { logout } from '../../../store/feature/authSlice';
 import toast from 'react-hot-toast';
 import { fetchPlayerProfile } from '../../../store/feature/playerSlice';
-import { IPlayerProfile } from '../../../models/IPlayerProfile';
+import { IGetTournamentPlayer } from '../../../models/get/IGetTournamentPlayer';
 
 
 const AddNewMatch = ({ onClose, tournamentId, tournamentPlayerList }:
     {
         onClose: () => void,
         tournamentId: string,
-        tournamentPlayerList: IPlayerProfile[];
+        tournamentPlayerList: IGetTournamentPlayer[];
     }) => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();

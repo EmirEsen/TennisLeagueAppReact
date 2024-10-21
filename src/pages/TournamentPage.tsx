@@ -13,8 +13,8 @@ import AddIcon from '@mui/icons-material/Add';
 import { fetchSendConfirmationEmail } from "../store/feature/authSlice";
 import RankList from "../components/molecules/RankList";
 import { getPlayersOfTournament } from "../store/feature/tournamentPlayerSlice";
-import { IPlayerProfile } from "../models/IPlayerProfile";
 import { IGetMatch } from "../models/get/IGetMatch";
+import { IGetTournamentPlayer } from "../models/get/IGetTournamentPlayer";
 
 
 const TournamentPage: React.FC = () => {
@@ -29,7 +29,7 @@ const TournamentPage: React.FC = () => {
     console.log(tournamentId)
 
     const [tournamentMatchList, setTournamentMatchList] = useState<IGetMatch[]>([]); // Local state for tournament matches
-    const [tournamentPlayerList, setTournamentPlayerList] = useState<IPlayerProfile[]>([]);
+    const [tournamentPlayerList, setTournamentPlayerList] = useState<IGetTournamentPlayer[]>([]);
 
     const [isTournamentLoading, setIsTournamentLoading] = useState<boolean>(true);
 
@@ -186,7 +186,8 @@ const TournamentPage: React.FC = () => {
                                         tournamentPlayerList={tournamentPlayerList}
                                     />
                                 ) : <></>}
-                                <RankList players={tournamentPlayerList} />
+                                {tournamentId && <RankList players={tournamentPlayerList} tournamentId={tournamentId} />}
+
                             </>
                         )}
                     </Grid>
