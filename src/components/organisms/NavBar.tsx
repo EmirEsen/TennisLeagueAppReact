@@ -22,7 +22,7 @@ const tennis = createTheme({
     }
 })
 
-const pages = ['Rankings', 'Tournaments'];
+const pages = ['Tournaments'];
 const settings = {
     signedIn: ['Profile', 'Logout'],
     signedOut: ['Sign In']
@@ -47,7 +47,7 @@ export default function NavBar() {
 
     const handleCloseNavMenu = (page?: string) => {
         setAnchorElNav(null);
-        if (page === 'Rankings') {
+        if (page === 'Tournaments') {
             navigate('/');
         }
     };

@@ -20,7 +20,7 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
         endDate: dayjs().format('YYYY-MM-DD'),
         createdById: loggedInProfile?.id || '',
         participantIds: [],
-        managerIds: [],
+        adminIds: [],
         updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
     });
 
@@ -51,7 +51,7 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
     const handleManagerChange = (selectedIds: string[]) => {
         setFormState({
             ...formState,
-            managerIds: selectedIds
+            adminIds: selectedIds
         });
     };
 
@@ -139,7 +139,7 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
                             {/* Managers */}
                             <Grid item xs={12}>
                                 <MultipleSelectCheckmarks
-                                    selectedItems={formState.managerIds}
+                                    selectedItems={formState.adminIds}
                                     label="Select Managers"
                                     onChange={handleManagerChange}
                                 />

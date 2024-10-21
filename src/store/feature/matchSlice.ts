@@ -33,6 +33,15 @@ export const getPlayerMatchList = createAsyncThunk<IGetMatch[], { playerId: stri
     }
 )
 
+export const getTournamentMatchList = createAsyncThunk<IGetMatch[], { tournamentId: string }, { rejectValue: string }>(
+    'match/getTournamentMatchs',
+    async ({ tournamentId }) => {
+        const result = await fetch(`${config.BASE_URL}/api/v1/match/matches?tournamentId=${tournamentId}`)
+            .then(data => data.json())
+        return result;
+    }
+)
+
 export const addNewMatch = createAsyncThunk<IResponse, IPostMatch, { rejectValue: string }>(
     'match/addNewMatch',
     async (payload: IPostMatch, { rejectWithValue }) => {

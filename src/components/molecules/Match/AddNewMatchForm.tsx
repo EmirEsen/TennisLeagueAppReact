@@ -12,15 +12,22 @@ import SelectPlayerInput from '../../atoms/SelectPlayerInput';
 import { logout } from '../../../store/feature/authSlice';
 import toast from 'react-hot-toast';
 import { fetchPlayerProfile } from '../../../store/feature/playerSlice';
+import { IPlayerProfile } from '../../../models/IPlayerProfile';
 
 
-const AddNewMatch = ({ onClose }: { onClose: () => void }) => {
+const AddNewMatch = ({ onClose, tournamentId, tournamentPlayerList }:
+    {
+        onClose: () => void,
+        tournamentId: string,
+        tournamentPlayerList: IPlayerProfile[];
+    }) => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
     const loggedInProfile = useAppSelector(state => state.player.loggedInProfile)
 
     const [formState, setFormState] = useState<IPostMatch>({
+        tournamentId: tournamentId || '',
         court: '',
         date: dayjs().format('YYYY-MM-DD'),
         time: 'N/A',
@@ -224,7 +231,10 @@ const AddNewMatch = ({ onClose }: { onClose: () => void }) => {
                             <Grid item xs={12}>
                                 <SelectPlayerInput
                                     selectedPlayer={formState.player2Id}
-                                    onChange={handlePlayer2Change} />
+                                    onChange={handlePlayer2Change}
+                                    tournamentId={tournamentId}
+                                    tournamentPlayerList={tournamentPlayerList}
+                                />
                                 {errors.player2Id && (
                                     <Typography color="error" variant="caption">
                                         {errors.player2Id}

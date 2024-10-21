@@ -4,11 +4,12 @@ import { IPlayerProfile } from '../../models/IPlayerProfile';
 
 interface SelectAvatarInputProps {
     selectedPlayer: string;
+    tournamentId: string;
+    tournamentPlayerList: IPlayerProfile[];
     onChange: (playerId: string) => void;
 }
 
-export default function SelectPlayerInput({ selectedPlayer, onChange }: SelectAvatarInputProps) {
-    const players = useAppSelector(state => state.player.playerList);
+export default function SelectPlayerInput({ selectedPlayer, tournamentPlayerList, onChange }: SelectAvatarInputProps) {
     const loggedInPlayer = useAppSelector(state => state.player.loggedInProfile?.id)
 
     const handleChange = (event: SelectChangeEvent<string>) => {
@@ -28,7 +29,7 @@ export default function SelectPlayerInput({ selectedPlayer, onChange }: SelectAv
                     label="Select Opponent"
                 >
                     <MenuItem value="" disabled> <em>Select Player</em></MenuItem>
-                    {players.filter(player => player.id !== loggedInPlayer)
+                    {tournamentPlayerList.filter(player => player.id !== loggedInPlayer)
                         .map((player: IPlayerProfile) => (
                             <MenuItem key={player.id} value={player.id}>
                                 {player.firstname} {player.lastname}

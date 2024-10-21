@@ -6,6 +6,7 @@ export interface score {
 }
 
 export interface IPostMatch {
+    tournamentId: string
     court?: string
     date: string
     time?: string

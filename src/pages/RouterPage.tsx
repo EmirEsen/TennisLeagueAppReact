@@ -64,7 +64,7 @@ function RouterPage() {
                     path="/api/v1/auth/verify-email"
                     element={<VerifyEmail />} />
                 <Route
-                    path="/tournament/:id"
+                    path="/tournament/:tournamentId"
                     element={<TournamentPage />} />
             </Routes>
         </BrowserRouter>

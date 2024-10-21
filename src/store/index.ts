@@ -2,13 +2,15 @@ import { configureStore } from "@reduxjs/toolkit";
 import { useSelector } from "react-redux";
 import { authSlice, matchSlice, playerSlice } from "./feature";
 import tournamentSlice from "./feature/tournamentSlice";
+import tournamentPlayerSlice from "./feature/tournamentPlayerSlice";
 
 const store = configureStore({
     reducer: {
         auth: authSlice,
         player: playerSlice,
         match: matchSlice,
-        tournament: tournamentSlice
+        tournament: tournamentSlice,
+        tournamentPlayer: tournamentPlayerSlice
     }
 });
 

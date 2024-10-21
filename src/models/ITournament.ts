@@ -1,5 +1,3 @@
-import { IPlayerProfile } from "./IPlayerProfile"
-
 export interface ITournament {
     id: string
     title: string
@@ -8,9 +6,6 @@ export interface ITournament {
     end: string
     status: "ONGOING" | "COMPLETED" | "UPCOMING";
     createdById: string
-    participantIds: string[]
-    managerIds: string[]
     createdAt: String
     updatedAt: string
-    players?: IPlayerProfile[];
 }

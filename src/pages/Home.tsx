@@ -1,5 +1,5 @@
-import { Alert, Button, CircularProgress, Container, Fab, Grid, LinearProgress, useMediaQuery } from '@mui/material'
-import NavBar from '../components/organisms/NavBar'
+import { Alert, Button, CircularProgress, Container, Fab, Grid, LinearProgress, useMediaQuery } from '@mui/material';
+import NavBar from '../components/organisms/NavBar';
 import { AppDispatch, useAppSelector } from '../store';
 import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -11,36 +11,55 @@ import AddIcon from '@mui/icons-material/Add';
 import Tournament from '../components/molecules/Tournament/Tournament';
 import { getTournamentList } from '../store/feature/tournamentSlice';
 import ModalAddNewTournament from '../components/molecules/Tournament/ModaNewTournament';
+import config from '../store/feature/config';
+import { IPlayerProfile } from '../models/IPlayerProfile';
 
 export default function Home() {
 
-    const { playerList, isLoading: isPlayersLoading } = useAppSelector(state => state.player)
-    const { matchList, isLoading: isMatchesLoading } = useAppSelector(state => state.match)
-    const { tournamentList, isLoading: isTournamentLoading } = useAppSelector(state => state.tournament)
-    const { loggedInProfile } = useAppSelector(state => state.player)
+    const { tournamentList, isLoading: isTournamentLoading } = useAppSelector(state => state.tournament);
+    const { loggedInProfile } = useAppSelector(state => state.player);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
-    const isAuth = useAppSelector(state => state.auth.isAuth)
+    const isAuth = useAppSelector(state => state.auth.isAuth);
     const dispatch = useDispatch<AppDispatch>();
     const isMobile = useMediaQuery('(max-width: 600px)');
-
-    useEffect(() => {
-        dispatch(getPlayerProfileList())
-        dispatch(getMatchList())
-        dispatch(getTournamentList())
-        if (isAuth) {
-            dispatch(fetchPlayerProfile())
-        }
-    }, [isAuth]);
+    const [tournamentPlayers, setTournamentPlayers] = useState<{ [key: string]: IPlayerProfile[] }>({});
 
     useEffect(() => {
         dispatch(getPlayerProfileList());
-    }, [dispatch, matchList]);
+        dispatch(getMatchList());
+        dispatch(getTournamentList());
+        if (isAuth) {
+            dispatch(fetchPlayerProfile());
+        }
+    }, [isAuth]);
 
     useEffect(() => {
         if (loggedInProfile) {
             setIsEmailVerified(loggedInProfile.isEmailVerified);
         }
     }, [loggedInProfile]);
+
+    useEffect(() => {
+        // Fetch players for each tournament
+        const fetchTournamentPlayers = async (tournamentId: string) => {
+            try {
+                const response = await fetch(`${config.BASE_URL}/api/v1/tournament-player/${tournamentId}/players`);
+                const players: IPlayerProfile[] = await response.json();
+                setTournamentPlayers((prevPlayers) => ({
+                    ...prevPlayers,
+                    [tournamentId]: players
+                }));
+            } catch (error) {
+                console.error("Failed to fetch tournament players:", error);
+            }
+        };
+
+        tournamentList.forEach(tournament => {
+            if (!tournamentPlayers[tournament.id]) {
+                fetchTournamentPlayers(tournament.id);
+            }
+        });
+    }, [tournamentList]);
 
     const reSendConfirmationEmail = () => {
         dispatch(fetchSendConfirmationEmail(loggedInProfile?.email || ''))
@@ -54,7 +73,6 @@ export default function Home() {
                 }
             })
             .catch((error) => {
-                // Handle any unexpected errors
                 console.error('Error dispatching thunk:', error);
             });
     }
@@ -77,22 +95,12 @@ export default function Home() {
         dispatch(getTournamentList());
     };
 
-    if (isPlayersLoading || isMatchesLoading) {
-        return (
-            <Container maxWidth="lg" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
-                <LinearProgress />
-            </Container>
-        );
-    }
-
     return (
         <>
             <Toaster />
             <NavBar />
-
             <Container maxWidth="lg" style={{ marginTop: '20px' }}>
                 <Grid container spacing={2} flexDirection={{ md: 'row', xs: 'column' }}>
-
                     {isAuth && !isEmailVerified && (
                         <Grid item xs={12} md={9}>
                             <Alert severity="warning" action={
@@ -104,35 +112,26 @@ export default function Home() {
                             </Alert>
                         </Grid>
                     )}
-
                     <Grid item xs={12} md={9}>
-                        {isPlayersLoading ? (
-                            <Container maxWidth="lg" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
-                                <CircularProgress />
-                            </Container>
-                        ) : (
-                            <>
-                                {!isMobile ? (
-                                    <ModalAddNewTournament
-                                        isActive={isFeaturesAvailable()}
-                                        infoText={getInfoText()}
-                                        onTournamentAdded={refreshTournamentList}
-                                    />
-                                ) : <></>}
-                            </>
+                        {!isMobile && (
+                            <ModalAddNewTournament
+                                isActive={isFeaturesAvailable()}
+                                infoText={getInfoText()}
+                                onTournamentAdded={refreshTournamentList}
+                            />
                         )}
                     </Grid>
-
                     <Grid item xs={12} md={9}>
-                        {
-                            tournamentList.map((tournament) => (
-                                <Tournament key={tournament.id} tournament={tournament} />
-                            ))
-                        }
+                        {tournamentList.map((tournament) => (
+                            <Tournament
+                                key={tournament.id}
+                                tournament={tournament}
+                                tournamentPlayers={tournamentPlayers[tournament.id] || []}
+                            />
+                        ))}
                     </Grid>
                 </Grid>
             </Container>
-
             {isMobile && (
                 <ModalAddNewTournament
                     isActive={isFeaturesAvailable()}
@@ -147,7 +146,5 @@ export default function Home() {
                 />
             )}
         </>
-    )
+    );
 }
-
-

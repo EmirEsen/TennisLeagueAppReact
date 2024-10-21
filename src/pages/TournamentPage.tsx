@@ -6,27 +6,75 @@ import NavBar from "../components/organisms/NavBar";
 import { AppDispatch, useAppSelector } from "../store";
 import { useDispatch } from "react-redux";
 import { fetchPlayerProfile, getPlayerProfileList } from "../store/feature/playerSlice";
-import { getMatchList } from "../store/feature/matchSlice";
+import { getTournamentMatchList } from "../store/feature/matchSlice";
 import ModalAddNewMatch from "../components/molecules/Match/ModalAddNewMatch";
 import MatchInfo from "../components/atoms/MatchInfo";
 import AddIcon from '@mui/icons-material/Add';
 import { fetchSendConfirmationEmail } from "../store/feature/authSlice";
 import RankList from "../components/molecules/RankList";
-import config from "../store/feature/config";
+import { getPlayersOfTournament } from "../store/feature/tournamentPlayerSlice";
 import { IPlayerProfile } from "../models/IPlayerProfile";
+import { IGetMatch } from "../models/get/IGetMatch";
 
 
 const TournamentPage: React.FC = () => {
 
-    const { playerList, isLoading: isPlayersLoading } = useAppSelector(state => state.player)
-    const { matchList, isLoading: isMatchesLoading } = useAppSelector(state => state.match)
     const { loggedInProfile } = useAppSelector(state => state.player)
-    const [tournamentPlayers, setTournamentPlayers] = useState<IPlayerProfile[]>([]);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
     const isAuth = useAppSelector(state => state.auth.isAuth)
     const dispatch = useDispatch<AppDispatch>();
     const isMobile = useMediaQuery('(max-width: 600px)');
 
+    const { tournamentId } = useParams<{ tournamentId: string }>(); // Get the id from the URL
+    console.log(tournamentId)
+
+    const [tournamentMatchList, setTournamentMatchList] = useState<IGetMatch[]>([]); // Local state for tournament matches
+    const [tournamentPlayerList, setTournamentPlayerList] = useState<IPlayerProfile[]>([]);
+
+    const [isTournamentLoading, setIsTournamentLoading] = useState<boolean>(true);
+
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+
+    useEffect(() => {
+        dispatch(getPlayerProfileList());
+        const fetchTournamentPlayers = async () => {
+            try {
+                if (tournamentId) {
+                    setLoading(true);
+                    setError(null);
+                    const players = await dispatch(getPlayersOfTournament(tournamentId)).unwrap();
+                    setTournamentPlayerList(players); // Update local state with fetched players
+                }
+            } catch (error) {
+                setError((error as Error).message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTournamentPlayers();
+    }, [tournamentId, dispatch]);
+
+    // Fetch tournament matches
+    useEffect(() => {
+        const fetchTournamentMatches = async () => {
+            try {
+                if (tournamentId) {
+                    setIsTournamentLoading(true);
+                    const matches = await dispatch(getTournamentMatchList({ tournamentId })).unwrap();
+                    setTournamentMatchList(matches); // Update local state with fetched matches
+                }
+            } catch (error) {
+                setError((error as Error).message);
+            } finally {
+                setIsTournamentLoading(false);
+            }
+        };
+
+        fetchTournamentMatches();
+    }, [tournamentId, dispatch]);
     const getInfoText = () => {
         if (!isAuth) {
             return 'Sign In To Start New Match';
@@ -34,26 +82,30 @@ const TournamentPage: React.FC = () => {
         if (isAuth && !isEmailVerified) {
             return 'Verify Email To Add New Match';
         }
-        return 'Start New Tournament';
+        return 'Add New Match';
     }
 
     useEffect(() => {
         dispatch(getPlayerProfileList())
-        dispatch(getMatchList())
+        if (tournamentId) {
+            dispatch(getTournamentMatchList({ tournamentId }));
+        } else {
+            console.error("Tournament ID is undefined");
+        }
         if (isAuth) {
             dispatch(fetchPlayerProfile())
         }
     }, [isAuth]);
 
     const sortedMatchList = useMemo(() => {
-        return [...matchList].sort((a, b) => {
+        return [...tournamentMatchList].sort((a, b) => {
             return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         });
-    }, [matchList]);
+    }, [tournamentMatchList]);
 
     useEffect(() => {
         dispatch(getPlayerProfileList());
-    }, [dispatch, matchList]);
+    }, [dispatch, tournamentMatchList]);
 
     useEffect(() => {
         if (loggedInProfile) {
@@ -78,31 +130,6 @@ const TournamentPage: React.FC = () => {
                 console.error('Error dispatching thunk:', error);
             });
     }
-
-    const { id } = useParams<{ id: string }>(); // Get the id from the URL
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchTournament = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-                const response = await fetch(`${config.BASE_URL}/api/v1/tournament-player/${id}/players`);
-                const data: IPlayerProfile[] = await response.json();
-                setTournamentPlayers(data);
-
-            } catch (error) {
-                setError((error as Error).message);
-            } finally {
-                setLoading(false);
-            }
-        };
-        if (id) {
-            fetchTournament();
-        }
-    }, [id]);
-
 
     const isFeaturesAvailable = () => {
         return isAuth && isEmailVerified;
@@ -145,7 +172,7 @@ const TournamentPage: React.FC = () => {
                         </Grid>
                     )}
                     <Grid item xs={12} md={9}>
-                        {isPlayersLoading ? (
+                        {isTournamentLoading ? (
                             <Container maxWidth="lg" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
                                 <CircularProgress />
                             </Container>
@@ -155,14 +182,16 @@ const TournamentPage: React.FC = () => {
                                     <ModalAddNewMatch
                                         isActive={isFeaturesAvailable()}
                                         infoText={getInfoText()}
+                                        tournamentId={tournamentId}
+                                        tournamentPlayerList={tournamentPlayerList}
                                     />
                                 ) : <></>}
-                                <RankList players={tournamentPlayers} />
+                                <RankList players={tournamentPlayerList} />
                             </>
                         )}
                     </Grid>
                     <Grid item xs={9} md={3} style={{ margin: 'auto' }} >
-                        {isMatchesLoading ? (
+                        {isTournamentLoading ? (
                             <div>Loading...</div>
                         ) : (
                             sortedMatchList.map((match, index) => (
@@ -184,6 +213,8 @@ const TournamentPage: React.FC = () => {
                             <AddIcon />
                         </Fab>
                     }
+                    tournamentId={tournamentId}
+                    tournamentPlayerList={tournamentPlayerList}
                 />
             )}
         </>
