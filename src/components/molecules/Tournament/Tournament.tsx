@@ -44,7 +44,7 @@ const Tournament: React.FC<TournamentProps> = ({ tournament, tournamentPlayers }
                             variant="square"
                             src={'someimage'}
                             sx={{ width: 56, height: 56 }}
-                            alt="Tournament Logo"
+                            alt={tournament.title}
                         />
                         <Box>
                             <Typography variant="h6">
@@ -91,7 +91,7 @@ const Tournament: React.FC<TournamentProps> = ({ tournament, tournamentPlayers }
                             variant="square"
                             src={'someimage'}
                             sx={{ width: 56, height: 56 }}
-                            alt="Tournament Logo"
+                            alt={tournament.title}
                         />
                         <Box>
                             <Typography variant="h6">

@@ -6,7 +6,7 @@ import { IGetMatch } from "../models/get/IGetMatch";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
 import NavBar from "../components/organisms/NavBar";
-import { Box, Container, Grid, Pagination, Stack } from "@mui/material";
+import { Box, CircularProgress, Container, Grid, Pagination, Stack } from "@mui/material";
 
 function PlayerView() {
     const [searchParams] = useSearchParams();
@@ -46,8 +46,8 @@ function PlayerView() {
                     // Fetch matches from API if not in local storage
                     try {
                         setLoading(true);
-                        console.log('here', tournamentId)
-                        console.log('here', playerId)
+                        console.log('player view', tournamentId)
+                        console.log('player view', playerId)
                         const data = await dispatch(getMatchListByPlayerAndTournament({ tournamentId, playerId, page: currentPage, size: pageSize })).unwrap();
                         setMatchList(data);
                         storeMatchesInLocalStorage(data); // Store fetched data in local storage
@@ -72,12 +72,19 @@ function PlayerView() {
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+                <CircularProgress />
+            </Box>
+        );
     }
 
     if (error) {
         return <div>Error: {error}</div>;
     }
+
+    const totalPages = Math.ceil(matchList.length / pageSize);
+    const paginationCount = totalPages > 0 ? totalPages : 1;
 
     return (
         <>
@@ -106,7 +113,7 @@ function PlayerView() {
                 <Box sx={{ marginTop: 'auto', marginBottom: '20px', width: '100%', display: 'flex', justifyContent: 'center' }}>
                     <Stack spacing={2}>
                         <Pagination
-                            count={Math.ceil(matchList.length / pageSize)}
+                            count={paginationCount}
                             shape="rounded"
                             page={currentPage}
                             onChange={handlePageChange}

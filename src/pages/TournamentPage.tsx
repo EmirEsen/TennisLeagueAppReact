@@ -26,7 +26,6 @@ const TournamentPage: React.FC = () => {
     const isMobile = useMediaQuery('(max-width: 600px)');
 
     const { tournamentId } = useParams<{ tournamentId: string }>(); // Get the id from the URL
-    console.log(tournamentId)
 
     const [tournamentMatchList, setTournamentMatchList] = useState<IGetMatch[]>([]); // Local state for tournament matches
     const [tournamentPlayerList, setTournamentPlayerList] = useState<IGetTournamentPlayer[]>([]);
@@ -55,7 +54,7 @@ const TournamentPage: React.FC = () => {
         };
 
         fetchTournamentPlayers();
-    }, [tournamentId, dispatch]);
+    }, [tournamentId, dispatch, tournamentMatchList]);
 
     // Fetch tournament matches
     useEffect(() => {
@@ -95,7 +94,7 @@ const TournamentPage: React.FC = () => {
         if (isAuth) {
             dispatch(fetchPlayerProfile())
         }
-    }, [isAuth]);
+    }, [isAuth, tournamentMatchList]);
 
     const sortedMatchList = useMemo(() => {
         return [...tournamentMatchList].sort((a, b) => {

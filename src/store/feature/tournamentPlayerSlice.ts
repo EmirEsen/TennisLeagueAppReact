@@ -1,10 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import config from "./config";
-import { IPlayerProfile } from "../../models/IPlayerProfile";
 import { IGetTournamentPlayer } from "../../models/get/IGetTournamentPlayer";
 
 export interface ITournamentPlayerState {
-    tournamentPlayerList: IPlayerProfile[],
+    tournamentPlayerList: IGetTournamentPlayer[],
     isLoading: boolean,
     error: string | null // Optional: Track errors
 }

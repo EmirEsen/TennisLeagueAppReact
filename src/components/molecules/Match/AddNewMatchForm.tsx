@@ -11,8 +11,8 @@ import { IPostMatch, score } from '../../../models/post/IPostMatch';
 import SelectPlayerInput from '../../atoms/SelectPlayerInput';
 import { logout } from '../../../store/feature/authSlice';
 import toast from 'react-hot-toast';
-import { fetchPlayerProfile } from '../../../store/feature/playerSlice';
 import { IGetTournamentPlayer } from '../../../models/get/IGetTournamentPlayer';
+import { getPlayersOfTournament } from '../../../store/feature/tournamentPlayerSlice';
 
 
 const AddNewMatch = ({ onClose, tournamentId, tournamentPlayerList }:
@@ -143,26 +143,30 @@ const AddNewMatch = ({ onClose, tournamentId, tournamentPlayerList }:
 
             onClose();
 
-            const updatedProfile = await dispatch(fetchPlayerProfile()).unwrap();
+            //to-do get tournament player according to tournament id and playerId 
+            const tournamentPlayers = await dispatch(getPlayersOfTournament(tournamentId)).unwrap();
 
-            if (updatedProfile.matchPlayed < 3) {
-                toast((t) => (
-                    <Grid container justifyContent={'space-between'}>
-                        <Grid item>
-                            Congrats! 📣, {updatedProfile?.firstname}. After {3 - updatedProfile.matchPlayed} more matches, your Rating will be set!
-                            <Button onClick={() => toast.dismiss(t.id)}>
-                                Dismiss
-                            </Button>
+            const updatedProfile = tournamentPlayers.find(player => player.playerId === loggedInProfile?.id);
+
+            if (updatedProfile)
+                if (updatedProfile.matchPlayed < 3) {
+                    toast((t) => (
+                        <Grid container justifyContent={'space-between'}>
+                            <Grid item>
+                                Congrats! 📣, {updatedProfile?.firstname}. After {3 - updatedProfile.matchPlayed} more matches, your Rating will be set!
+                                <Button onClick={() => toast.dismiss(t.id)}>
+                                    Dismiss
+                                </Button>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                ), {
-                    duration: 6000
-                });
-            } else if (updatedProfile.matchPlayed === 3) {
-                toast(`Your rating has been revealed, ${updatedProfile?.rating}`, {
-                    icon: '✨',
-                });
-            }
+                    ), {
+                        duration: 6000
+                    });
+                } else if (updatedProfile.matchPlayed === 3) {
+                    toast(`Your rating has been revealed, ${updatedProfile?.rating}`, {
+                        icon: '✨',
+                    });
+                }
         } catch (error) {
             console.error('Failed to add match:', error);
             dispatch(logout());

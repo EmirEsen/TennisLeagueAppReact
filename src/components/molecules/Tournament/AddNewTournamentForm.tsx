@@ -6,11 +6,16 @@ import { AppDispatch, useAppSelector } from '../../../store';
 import { IPostTournament } from '../../../models/post/IPostTournament';
 import { addNewTournament } from '../../../store/feature/tournamentSlice';
 import MultipleSelectCheckmarks from '../../atoms/MultipleSelectCheckmarks';
+import { logout } from '../../../store/feature/authSlice';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 
 const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
     const dispatch = useDispatch<AppDispatch>();
     const loggedInProfile = useAppSelector(state => state.player.loggedInProfile);
+
+    const navigate = useNavigate()
 
     const [formState, setFormState] = useState<IPostTournament>({
         title: '',
@@ -59,10 +64,16 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
         e.preventDefault();
         if (!validateForm()) return;
         try {
-            await dispatch(addNewTournament(formState));
+            await dispatch(addNewTournament(formState)).then((response) => {
+                if (addNewTournament.fulfilled.match(response)) {
+                    toast.success('Tournament Added Successfully!');
+                }
+            });
             onClose();
         } catch (error) {
-            console.error('Failed to add tournament:', error);
+            dispatch(logout());
+            toast.error('Failed to Add Tournament!');
+            navigate('/login');
         }
     };
 

@@ -1,4 +1,4 @@
-import { Alert, Button, CircularProgress, Container, Fab, Grid, useMediaQuery } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, Container, Fab, Grid, useMediaQuery } from '@mui/material';
 import NavBar from '../components/organisms/NavBar';
 import { AppDispatch, useAppSelector } from '../store';
 import { useDispatch } from 'react-redux';
@@ -18,7 +18,6 @@ export default function Home() {
 
     const { tournamentList, isLoading: isTournamentLoading } = useAppSelector(state => state.tournament);
     const { loggedInProfile } = useAppSelector(state => state.player);
-    const [isEmailVerified, setIsEmailVerified] = useState(false);
     const isAuth = useAppSelector(state => state.auth.isAuth);
     const dispatch = useDispatch<AppDispatch>();
     const isMobile = useMediaQuery('(max-width: 600px)');
@@ -32,6 +31,8 @@ export default function Home() {
             dispatch(fetchPlayerProfile());
         }
     }, [isAuth]);
+
+    const [isEmailVerified, setIsEmailVerified] = useState(false);
 
     useEffect(() => {
         if (loggedInProfile) {
@@ -94,6 +95,14 @@ export default function Home() {
     const refreshTournamentList = () => {
         dispatch(getTournamentList());
     };
+
+    if (isTournamentLoading) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+                <CircularProgress />
+            </Box>
+        );
+    }
 
     return (
         <>

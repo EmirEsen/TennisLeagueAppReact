@@ -4,9 +4,9 @@ import {
 } from '@mui/material';
 
 // import emirpp from '../../images/emirpp.jpg';
-import { IPlayerProfile } from '../../models/IPlayerProfile';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
+import { IGetTournamentPlayer } from '../../models/get/IGetTournamentPlayer';
 
 function calculateAge(dob: string): number {
     const birthDate = dayjs(dob);
@@ -26,7 +26,7 @@ const calculateWinLossRatio = (wins: number, losses: number): string => {
 };
 
 
-export default function RankList(props: { players: IPlayerProfile[], tournamentId: string }) {
+export default function RankList(props: { players: IGetTournamentPlayer[], tournamentId: string }) {
     return (
         <TableContainer component={Paper} >
             <Table >
@@ -44,7 +44,7 @@ export default function RankList(props: { players: IPlayerProfile[], tournamentI
                 </TableHead>
                 <TableBody>
                     {props.players.map((player, index) => (
-                        <TableRow key={player.email} >
+                        <TableRow key={player.id} >
                             <TableCell align='center'>{index + 1}</TableCell>
                             <TableCell>
                                 <Box display="flex" alignItems="center">
