@@ -6,6 +6,5 @@ export interface IPostTournament {
     endDate: string
     createdById: string
     participantIds: string[]
-    adminIds: string[]
     updatedAt: string
 }

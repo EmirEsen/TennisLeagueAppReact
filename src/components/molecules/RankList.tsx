@@ -7,6 +7,8 @@ import {
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
 import { IGetTournamentPlayer } from '../../models/get/IGetTournamentPlayer';
+import { ITournament } from '../../models/ITournament';
+import { AccessAlarmOutlined } from '@mui/icons-material';
 
 function calculateAge(dob: string): number {
     const birthDate = dayjs(dob);
@@ -26,11 +28,24 @@ const calculateWinLossRatio = (wins: number, losses: number): string => {
 };
 
 
-export default function RankList(props: { players: IGetTournamentPlayer[], tournamentId: string }) {
+export default function RankList(props: { players: IGetTournamentPlayer[], tournamentId: string, tournament: ITournament }) {
+    const { title, start, end } = props.tournament;
+
     return (
         <TableContainer component={Paper} >
             <Table >
                 <TableHead >
+                    <TableRow>
+                        <TableCell align="left" colSpan={4} sx={{ fontSize: '1.25rem', p: 1 }}>
+                            {title}
+                        </TableCell>
+                        <TableCell align="right" colSpan={4} sx={{ fontSize: '0.875rem', fontWeight: 'light', p: 1 }}>
+                            <Box display="flex" alignItems="center" justifyContent="flex-end">
+                                {`${dayjs(start).format('DD MMM YY')} - ${dayjs(end).format('DD MMM YY')}`}
+                                <AccessAlarmOutlined sx={{ ml: 1 }} />
+                            </Box>
+                        </TableCell>
+                    </TableRow>
                     <TableRow >
                         <TableCell align='center' sx={{ fontSize: '0.75rem', p: 1 }}>Rank</TableCell>
                         <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>Player</TableCell>

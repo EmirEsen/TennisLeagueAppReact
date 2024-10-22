@@ -1,11 +1,10 @@
-import { Alert, Box, Button, CircularProgress, Container, Fab, Grid, Typography, useMediaQuery } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, Container, Fab, Grid, LinearProgress, Typography, useMediaQuery } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import NavBar from "../components/organisms/NavBar";
 import { AppDispatch, useAppSelector } from "../store";
 import { useDispatch } from "react-redux";
-import { fetchPlayerProfile, getPlayerProfileList } from "../store/feature/playerSlice";
 import { getTournamentMatchList } from "../store/feature/matchSlice";
 import ModalAddNewMatch from "../components/molecules/Match/ModalAddNewMatch";
 import MatchInfo from "../components/atoms/MatchInfo";
@@ -15,65 +14,63 @@ import RankList from "../components/molecules/RankList";
 import { getPlayersOfTournament } from "../store/feature/tournamentPlayerSlice";
 import { IGetMatch } from "../models/get/IGetMatch";
 import { IGetTournamentPlayer } from "../models/get/IGetTournamentPlayer";
+import { ITournament } from "../models/ITournament";
+import { getTournamentById } from "../store/feature/tournamentSlice";
 
 
 const TournamentPage: React.FC = () => {
 
-    const { loggedInProfile } = useAppSelector(state => state.player)
+    const { loggedInProfile } = useAppSelector(state => state.player);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
-    const isAuth = useAppSelector(state => state.auth.isAuth)
+    const isAuth = useAppSelector(state => state.auth.isAuth);
     const dispatch = useDispatch<AppDispatch>();
     const isMobile = useMediaQuery('(max-width: 600px)');
 
-    const { tournamentId } = useParams<{ tournamentId: string }>(); // Get the id from the URL
+    const { tournamentId } = useParams<{ tournamentId: string | undefined }>();
 
-    const [tournamentMatchList, setTournamentMatchList] = useState<IGetMatch[]>([]); // Local state for tournament matches
+    if (!tournamentId) {
+        return <div>Error: Tournament ID is not defined.</div>;
+    }
+
+    const [tournamentMatchList, setTournamentMatchList] = useState<IGetMatch[]>([]);
     const [tournamentPlayerList, setTournamentPlayerList] = useState<IGetTournamentPlayer[]>([]);
+    const [tournament, setTournament] = useState<ITournament | null>(null);
 
-    const [isTournamentLoading, setIsTournamentLoading] = useState<boolean>(true);
+    const [loadingPlayers, setLoadingPlayers] = useState<boolean>(true);
+    const [loadingMatches, setLoadingMatches] = useState<boolean>(true);
 
-    const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
-
     useEffect(() => {
-        dispatch(getPlayerProfileList());
-        const fetchTournamentPlayers = async () => {
+        const fetchTournamentData = async () => {
             try {
                 if (tournamentId) {
-                    setLoading(true);
+                    setLoadingPlayers(true);
                     setError(null);
+
+                    const tournament = await dispatch(getTournamentById(tournamentId)).unwrap();
+                    setTournament(tournament)
+
                     const players = await dispatch(getPlayersOfTournament(tournamentId)).unwrap();
-                    setTournamentPlayerList(players); // Update local state with fetched players
-                }
-            } catch (error) {
-                setError((error as Error).message);
-            } finally {
-                setLoading(false);
-            }
-        };
+                    setTournamentPlayerList(players);
 
-        fetchTournamentPlayers();
-    }, [tournamentId, dispatch, tournamentMatchList]);
-
-    // Fetch tournament matches
-    useEffect(() => {
-        const fetchTournamentMatches = async () => {
-            try {
-                if (tournamentId) {
-                    setIsTournamentLoading(true);
+                    setLoadingMatches(true)
                     const matches = await dispatch(getTournamentMatchList({ tournamentId })).unwrap();
-                    setTournamentMatchList(matches); // Update local state with fetched matches
+                    console.log(matches)
+                    setTournamentMatchList(matches);
                 }
             } catch (error) {
                 setError((error as Error).message);
             } finally {
-                setIsTournamentLoading(false);
+                setLoadingPlayers(false)
+                setLoadingMatches(false)
             }
         };
 
-        fetchTournamentMatches();
+        fetchTournamentData();
     }, [tournamentId, dispatch]);
+
+
     const getInfoText = () => {
         if (!isAuth) {
             return 'Sign In To Start New Match';
@@ -84,27 +81,11 @@ const TournamentPage: React.FC = () => {
         return 'Add New Match';
     }
 
-    useEffect(() => {
-        dispatch(getPlayerProfileList())
-        if (tournamentId) {
-            dispatch(getTournamentMatchList({ tournamentId }));
-        } else {
-            console.error("Tournament ID is undefined");
-        }
-        if (isAuth) {
-            dispatch(fetchPlayerProfile())
-        }
-    }, [isAuth, tournamentMatchList]);
-
     const sortedMatchList = useMemo(() => {
         return [...tournamentMatchList].sort((a, b) => {
             return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         });
     }, [tournamentMatchList]);
-
-    useEffect(() => {
-        dispatch(getPlayerProfileList());
-    }, [dispatch, tournamentMatchList]);
 
     useEffect(() => {
         if (loggedInProfile) {
@@ -130,17 +111,34 @@ const TournamentPage: React.FC = () => {
             });
     }
 
+    const refreshRankListAndMatchList = () => {
+        dispatch(getTournamentMatchList({ tournamentId }))
+            .then((action) => {
+                if (getTournamentMatchList.fulfilled.match(action)) {
+                    // Set the match list from the action's payload
+                    setTournamentMatchList(action.payload);
+                } else {
+                    // Handle the case where the action is not fulfilled
+                    console.error('Failed to fetch match list:', action.payload);
+                }
+            });
+
+        dispatch(getPlayersOfTournament(tournamentId))
+            .then((action) => {
+                if (getPlayersOfTournament.fulfilled.match(action)) {
+                    // Set the player list from the action's payload
+                    setTournamentPlayerList(action.payload);
+                } else {
+                    // Handle the case where the action is not fulfilled
+                    console.error('Failed to fetch player list:', action.payload);
+                }
+            });
+    };
+
     const isFeaturesAvailable = () => {
         return isAuth && isEmailVerified;
     }
 
-    if (loading) {
-        return (
-            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-                <CircularProgress />
-            </Box>
-        );
-    }
 
     if (error) {
         return (
@@ -171,9 +169,9 @@ const TournamentPage: React.FC = () => {
                         </Grid>
                     )}
                     <Grid item xs={12} md={9}>
-                        {isTournamentLoading ? (
+                        {loadingPlayers ? (
                             <Container maxWidth="lg" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
-                                <CircularProgress />
+                                <LinearProgress />
                             </Container>
                         ) : (
                             <>
@@ -183,19 +181,23 @@ const TournamentPage: React.FC = () => {
                                         infoText={getInfoText()}
                                         tournamentId={tournamentId}
                                         tournamentPlayerList={tournamentPlayerList}
+                                        onMatchAdded={refreshRankListAndMatchList}
                                     />
                                 ) : <></>}
-                                {tournamentId && <RankList players={tournamentPlayerList} tournamentId={tournamentId} />}
+                                {tournament &&
+                                    <RankList players={tournamentPlayerList}
+                                        tournamentId={tournamentId}
+                                        tournament={tournament} />}
 
                             </>
                         )}
                     </Grid>
                     <Grid item xs={9} md={3} style={{ margin: 'auto' }} >
-                        {isTournamentLoading ? (
-                            <div>Loading...</div>
+                        {loadingMatches ? (
+                            <CircularProgress />
                         ) : (
                             sortedMatchList.map((match, index) => (
-                                <MatchInfo key={index} match={match} />
+                                <MatchInfo key={index} match={match} tournamentPlayerList={tournamentPlayerList} />
                             ))
                         )}
                     </Grid>
@@ -215,6 +217,7 @@ const TournamentPage: React.FC = () => {
                     }
                     tournamentId={tournamentId}
                     tournamentPlayerList={tournamentPlayerList}
+                    onMatchAdded={refreshRankListAndMatchList}
                 />
             )}
         </>

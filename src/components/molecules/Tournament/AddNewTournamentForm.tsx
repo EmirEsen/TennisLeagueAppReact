@@ -25,7 +25,6 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
         endDate: dayjs().format('YYYY-MM-DD'),
         createdById: loggedInProfile?.id || '',
         participantIds: [],
-        adminIds: [],
         updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
     });
 
@@ -34,6 +33,9 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
     const validateForm = () => {
         const newErrors: Record<string, string> = {};
         if (!formState.title) newErrors.title = 'Title is required.';
+        if (dayjs(formState.startDate).isAfter(dayjs(formState.endDate))) {
+            newErrors.endDate = 'End date cannot be before start date.';
+        }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -47,16 +49,12 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
     };
 
     const handleParticipantChange = (selectedIds: string[]) => {
+        const updatedIds = loggedInProfile?.id
+            ? [...new Set([loggedInProfile.id, ...selectedIds])]
+            : selectedIds;
         setFormState({
             ...formState,
-            participantIds: selectedIds
-        });
-    };
-
-    const handleManagerChange = (selectedIds: string[]) => {
-        setFormState({
-            ...formState,
-            adminIds: selectedIds
+            participantIds: updatedIds,
         });
     };
 
@@ -64,11 +62,12 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
         e.preventDefault();
         if (!validateForm()) return;
         try {
-            await dispatch(addNewTournament(formState)).then((response) => {
-                if (addNewTournament.fulfilled.match(response)) {
-                    toast.success('Tournament Added Successfully!');
-                }
-            });
+            await dispatch(addNewTournament(formState))
+                .then((response) => {
+                    if (addNewTournament.fulfilled.match(response)) {
+                        toast.success('Tournament Added Successfully!');
+                    }
+                });
             onClose();
         } catch (error) {
             dispatch(logout());
@@ -135,6 +134,7 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
                                     onChange={handleChange}
                                     fullWidth
                                     InputLabelProps={{ shrink: true }}
+                                    helperText={errors.endDate}
                                 />
                             </Grid>
 
@@ -144,15 +144,6 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
                                     selectedItems={formState.participantIds}
                                     label="Select Participants"
                                     onChange={handleParticipantChange}
-                                />
-                            </Grid>
-
-                            {/* Managers */}
-                            <Grid item xs={12}>
-                                <MultipleSelectCheckmarks
-                                    selectedItems={formState.adminIds}
-                                    label="Select Managers"
-                                    onChange={handleManagerChange}
                                 />
                             </Grid>
 

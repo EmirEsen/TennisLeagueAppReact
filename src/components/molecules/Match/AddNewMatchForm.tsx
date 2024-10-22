@@ -127,46 +127,44 @@ const AddNewMatch = ({ onClose, tournamentId, tournamentPlayerList }:
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!validateForm()) return;
+
         try {
-            await dispatch(addNewMatch(formState))
-                .then((response) => {
-                    if (addNewMatch.fulfilled.match(response)) {
-                        toast.success('Match Added Successfully!');
-                    }
-                })
-                .catch((error) => {
-                    toast.error('Error adding match!');
-                    console.log(error);
-                });
+            const response = await dispatch(addNewMatch(formState)).unwrap();
 
-            await dispatch(getMatchList());
+            if (response) {
+                toast.success('Match Added Successfully!');
 
-            onClose();
+                // Fetching the updated match list after adding the match
+                await dispatch(getMatchList());
 
-            //to-do get tournament player according to tournament id and playerId 
-            const tournamentPlayers = await dispatch(getPlayersOfTournament(tournamentId)).unwrap();
+                // Fetching the tournament players to check updated matches for logged-in profile
+                const tournamentPlayers = await dispatch(getPlayersOfTournament(tournamentId)).unwrap();
+                const updatedProfile = tournamentPlayers.find(player => player.playerId === loggedInProfile?.id);
 
-            const updatedProfile = tournamentPlayers.find(player => player.playerId === loggedInProfile?.id);
-
-            if (updatedProfile)
-                if (updatedProfile.matchPlayed < 3) {
-                    toast((t) => (
-                        <Grid container justifyContent={'space-between'}>
-                            <Grid item>
-                                Congrats! 📣, {updatedProfile?.firstname}. After {3 - updatedProfile.matchPlayed} more matches, your Rating will be set!
-                                <Button onClick={() => toast.dismiss(t.id)}>
-                                    Dismiss
-                                </Button>
+                if (updatedProfile) {
+                    if (updatedProfile.matchPlayed < 3) {
+                        toast((t) => (
+                            <Grid container justifyContent={'space-between'}>
+                                <Grid item>
+                                    Congrats! 📣, {updatedProfile?.firstname}. After {3 - updatedProfile.matchPlayed} more matches, your Rating will be set!
+                                    <Button onClick={() => toast.dismiss(t.id)}>
+                                        Dismiss
+                                    </Button>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    ), {
-                        duration: 6000
-                    });
-                } else if (updatedProfile.matchPlayed === 3) {
-                    toast(`Your rating has been revealed, ${updatedProfile?.rating}`, {
-                        icon: '✨',
-                    });
+                        ), {
+                            duration: 6000
+                        });
+                    } else if (updatedProfile.matchPlayed === 3) {
+                        toast(`Your rating has been revealed, ${updatedProfile?.rating}`, {
+                            icon: '✨',
+                        });
+                    }
                 }
+
+                onClose();
+            }
+
         } catch (error) {
             console.error('Failed to add match:', error);
             dispatch(logout());

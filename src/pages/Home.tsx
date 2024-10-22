@@ -89,7 +89,7 @@ export default function Home() {
         if (isAuth && !isEmailVerified) {
             return 'Verify Email To Start New Tournament';
         }
-        return 'Start New Tournament';
+        return 'Add New Tournament';
     }
 
     const refreshTournamentList = () => {
@@ -130,7 +130,7 @@ export default function Home() {
                             />
                         )}
                     </Grid>
-                    <Grid item xs={12} md={9}>
+                    <Grid item xs={12} md={9} sx={{ mt: -2 }}>
                         {tournamentList.map((tournament) => (
                             <Tournament
                                 key={tournament.id}

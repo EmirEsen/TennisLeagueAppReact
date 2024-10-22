@@ -1,23 +1,8 @@
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import ListItemText from '@mui/material/ListItemText';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import { useAppSelector } from '../../store';  // Adjust the path as per your project structure
-import { IPlayerProfile } from '../../models/IPlayerProfile';
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
+import { Autocomplete, Avatar, TextField } from '@mui/material';
+import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
 
 interface MultipleSelectProps {
     selectedItems: string[];
@@ -26,48 +11,50 @@ interface MultipleSelectProps {
 }
 
 export default function MultipleSelectCheckmarks({
-    selectedItems,
-    label,
     onChange,
 }: MultipleSelectProps) {
 
     const players = useAppSelector(state => state.player.playerList);
+    const loggedInProfile = useAppSelector(state => state.player.loggedInProfile);
 
-    // Handle change event when a user selects or deselects players/managers
-    const handleChange = (event: SelectChangeEvent<typeof selectedItems>) => {
-        const {
-            target: { value },
-        } = event;
-        onChange(typeof value === 'string' ? value.split(',') : value);
-    };
+    const availablePlayers = players.filter(player => player.id !== loggedInProfile?.id);
 
-    // Render the full names of selected players or managers
-    const renderSelectedNames = (selectedIds: string[]) => {
-        const selectedPlayers = players.filter(player => selectedIds.includes(player.id));
-        return selectedPlayers.map(player => `${player.firstname} ${player.lastname}`).join(', ');
-    };
+    const icon = <CheckBoxOutlineBlank fontSize="small" />;
+    const checkedIcon = <CheckBox fontSize="small" />;
 
     return (
         <FormControl sx={{ width: '100%' }} fullWidth>
-            <InputLabel id="multiple-checkbox-label">{label}</InputLabel>
-            <Select
-                labelId="multiple-checkbox-label"
-                id="multiple-checkbox"
+            <Autocomplete
                 multiple
-                value={selectedItems}
-                onChange={handleChange}
-                input={<OutlinedInput label={label} />}
-                renderValue={renderSelectedNames}
-                MenuProps={MenuProps}
-                fullWidth
-            >
-                {players.map((player: IPlayerProfile) => (
-                    <MenuItem key={player.id} value={player.id}>
-                        <Checkbox checked={selectedItems.includes(player.id)} />
-                        <ListItemText primary={`${player.firstname} ${player.lastname}`} />
-                    </MenuItem>
-                ))}
-            </Select>
+                id="checkboxes-tags-demo"
+                options={availablePlayers}
+                disableCloseOnSelect
+                getOptionLabel={(option) => `${option.firstname} ${option.lastname}`}
+                onChange={(event, value) => onChange(value.map((player) => player.id))}
+                renderOption={(props, option, { selected }) => {
+                    const { key, ...optionProps } = props;
+                    return (
+                        <li key={key} {...optionProps}>
+                            <Checkbox
+                                icon={icon}
+                                checkedIcon={checkedIcon}
+                                style={{ marginRight: 8 }}
+                                checked={selected}
+                            />
+                            <Avatar
+                                src={option.profileImageUrl}
+                                alt={option.firstname}
+                                sx={{ width: 35, height: 35, marginRight: 1 }}
+                            />
+                            {`${option.firstname} ${option.lastname}`}
+                        </li>
+                    );
+                }}
+                style={{ width: '100%' }}
+                renderInput={(params) => (
+                    <TextField {...params} label="Select Players" placeholder="Players" />
+                )}
+            />
         </FormControl>
     );
 }

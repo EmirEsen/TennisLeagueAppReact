@@ -34,17 +34,26 @@ export default function ModalAddNewMatch({
     infoText,
     customButton,
     tournamentId = '',
-    tournamentPlayerList
+    tournamentPlayerList,
+    onMatchAdded
 }: {
     isActive?: boolean,
     infoText?: string,
     customButton?: React.ReactNode,
     tournamentId?: string
-    tournamentPlayerList: IGetTournamentPlayer[]
+    tournamentPlayerList: IGetTournamentPlayer[],
+    onMatchAdded?: () => void
 }) {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const handleMatchAdded = () => {
+        handleClose();
+        if (onMatchAdded) {
+            onMatchAdded();
+        }
+    };
 
     return (
         <>
@@ -68,7 +77,7 @@ export default function ModalAddNewMatch({
                     <AddNewMatch
                         tournamentId={tournamentId}
                         tournamentPlayerList={tournamentPlayerList}
-                        onClose={handleClose} />
+                        onClose={handleMatchAdded} />
                 </Box>
             </Modal>
         </>

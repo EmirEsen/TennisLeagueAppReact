@@ -4,7 +4,6 @@ import Modal from '@mui/material/Modal';
 import { Chip, IconButton } from '@mui/material';
 import { Add, Close } from '@mui/icons-material';
 import AddNewTournament from './AddNewTournamentForm';
-import { toast } from 'react-hot-toast';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -49,7 +48,6 @@ export default function ModalAddNewTournament({
         if (onTournamentAdded) {
             onTournamentAdded();
         }
-        toast.success('Tournament Added Successfully!');
     };
 
     return (

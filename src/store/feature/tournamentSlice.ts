@@ -44,6 +44,22 @@ export const getTournamentList = createAsyncThunk<ITournament[], void, { rejectV
     }
 )
 
+export const getTournamentById = createAsyncThunk<ITournament, string, { rejectValue: string }>(
+    'tournament/getTournamentById',
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await fetch(`${config.BASE_URL}/api/v1/tournament/${id}`);
+            if (!response.ok) {
+                return rejectWithValue('Failed to fetch the tournament');
+            }
+            const result: ITournament = await response.json();
+            return result;
+        } catch (error) {
+            return rejectWithValue('Network error');
+        }
+    }
+);
+
 
 
 const tournamentSlice = createSlice({

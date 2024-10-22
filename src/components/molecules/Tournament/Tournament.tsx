@@ -116,7 +116,10 @@ const Tournament: React.FC<TournamentProps> = ({ tournament, tournamentPlayers }
                                 />
                             ))}
                         </AvatarGroup>
-                        <Button variant="outlined" sx={{ color: 'blue', borderColor: 'blue', textTransform: 'none', marginTop: 1 }} onClick={handleResultsClick}>
+                        <Button
+                            variant="outlined"
+                            sx={{ color: 'blue', borderColor: 'blue', textTransform: 'none', marginTop: 1 }}
+                            onClick={handleResultsClick}>
                             Results
                         </Button>
                     </Stack>
