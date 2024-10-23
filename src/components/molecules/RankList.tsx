@@ -52,9 +52,9 @@ export default function RankList(props: { players: IGetTournamentPlayer[], tourn
                         <TableCell sx={{ fontSize: '0.75rem', p: 1, display: { xs: 'none', sm: 'table-cell' } }}>Age</TableCell>
                         <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>Official Rating</TableCell>
                         <TableCell sx={{ fontSize: '0.75rem', p: 1, display: { xs: 'none', sm: 'table-cell' } }}>Win/Lose</TableCell>
-                        <TableCell sx={{ fontSize: '0.75rem', p: 1, display: { xs: 'none', sm: 'table-cell' } }}>Match Played</TableCell>
-                        <TableCell sx={{ fontSize: '0.75rem', p: 1, display: { xs: 'none', sm: 'table-cell' } }}>Win</TableCell>
-                        <TableCell sx={{ fontSize: '0.75rem', p: 1, display: { xs: 'none', sm: 'table-cell' } }}>Lose</TableCell>
+                        <TableCell align='center' sx={{ fontSize: '0.75rem', p: 1, display: { xs: 'none', sm: 'table-cell' } }}>Match Played</TableCell>
+                        <TableCell align='center' sx={{ fontSize: '0.75rem', p: 1, display: { xs: 'none', sm: 'table-cell' } }}>Win</TableCell>
+                        <TableCell align='center' sx={{ fontSize: '0.75rem', p: 1, display: { xs: 'none', sm: 'table-cell' } }}>Lose</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
