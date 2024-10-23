@@ -4,6 +4,7 @@ import Modal from '@mui/material/Modal';
 import AddNewMatch from './AddNewMatchForm';
 import { Chip, IconButton } from '@mui/material';
 import { Add, Close } from '@mui/icons-material';
+import { IGetTournamentPlayer } from '../../../models/get/IGetTournamentPlayer';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -31,15 +32,28 @@ const closeButtonStyle = {
 export default function ModalAddNewMatch({
     isActive,
     infoText,
-    customButton
+    customButton,
+    tournamentId = '',
+    tournamentPlayerList,
+    onMatchAdded
 }: {
     isActive?: boolean,
     infoText?: string,
-    customButton?: React.ReactNode
+    customButton?: React.ReactNode,
+    tournamentId?: string
+    tournamentPlayerList: IGetTournamentPlayer[],
+    onMatchAdded?: () => void
 }) {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const handleMatchAdded = () => {
+        handleClose();
+        if (onMatchAdded) {
+            onMatchAdded();
+        }
+    };
 
     return (
         <>
@@ -60,7 +74,10 @@ export default function ModalAddNewMatch({
                     <IconButton onClick={handleClose} sx={closeButtonStyle}>
                         <Close />
                     </IconButton>
-                    <AddNewMatch />
+                    <AddNewMatch
+                        tournamentId={tournamentId}
+                        tournamentPlayerList={tournamentPlayerList}
+                        onClose={handleMatchAdded} />
                 </Box>
             </Modal>
         </>

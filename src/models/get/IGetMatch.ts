@@ -10,6 +10,7 @@ export interface IGetMatch {
     date: string
     time?: string
     id: string
+    tournamentId: string
     player1Id: string
     player2Id: string
     score: score[]

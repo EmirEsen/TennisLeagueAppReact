@@ -1,15 +1,16 @@
 import { Select, MenuItem, FormControl, InputLabel, SelectChangeEvent } from '@mui/material';
 import { useAppSelector } from '../../store';  //
-import { IPlayerProfile } from '../../models/IPlayerProfile';
+import { IGetTournamentPlayer } from '../../models/get/IGetTournamentPlayer';
 
 interface SelectAvatarInputProps {
     selectedPlayer: string;
+    tournamentId: string;
+    tournamentPlayerList: IGetTournamentPlayer[];
     onChange: (playerId: string) => void;
 }
 
-export default function SelectPlayerInput({ selectedPlayer, onChange }: SelectAvatarInputProps) {
-    const players = useAppSelector(state => state.player.playerList);
-    const loggedInPlayer = useAppSelector(state => state.player.loggedInProfile?.id)
+export default function SelectPlayerInput({ selectedPlayer, tournamentPlayerList, onChange }: SelectAvatarInputProps) {
+    const loggedInPlayerId = useAppSelector(state => state.player.loggedInProfile?.id)
 
     const handleChange = (event: SelectChangeEvent<string>) => {
         onChange(event.target.value);
@@ -28,9 +29,9 @@ export default function SelectPlayerInput({ selectedPlayer, onChange }: SelectAv
                     label="Select Opponent"
                 >
                     <MenuItem value="" disabled> <em>Select Player</em></MenuItem>
-                    {players.filter(player => player.id !== loggedInPlayer)
-                        .map((player: IPlayerProfile) => (
-                            <MenuItem key={player.id} value={player.id}>
+                    {tournamentPlayerList.filter(player => player.playerId !== loggedInPlayerId)
+                        .map((player: IGetTournamentPlayer) => (
+                            <MenuItem key={player.playerId} value={player.playerId}>
                                 {player.firstname} {player.lastname}
                             </MenuItem>
                         ))}

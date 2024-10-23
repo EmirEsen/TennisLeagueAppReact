@@ -1,7 +1,7 @@
 import { Box, Divider, Grid, Paper, Typography } from '@mui/material'
-import { IGetMatch } from '../../models/IGetMatch'
-import { useAppSelector } from '../../store'
+import { IGetMatch } from '../../models/get/IGetMatch'
 import { ArrowDropDown, ArrowDropUp, ArrowRight } from '@mui/icons-material';
+import { IGetTournamentPlayer } from '../../models/get/IGetTournamentPlayer';
 
 function excludeSeconds(timeString: string): string {
     const parts = timeString.split(':');
@@ -11,6 +11,12 @@ function excludeSeconds(timeString: string): string {
     }
 
     return timeString;
+}
+
+function formatMatchDate(start: string): string {
+    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
+    const formattedStart = new Date(start).toLocaleDateString('en-GB', options);
+    return `${formattedStart}`;
 }
 
 function getRatingChangeDisplay(ratingChange: number) {
@@ -38,26 +44,25 @@ function getRatingChangeDisplay(ratingChange: number) {
     }
 }
 
-function MatchInfo({ match }: { match: IGetMatch }) {
+function MatchInfo({ match, tournamentPlayerList }: { match: IGetMatch; tournamentPlayerList?: IGetTournamentPlayer[] }) {
     const { court, date, time, score, player1Id, player2Id, winnerId } = match;
-    const players = useAppSelector((state) => state.player.playerList);
-    const player1 = players.find((player) => player.id === player1Id);
-    const player2 = players.find((player) => player.id === player2Id);
+
+    const player1 = tournamentPlayerList?.find((player) => player.playerId === player1Id);
+    const player2 = tournamentPlayerList?.find((player) => player.playerId === player2Id);
 
     if (!player1 || !player2) {
         return <div>mathes not found</div>;
     }
 
     const isDraw = winnerId === 'draw';
-    const winner = isDraw ? null : winnerId === player1.id ? player1 : player2;
-
+    const winner = isDraw ? null : winnerId === player1.playerId ? player1 : player2;
 
     return (
         <Paper elevation={2} sx={{ padding: 2, mb: 2, borderRadius: '16px' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="subtitle1">{court}</Typography>
                 <Typography variant="body2" color="text.secondary" align="right">
-                    {date} | {time ? excludeSeconds(time) : ''}
+                    {formatMatchDate(date)} | {time ? excludeSeconds(time) : ''}
                 </Typography>
             </Box>
             <Divider sx={{ marginY: 1 }} />
@@ -90,7 +95,6 @@ function MatchInfo({ match }: { match: IGetMatch }) {
                 {isDraw ? '' : winnerId === player1Id ? score.map((score) => score.player1Score).join('-') : score.map((score) => score.player2Score).join('-')}
             </Typography>
         </Paper>
-
 
     )
 }

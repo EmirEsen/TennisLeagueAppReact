@@ -13,7 +13,8 @@ import { SportsTennis } from '@mui/icons-material';
 import { AppDispatch, useAppSelector } from '../../store';
 import { useDispatch } from 'react-redux';
 import { fetchRegister } from '../../store/feature/authSlice';
-import { Alert, CircularProgress, Collapse, Link as MUILink } from '@mui/material'
+import { Icon as Iconf } from '@iconify/react';
+import { Alert, CircularProgress, Collapse, IconButton, InputAdornment, Link as MUILink } from '@mui/material'
 
 function Copyright(props: any) {
     return (
@@ -37,6 +38,7 @@ function Copyright(props: any) {
 export default function RegisterCard() {
     const [error, setError] = useState('');
     const [isError, setIsError] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const loading = useAppSelector(state => state.auth.isLoading)
 
     const dispatch: AppDispatch = useDispatch();
@@ -180,6 +182,16 @@ export default function RegisterCard() {
                         autoComplete="current-password"
                         value={formData.password}
                         onChange={handleChange}
+                        type={showPassword ? 'text' : 'password'}  //working but still gives syntax err
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                                        <Iconf icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
                     />
                     <TextField
                         margin="normal"
@@ -194,6 +206,16 @@ export default function RegisterCard() {
                         onChange={handleChange}
                         error={!isPasswordMatch}
                         helperText={!isPasswordMatch ? 'Passwords must match!' : ''}
+                        type={showPassword ? 'text' : 'password'} //working but still gives syntax err
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                                        <Iconf icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
                     />
                     <FormControlLabel
                         control={<Checkbox value="remember" color="primary" />}

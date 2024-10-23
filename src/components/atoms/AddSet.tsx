@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { score } from "../../models/IGetMatch";
+import { score } from "../../models/get/IGetMatch";
 import { Button, Grid, TextField } from "@mui/material";
 
 interface ScoreSetsProps {

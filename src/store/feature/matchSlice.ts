@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import { IGetMatch } from "../../models/IGetMatch"
-import { IPostMatch } from "../../models/IPostMatch"
+import { IGetMatch } from "../../models/get/IGetMatch"
+import { IPostMatch } from "../../models/post/IPostMatch"
 import { IResponse } from "../../models/IResponse"
 
 export interface IMatchState {
@@ -18,6 +18,36 @@ export const getMatchList = createAsyncThunk<IGetMatch[], void, { rejectValue: s
     'match/getMatchs',
     async () => {
         const result = await fetch(`/api/v1/match/matches`)
+            .then(data => data.json())
+        return result;
+    }
+)
+
+export const getPlayerMatchList = createAsyncThunk<IGetMatch[],
+    { playerId: string; page: number; size: number }, { rejectValue: string }>(
+        'match/getPlayerMatchs',
+        async ({ playerId, page, size }) => {
+            const result = await fetch(`${config.BASE_URL}/api/v1/match/matches?playerId=${playerId}?page=${page}&size=${size}`)
+                .then(data => data.json())
+            return result;
+        }
+    )
+
+export const getMatchListByPlayerAndTournament = createAsyncThunk<IGetMatch[], { tournamentId: string; playerId: string; page: number; size: number }, { rejectValue: string }>(
+    'match/getMatchListByPlayerAndTournament',
+    async ({ tournamentId, playerId, page, size }) => {
+        const result = await fetch(
+            `${config.BASE_URL}/api/v1/match/matches?tournamentId=${tournamentId}&playerId=${playerId}&page=${page}&size=${size}`
+        )
+            .then(data => data.json())
+        return result;
+    }
+)
+
+export const getTournamentMatchList = createAsyncThunk<IGetMatch[], { tournamentId: string }, { rejectValue: string }>(
+    'match/getMatchListByTournament',
+    async ({ tournamentId }) => {
+        const result = await fetch(`${config.BASE_URL}/api/v1/match/matches?tournamentId=${tournamentId}`)
             .then(data => data.json())
         return result;
     }
@@ -41,7 +71,6 @@ export const addNewMatch = createAsyncThunk<IResponse, IPostMatch, { rejectValue
         } catch (error) {
             return rejectWithValue("Network error");
         }
-
     }
 )
 
