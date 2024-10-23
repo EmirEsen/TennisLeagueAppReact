@@ -27,7 +27,7 @@ export const getPlayerMatchList = createAsyncThunk<IGetMatch[],
     { playerId: string; page: number; size: number }, { rejectValue: string }>(
         'match/getPlayerMatchs',
         async ({ playerId, page, size }) => {
-            const result = await fetch(`${config.BASE_URL}/api/v1/match/matches?playerId=${playerId}?page=${page}&size=${size}`)
+            const result = await fetch(`/api/v1/match/matches?playerId=${playerId}?page=${page}&size=${size}`)
                 .then(data => data.json())
             return result;
         }
@@ -37,7 +37,7 @@ export const getMatchListByPlayerAndTournament = createAsyncThunk<IGetMatch[], {
     'match/getMatchListByPlayerAndTournament',
     async ({ tournamentId, playerId, page, size }) => {
         const result = await fetch(
-            `${config.BASE_URL}/api/v1/match/matches?tournamentId=${tournamentId}&playerId=${playerId}&page=${page}&size=${size}`
+            `/api/v1/match/matches?tournamentId=${tournamentId}&playerId=${playerId}&page=${page}&size=${size}`
         )
             .then(data => data.json())
         return result;
@@ -47,7 +47,7 @@ export const getMatchListByPlayerAndTournament = createAsyncThunk<IGetMatch[], {
 export const getTournamentMatchList = createAsyncThunk<IGetMatch[], { tournamentId: string }, { rejectValue: string }>(
     'match/getMatchListByTournament',
     async ({ tournamentId }) => {
-        const result = await fetch(`${config.BASE_URL}/api/v1/match/matches?tournamentId=${tournamentId}`)
+        const result = await fetch(`/api/v1/match/matches?tournamentId=${tournamentId}`)
             .then(data => data.json())
         return result;
     }

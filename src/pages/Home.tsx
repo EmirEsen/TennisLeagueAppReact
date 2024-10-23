@@ -5,14 +5,12 @@ import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { fetchPlayerProfile, getPlayerProfileList } from '../store/feature/playerSlice';
 import { getMatchList } from '../store/feature/matchSlice';
-import ModalAddNewMatch from '../components/molecules/ModalAddNewMatch';
 import { Toaster } from 'react-hot-toast';
 import { fetchSendConfirmationEmail } from '../store/feature/authSlice';
 import AddIcon from '@mui/icons-material/Add';
 import Tournament from '../components/molecules/Tournament/Tournament';
 import { getTournamentList } from '../store/feature/tournamentSlice';
 import ModalAddNewTournament from '../components/molecules/Tournament/ModaNewTournament';
-import config from '../store/feature/config';
 import { IPlayerProfile } from '../models/IPlayerProfile';
 
 export default function Home() {
@@ -45,7 +43,7 @@ export default function Home() {
         // Fetch players for each tournament
         const fetchTournamentPlayers = async (tournamentId: string) => {
             try {
-                const response = await fetch(`${config.BASE_URL}/api/v1/tournament-player/${tournamentId}/players`);
+                const response = await fetch(`/api/v1/tournament-player/${tournamentId}/players`);
                 const players: IPlayerProfile[] = await response.json();
                 setTournamentPlayers((prevPlayers) => ({
                     ...prevPlayers,

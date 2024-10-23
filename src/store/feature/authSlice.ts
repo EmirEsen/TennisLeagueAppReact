@@ -106,7 +106,7 @@ export const fetchForgotPassword = createAsyncThunk(
     'auth/fetchForgotPassword',
     async (payload: IFetchForgotPassword, { rejectWithValue }) => {
         try {
-            const response = await fetch(`${config.BASE_URL}/forget-password?email=${payload.email}`, {
+            const response = await fetch(`/api/v1/forget-password?email=${payload.email}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
             });

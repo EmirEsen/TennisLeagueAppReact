@@ -30,7 +30,7 @@ export default function MultipleSelectCheckmarks({
                 options={availablePlayers}
                 disableCloseOnSelect
                 getOptionLabel={(option) => `${option.firstname} ${option.lastname}`}
-                onChange={(event, value) => onChange(value.map((player) => player.id))}
+                onChange={(_, value) => onChange(value.map((player) => player.id))}
                 renderOption={(props, option, { selected }) => {
                     const { key, ...optionProps } = props;
                     return (

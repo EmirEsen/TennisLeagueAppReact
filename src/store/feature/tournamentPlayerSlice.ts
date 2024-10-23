@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import config from "./config";
 import { IGetTournamentPlayer } from "../../models/get/IGetTournamentPlayer";
 
 export interface ITournamentPlayerState {
@@ -18,7 +17,7 @@ export const getPlayersOfTournament = createAsyncThunk<IGetTournamentPlayer[], s
     'tournamentPlayer/getPlayersOfTournament',
     async (tournamentId, { rejectWithValue }) => {
         try {
-            const response = await fetch(`${config.BASE_URL}/api/v1/tournament-player/${tournamentId}/players`, {
+            const response = await fetch(`/api/v1/tournament-player/${tournamentId}/players`, {
                 method: 'GET'
             });
 

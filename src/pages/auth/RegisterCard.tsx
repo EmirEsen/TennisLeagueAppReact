@@ -177,12 +177,11 @@ export default function RegisterCard() {
                         fullWidth
                         name="password"
                         label="Password"
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}  //working but still gives syntax err
                         id="password"
                         autoComplete="current-password"
                         value={formData.password}
                         onChange={handleChange}
-                        type={showPassword ? 'text' : 'password'}  //working but still gives syntax err
                         InputProps={{
                             endAdornment: (
                                 <InputAdornment position="end">
@@ -199,14 +198,13 @@ export default function RegisterCard() {
                         fullWidth
                         name="rePassword"
                         label="Confirm Password"
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}  //working but still gives syntax err
                         id="rePassword"
                         autoComplete="current-password"
                         value={formData.rePassword}
                         onChange={handleChange}
                         error={!isPasswordMatch}
                         helperText={!isPasswordMatch ? 'Passwords must match!' : ''}
-                        type={showPassword ? 'text' : 'password'} //working but still gives syntax err
                         InputProps={{
                             endAdornment: (
                                 <InputAdornment position="end">

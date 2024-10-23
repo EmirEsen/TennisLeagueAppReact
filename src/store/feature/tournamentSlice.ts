@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { IResponse } from "../../models/IResponse"
-import config from "./config"
 import { IPostTournament } from "../../models/post/IPostTournament"
 import { ITournament } from "../../models/ITournament"
 
@@ -18,7 +17,7 @@ export const addNewTournament = createAsyncThunk<IResponse, IPostTournament, { r
     'tournament/addNewTournament',
     async (payload: IPostTournament, { rejectWithValue }) => {
         try {
-            const response = await fetch(`${config.BASE_URL}/api/v1/tournament/save`, {
+            const response = await fetch(`/api/v1/tournament/save`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -38,7 +37,7 @@ export const addNewTournament = createAsyncThunk<IResponse, IPostTournament, { r
 export const getTournamentList = createAsyncThunk<ITournament[], void, { rejectValue: string }>(
     'tournament/getTournaments',
     async () => {
-        const result = await fetch(`${config.BASE_URL}/api/v1/tournament/tournaments`)
+        const result = await fetch(`/api/v1/tournament/tournaments`)
             .then(data => data.json())
         return result;
     }
@@ -48,7 +47,7 @@ export const getTournamentById = createAsyncThunk<ITournament, string, { rejectV
     'tournament/getTournamentById',
     async (id, { rejectWithValue }) => {
         try {
-            const response = await fetch(`${config.BASE_URL}/api/v1/tournament/${id}`);
+            const response = await fetch(`/api/v1/tournament/${id}`);
             if (!response.ok) {
                 return rejectWithValue('Failed to fetch the tournament');
             }
