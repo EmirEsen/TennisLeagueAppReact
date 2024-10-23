@@ -17,7 +17,6 @@ import { IGetTournamentPlayer } from "../models/get/IGetTournamentPlayer";
 import { ITournament } from "../models/ITournament";
 import { getTournamentById } from "../store/feature/tournamentSlice";
 
-
 const TournamentPage: React.FC = () => {
 
     const { loggedInProfile } = useAppSelector(state => state.player);
@@ -139,6 +138,8 @@ const TournamentPage: React.FC = () => {
         return isAuth && isEmailVerified;
     }
 
+    const isPlayerInTournament = tournamentPlayerList.some(player => player.playerId === loggedInProfile?.id);
+
 
     if (error) {
         return (
@@ -175,7 +176,7 @@ const TournamentPage: React.FC = () => {
                             </Container>
                         ) : (
                             <>
-                                {!isMobile ? (
+                                {!isMobile && isPlayerInTournament && (
                                     <ModalAddNewMatch
                                         isActive={isFeaturesAvailable()}
                                         infoText={getInfoText()}
@@ -183,12 +184,11 @@ const TournamentPage: React.FC = () => {
                                         tournamentPlayerList={tournamentPlayerList}
                                         onMatchAdded={refreshRankListAndMatchList}
                                     />
-                                ) : <></>}
+                                )}
                                 {tournament &&
                                     <RankList players={tournamentPlayerList}
                                         tournamentId={tournamentId}
                                         tournament={tournament} />}
-
                             </>
                         )}
                     </Grid>
@@ -204,7 +204,7 @@ const TournamentPage: React.FC = () => {
                 </Grid>
             </Container>
 
-            {isMobile && (
+            {isMobile && isPlayerInTournament && (
                 <ModalAddNewMatch
                     isActive={isFeaturesAvailable()}
                     customButton={
