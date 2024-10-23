@@ -32,14 +32,14 @@ export default function RankList(props: { players: IGetTournamentPlayer[], tourn
     const { title, start, end } = props.tournament;
 
     return (
-        <TableContainer component={Paper} >
+        <TableContainer component={Paper} sx={{ borderRadius: '16px' }} >
             <Table >
                 <TableHead >
-                    <TableRow>
-                        <TableCell align="left" colSpan={4} sx={{ fontSize: '1.25rem', p: 1 }}>
+                    <TableRow sx={{ justifySelf: 'space-between' }}>
+                        <TableCell align="left" sx={{ fontSize: '1.25rem', p: 1 }}>
                             {title}
                         </TableCell>
-                        <TableCell align="right" colSpan={4} sx={{ fontSize: '0.875rem', fontWeight: 'light', p: 1 }}>
+                        <TableCell align="right" sx={{ fontSize: '0.875rem', fontWeight: 'light', p: 1 }}>
                             <Box display="flex" alignItems="center" justifyContent="flex-end">
                                 {`${dayjs(start).format('DD MMM YY')} - ${dayjs(end).format('DD MMM YY')}`}
                                 <AccessAlarmOutlined sx={{ ml: 1 }} />
