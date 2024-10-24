@@ -1,4 +1,4 @@
-import { Alert, Box, Button, CircularProgress, Container, Fab, Grid, LinearProgress, Typography, useMediaQuery } from "@mui/material";
+import { Alert, Box, Button, Container, Fab, Grid, Skeleton, Typography, useMediaQuery } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
@@ -171,9 +171,9 @@ const TournamentPage: React.FC = () => {
                     )}
                     <Grid item xs={12} md={9}>
                         {loadingPlayers ? (
-                            <Container maxWidth="lg" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
-                                <LinearProgress />
-                            </Container>
+                            <Box >
+                                <Skeleton variant="rectangular" width="100%" height={400} sx={{ borderRadius: '16px' }} />
+                            </Box>
                         ) : (
                             <>
                                 {!isMobile && isPlayerInTournament && (
@@ -194,7 +194,11 @@ const TournamentPage: React.FC = () => {
                     </Grid>
                     <Grid item xs={9} md={3} style={{ margin: 'auto' }} >
                         {loadingMatches ? (
-                            <CircularProgress />
+                            (new Array(3)).fill(null).map((_, index) => (
+                                <Box key={index} marginBottom={2}>
+                                    <Skeleton variant="rectangular" width="100%" height={198} sx={{ borderRadius: '16px' }} />
+                                </Box>
+                            ))
                         ) : (
                             sortedMatchList.map((match, index) => (
                                 <MatchInfo key={index} match={match} tournamentPlayerList={tournamentPlayerList} />
