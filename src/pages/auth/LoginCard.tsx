@@ -16,9 +16,7 @@ import { fetchLogin } from '../../store/feature/authSlice';
 import { Toaster } from 'react-hot-toast';
 import { Icon as Iconf } from '@iconify/react';
 
-import Links from '@mui/material/Link';
-
-import { Alert, Collapse, Icon, IconButton, InputAdornment, Link as MUILink } from '@mui/material'
+import { Alert, Collapse, IconButton, InputAdornment, Link as MUILink } from '@mui/material'
 import PasswordResetPopup from './PasswordResetModal';
 
 
@@ -143,7 +141,6 @@ export default function LoginCard() {
                         fullWidth
                         name="password"
                         label="Password"
-                        type="password"
                         id="password"
                         autoComplete="current-password"
                         value={formData.password}

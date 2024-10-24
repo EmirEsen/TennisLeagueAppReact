@@ -177,7 +177,6 @@ export default function RegisterCard() {
                         fullWidth
                         name="password"
                         label="Password"
-                        type="password"
                         id="password"
                         autoComplete="current-password"
                         value={formData.password}
@@ -199,7 +198,6 @@ export default function RegisterCard() {
                         fullWidth
                         name="rePassword"
                         label="Confirm Password"
-                        type="password"
                         id="rePassword"
                         autoComplete="current-password"
                         value={formData.rePassword}

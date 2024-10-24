@@ -4,26 +4,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store';
-// import { useTranslation } from 'react-i18next';
 import { fetchForgotPassword } from '../../store/feature/authSlice';
 
-
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: {
-    xs: '90%',
-    sm: 500,
-  },
-  maxHeight: '90vh',
-  bgcolor: 'background',
-  boxShadow: 24,
-  p: 0.5,
-  borderRadius: '16px',
-  overflowY: 'auto',
-};
 
 const PasswordResetModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
 
