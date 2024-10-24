@@ -1,6 +1,7 @@
 
 import {
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Avatar, Typography, Box
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Avatar, Typography, Box,
+    useMediaQuery
 } from '@mui/material';
 
 // import emirpp from '../../images/emirpp.jpg';
@@ -31,15 +32,21 @@ const calculateWinLossRatio = (wins: number, losses: number): string => {
 export default function RankList(props: { players: IGetTournamentPlayer[], tournamentId: string, tournament: ITournament }) {
     const { title, start, end, isDurationFinite, status } = props.tournament;
 
+    const isMobile = useMediaQuery('(max-width:600px)'); // Adjust the breakpoint as needed
+
+    // Define colSpan based on screen size
+    const titleColSpan = isMobile ? 2 : 6; // Adjust the colSpan for title
+    const statusColSpan = isMobile ? 1 : 6;
+
     return (
         <TableContainer component={Paper} sx={{ borderRadius: '16px' }} >
             <Table >
                 <TableHead >
                     <TableRow sx={{ justifySelf: 'space-between' }}>
-                        <TableCell align="left" sx={{ fontSize: '1.25rem', p: 1 }}>
+                        <TableCell colSpan={titleColSpan} align="left" sx={{ fontSize: '1.25rem', p: 1 }} >
                             {title}
                         </TableCell>
-                        <TableCell align="right" sx={{ fontSize: '0.875rem', fontWeight: 'light', p: 1 }}>
+                        <TableCell colSpan={statusColSpan} align="right" sx={{ fontSize: '0.875rem', fontWeight: 'light', p: 1 }}>
                             {isDurationFinite ? (
                                 <>
                                     {`${dayjs(start).format('DD MMM YY')} - ${dayjs(end).format('DD MMM YY')}`}
@@ -58,7 +65,7 @@ export default function RankList(props: { players: IGetTournamentPlayer[], tourn
                         <TableCell align='center' sx={{ fontSize: '0.75rem', p: 1 }}>Rank</TableCell>
                         <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>Player</TableCell>
                         <TableCell sx={{ fontSize: '0.75rem', p: 1, display: { xs: 'none', sm: 'table-cell' } }}>Age</TableCell>
-                        <TableCell sx={{ fontSize: '0.75rem', p: 1 }}>Official Rating</TableCell>
+                        <TableCell align={isMobile ? 'center' : 'left'} sx={{ fontSize: '0.75rem', p: 1 }}>Official Rating</TableCell>
                         <TableCell sx={{ fontSize: '0.75rem', p: 1, display: { xs: 'none', sm: 'table-cell' } }}>Win/Lose</TableCell>
                         <TableCell align='center' sx={{ fontSize: '0.75rem', p: 1, display: { xs: 'none', sm: 'table-cell' } }}>Match Played</TableCell>
                         <TableCell align='center' sx={{ fontSize: '0.75rem', p: 1, display: { xs: 'none', sm: 'table-cell' } }}>Win</TableCell>
@@ -69,7 +76,7 @@ export default function RankList(props: { players: IGetTournamentPlayer[], tourn
                     {props.players.map((player, index) => (
                         <TableRow key={player.id} >
                             <TableCell align='center'>{index + 1}</TableCell>
-                            <TableCell>
+                            <TableCell >
                                 <Box display="flex" alignItems="center">
                                     <Avatar src={player.profileImageUrl} alt={player.firstname} sx={{ width: 50, height: 50, objectFit: 'cover', objectPosition: 'top', border: '1px solid' }} />
                                     <Box ml={2}>
@@ -90,9 +97,7 @@ export default function RankList(props: { players: IGetTournamentPlayer[], tourn
                             <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }} >
                                 {player.dob ? calculateAge(player.dob) : 'N/A'}
                             </TableCell>
-                            <TableCell sx={{
-                                fontWeight: 'bold'
-                            }}>
+                            <TableCell align={isMobile ? 'center' : 'left'} sx={{ fontWeight: 'bold' }}>
                                 {player.rating != null ? player.rating : 'N/A'}
                             </TableCell>
                             <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
