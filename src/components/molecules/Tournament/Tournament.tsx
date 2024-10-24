@@ -3,8 +3,15 @@ import { ITournament } from "../../../models/ITournament"
 import { useNavigate } from "react-router-dom";
 import StatusDot from "../../atoms/StatusDot";
 import { IPlayerProfile } from "../../../models/IPlayerProfile";
+import { AllInclusive } from "@mui/icons-material";
 
-function formatTournamentDate(start: string, end: string): string {
+function formatTournamentDate(start: string | null, end: string | null, isDurationFinite: boolean): React.ReactNode {
+    if (!isDurationFinite) {
+        return <AllInclusive fontSize="small" sx={{ verticalAlign: 'middle' }} />;
+    }
+    if (!start || !end) {
+        return "Unknown dates"; // Handle null cases
+    }
     const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
     const formattedStart = new Date(start).toLocaleDateString('en-GB', options);
     const formattedEnd = new Date(end).toLocaleDateString('en-GB', options);
@@ -20,7 +27,7 @@ const Tournament: React.FC<TournamentProps> = ({ tournament, tournamentPlayers }
 
     const isMobile = useMediaQuery('(max-width: 600px)');
     const navigate = useNavigate();
-    const formattedDates = formatTournamentDate(tournament.start, tournament.end);
+    const formattedDates = formatTournamentDate(tournament.start, tournament.end, tournament.isDurationFinite);
 
     const handleResultsClick = () => {
         navigate(`/tournament/${tournament.id}`);
@@ -51,7 +58,7 @@ const Tournament: React.FC<TournamentProps> = ({ tournament, tournamentPlayers }
                                 {tournament.title}
                             </Typography>
                             <Typography variant="body2" color="textSecondary">
-                                {formattedDates}
+                                Duration: {formattedDates}
                             </Typography>
                             <Typography variant="body2" color="textSecondary" sx={{ marginTop: 1 }}>
                                 {tournament.info}
@@ -98,7 +105,7 @@ const Tournament: React.FC<TournamentProps> = ({ tournament, tournamentPlayers }
                                 {tournament.title}
                             </Typography>
                             <Typography variant="body2" color="textSecondary">
-                                {formattedDates}
+                                Duration: {formattedDates}
                             </Typography>
                             <Typography variant="body2" color="textSecondary" sx={{ marginTop: 1 }}>
                                 {tournament.info}

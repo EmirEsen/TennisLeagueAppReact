@@ -3,6 +3,7 @@ export interface IPlayerProfile {
     firstname: string
     lastname: string
     email: string
+    gender: "MALE" | "FEMALE";
     dob: string
     heightInCm: string
     weightInKg: string

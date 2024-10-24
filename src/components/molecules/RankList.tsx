@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
 import { IGetTournamentPlayer } from '../../models/get/IGetTournamentPlayer';
 import { ITournament } from '../../models/ITournament';
-import { AccessAlarmOutlined } from '@mui/icons-material';
+import { AccessAlarmOutlined, AllInclusive } from '@mui/icons-material';
 
 function calculateAge(dob: string): number {
     const birthDate = dayjs(dob);
@@ -29,7 +29,7 @@ const calculateWinLossRatio = (wins: number, losses: number): string => {
 
 
 export default function RankList(props: { players: IGetTournamentPlayer[], tournamentId: string, tournament: ITournament }) {
-    const { title, start, end } = props.tournament;
+    const { title, start, end, isDurationFinite, status } = props.tournament;
 
     return (
         <TableContainer component={Paper} sx={{ borderRadius: '16px' }} >
@@ -40,10 +40,18 @@ export default function RankList(props: { players: IGetTournamentPlayer[], tourn
                             {title}
                         </TableCell>
                         <TableCell align="right" sx={{ fontSize: '0.875rem', fontWeight: 'light', p: 1 }}>
-                            <Box display="flex" alignItems="center" justifyContent="flex-end">
-                                {`${dayjs(start).format('DD MMM YY')} - ${dayjs(end).format('DD MMM YY')}`}
-                                <AccessAlarmOutlined sx={{ ml: 1 }} />
-                            </Box>
+                            {isDurationFinite ? (
+                                <>
+                                    {`${dayjs(start).format('DD MMM YY')} - ${dayjs(end).format('DD MMM YY')}`}
+                                    <AccessAlarmOutlined sx={{ ml: 1 }} />
+                                </>
+                            ) : (
+                                <Box display="flex" alignItems="center">
+                                    <Typography>{status}</Typography>
+                                    <AllInclusive sx={{ fontSize: 20, ml: 1 }} />
+                                    <AccessAlarmOutlined sx={{ ml: 1 }} />
+                                </Box>
+                            )}
                         </TableCell>
                     </TableRow>
                     <TableRow >
