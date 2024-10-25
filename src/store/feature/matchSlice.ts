@@ -3,6 +3,7 @@ import { IGetMatch } from "../../models/get/IGetMatch"
 import { IPostMatch } from "../../models/post/IPostMatch"
 import { IResponse } from "../../models/IResponse"
 import config from "./config"
+import { IPageDto } from "../../models/IPageDto"
 
 export interface IMatchState {
     matchList: IGetMatch[],
@@ -34,16 +35,20 @@ export const getPlayerMatchList = createAsyncThunk<IGetMatch[],
         }
     )
 
-export const getMatchListByPlayerAndTournament = createAsyncThunk<IGetMatch[], { tournamentId: string; playerId: string; page: number; size: number }, { rejectValue: string }>(
-    'match/getMatchListByPlayerAndTournament',
-    async ({ tournamentId, playerId, page, size }) => {
-        const result = await fetch(
-            `${config.BASE_URL}/api/v1/match/matches?tournamentId=${tournamentId}&playerId=${playerId}&page=${page}&size=${size}`
+export const getMatchListByPlayerAndTournament = createAsyncThunk
+    <IPageDto<IGetMatch>,
+        { tournamentId: string; playerId: string; page: number; size: number },
+        { rejectValue: string }>(
+            'match/getMatchListByPlayerAndTournament',
+            async ({ tournamentId, playerId, page, size }) => {
+                const result: IPageDto<IGetMatch> = await fetch(
+                    `${config.BASE_URL}/api/v1/match/${tournamentId}/${playerId}/matches?page=${page}&size=${size}`
+                )
+                    .then(data => data.json())
+                console.log('page slice', result);
+                return result;
+            }
         )
-            .then(data => data.json())
-        return result;
-    }
-)
 
 export const getTournamentMatchList = createAsyncThunk<IGetMatch[], { tournamentId: string }, { rejectValue: string }>(
     'match/getMatchListByTournament',
@@ -101,7 +106,7 @@ const matchSlice = createSlice({
             .addCase(addNewMatch.rejected, (state, action) => {
                 state.isLoading = false;
                 console.error(action.payload);
-            });
+            })
     }
 })
 

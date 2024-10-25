@@ -80,7 +80,7 @@ export default function RankList(props: { players: IGetTournamentPlayer[], tourn
                                 <Box display="flex" alignItems="center">
                                     <Avatar src={player.profileImageUrl} alt={player.firstname} sx={{ width: 50, height: 50, objectFit: 'cover', objectPosition: 'top', border: '1px solid' }} />
                                     <Box ml={2}>
-                                        <Link to={`/player-view?tournamentId=${props.tournamentId}&playerId=${player.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                                        <Link to={`/player-view?tournamentId=${props.tournamentId}&playerId=${player.playerId}`} style={{ textDecoration: 'none', color: 'black' }}>
                                             <Typography sx={{
                                                 fontSize: '1rem',
                                                 '&:hover': {
