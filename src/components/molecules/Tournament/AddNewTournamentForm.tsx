@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { useDispatch } from 'react-redux';
 import { AppDispatch, useAppSelector } from '../../../store';
 import { IPostTournament } from '../../../models/post/IPostTournament';
-import { addNewTournament } from '../../../store/feature/tournamentSlice';
+import { addNewTournament, getTournamentList } from '../../../store/feature/tournamentSlice';
 import MultipleSelectCheckmarks from '../../atoms/MultipleSelectCheckmarks';
 import { logout } from '../../../store/feature/authSlice';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +12,6 @@ import toast from 'react-hot-toast';
 import TournamentPrivacyRadioButton from '../../atoms/TournamentPrivacyRadioButton';
 import { TournamentPrivacy } from '../../../models/enums/TournamentPrivacy';
 import TournamentDurationSwitch from '../../atoms/TournamentDurationSwitch';
-
 
 const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
     const dispatch = useDispatch<AppDispatch>();
@@ -88,16 +87,16 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
         e.preventDefault();
         if (!validateForm()) return;
         try {
-            await dispatch(addNewTournament(formState))
-                .then((response) => {
-                    if (addNewTournament.fulfilled.match(response)) {
-                        toast.success('Tournament Added Successfully!');
-                    }
-                });
-            onClose();
+            const response = await dispatch(addNewTournament(formState)).unwrap();;
+            if (response) {
+                toast.success('Tournament Added Successfully!')
+                dispatch(getTournamentList());
+                onClose();
+            }
         } catch (error) {
+            console.log('Session Expired. Please log in again.');
+            console.log('bu hata ne ', error)
             dispatch(logout());
-            toast.error('Failed to Add Tournament!');
             navigate('/login');
         }
     };

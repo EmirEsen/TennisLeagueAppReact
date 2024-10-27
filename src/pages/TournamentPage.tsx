@@ -2,7 +2,6 @@ import { Alert, Box, Button, Container, Fab, Grid, Skeleton, Typography, useMedi
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import NavBar from "../components/organisms/NavBar";
 import { AppDispatch, useAppSelector } from "../store";
 import { useDispatch } from "react-redux";
 import { getTournamentMatchList } from "../store/feature/matchSlice";
@@ -153,7 +152,6 @@ const TournamentPage: React.FC = () => {
         <>
 
             <Toaster />
-            <NavBar />
 
             <Container maxWidth="lg" style={{ marginTop: '20px' }}>
                 <Grid container spacing={2} flexDirection={{ md: 'row', xs: 'column' }}>

@@ -29,7 +29,7 @@ export default function TournamentPrivacyRadioButton({ value, onChange }: Tourna
                 <FormControlLabel
                     value={TournamentPrivacy.MEMBERS_PRIVATE}
                     control={<Radio />}
-                    label="All Tennis Club Members"
+                    label="Only Tennis Club Members"
                 />
                 <FormControlLabel
                     value={TournamentPrivacy.PRIVATE}

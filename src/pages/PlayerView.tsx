@@ -5,7 +5,6 @@ import MatchInfo from "../components/atoms/MatchInfo";
 import { IGetMatch } from "../models/get/IGetMatch";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store";
-import NavBar from "../components/organisms/NavBar";
 import { Box, CircularProgress, Container, Grid, Pagination, Stack, Alert } from "@mui/material";
 import { IPageDto } from "../models/IPageDto";
 import { getPlayersOfTournament } from "../store/feature/tournamentPlayerSlice";
@@ -81,7 +80,6 @@ function PlayerView() {
 
     return (
         <>
-            <NavBar />
             <Container style={{ marginTop: '40px', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
                 <Grid
                     container

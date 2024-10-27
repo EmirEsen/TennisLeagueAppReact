@@ -1,5 +1,4 @@
 import { Alert, Box, Button, CircularProgress, Container, Fab, Grid, useMediaQuery } from '@mui/material';
-import NavBar from '../components/organisms/NavBar';
 import { AppDispatch, useAppSelector } from '../store';
 import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -107,7 +106,6 @@ export default function Home() {
     return (
         <>
             <Toaster />
-            <NavBar />
             <Container maxWidth="lg" style={{ marginTop: '20px' }}>
                 <Grid container spacing={2} flexDirection={{ md: 'row', xs: 'column' }}>
                     {isAuth && !isEmailVerified && (

@@ -137,6 +137,7 @@ const authSlice = createSlice({
             state.isAuth = false;
             state.token = ''
             localStorage.removeItem('token')
+            state.data = '';
         }
     },
     extraReducers: (builder) => {
