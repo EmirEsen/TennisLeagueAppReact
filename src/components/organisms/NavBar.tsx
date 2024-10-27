@@ -22,12 +22,11 @@ const tennis = createTheme({
     }
 })
 
-const pages = ['Tournaments'];
+const pages = ['Community', 'My Tournaments'];
 const settings = {
     signedIn: ['Profile', 'Logout'],
     signedOut: ['Sign In']
 };
-
 
 export default function NavBar() {
     const dispatch = useDispatch<AppDispatch>();
@@ -35,6 +34,7 @@ export default function NavBar() {
 
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+    const [selectedPage, setSelectedPage] = React.useState<string>('Community'); // Default selected page
     const isAuth = useAppSelector(state => state.auth.isAuth)
     const loggedInPlayer = useAppSelector(state => state.player.loggedInProfile)
 
@@ -45,10 +45,15 @@ export default function NavBar() {
         setAnchorElUser(event.currentTarget);
     };
 
-    const handleCloseNavMenu = (page?: string) => {
+    const handleCloseNavMenu = (page: string) => {
         setAnchorElNav(null);
-        if (page === 'Tournaments') {
-            navigate('/');
+        setSelectedPage(page);
+        if (selectedPage !== page) {
+            if (page === 'Community') {
+                navigate('/');
+            } else if (page === 'My Tournaments') {
+                navigate('/my-tournaments');
+            }
         }
     };
 
@@ -61,14 +66,13 @@ export default function NavBar() {
         } else if (setting === 'Profile') {
             navigate('/profile');
         }
-
     };
 
     return (
         <ThemeProvider theme={tennis}>
             <AppBar position="sticky">
                 <Container maxWidth="xl">
-                    <Toolbar >
+                    <Toolbar>
                         <Typography
                             variant="h6"
                             noWrap
@@ -110,7 +114,6 @@ export default function NavBar() {
                                     horizontal: 'left',
                                 }}
                                 open={Boolean(anchorElNav)}
-                                // onClose={handleCloseNavMenu}
                                 sx={{
                                     display: { xs: 'block', md: 'none' },
                                 }}
@@ -147,7 +150,7 @@ export default function NavBar() {
                                     onClick={() => handleCloseNavMenu(page)}
                                     sx={{
                                         my: 2,
-                                        color: 'grey',
+                                        color: selectedPage === page ? 'white' : 'grey',
                                         display: 'block',
                                         position: 'relative',
                                         '&::after': {
@@ -156,13 +159,14 @@ export default function NavBar() {
                                             bottom: 0,
                                             left: '50%',
                                             transform: 'translateX(-50%)',
-                                            width: 0,
+                                            width: selectedPage === page ? '100%' : 0,
                                             height: 2,
-                                            backgroundColor: 'white',
+                                            backgroundColor: selectedPage === page ? 'blue' : 'transparent',
                                             transition: 'width 0.3s ease-in-out',
                                         },
                                         '&:hover::after': {
                                             width: '100%',
+                                            backgroundColor: 'blue',
                                         },
                                     }}
                                 >
@@ -221,11 +225,12 @@ export default function NavBar() {
                                             transform: 'translateX(-50%)',
                                             width: 0,
                                             height: 2,
-                                            backgroundColor: 'white',
+                                            backgroundColor: 'transparent',
                                             transition: 'width 0.3s ease-in-out',
                                         },
                                         '&:hover::after': {
                                             width: '100%',
+                                            backgroundColor: 'blue',
                                         },
                                     }}
                                 >
