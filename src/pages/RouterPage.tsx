@@ -13,6 +13,8 @@ import Home from "./Home";
 import VerifyEmail from "./auth/VerifyEmail";
 import PlayerView from "./PlayerView";
 import TournamentPage from "./TournamentPage";
+import MyTournaments from "./MyTournaments";
+import NavBar from "../components/organisms/NavBar";
 
 function RouterPage() {
     const dispatch = useDispatch<AppDispatch>();
@@ -43,10 +45,19 @@ function RouterPage() {
 
     return (
         <BrowserRouter>
+            {window.location.pathname !== '/login' && window.location.pathname !== '/register' && (
+                <NavBar />
+            )}
             <Routes>
+                <Route
+                    path="*"
+                    element={<div>404 Not Found</div>} />
                 <Route
                     path="/"
                     element={<Home />} />
+                <Route
+                    path="/my-tournaments"
+                    element={isLogin && profile ? <MyTournaments /> : <Login />} />
                 <Route
                     path="/login"
                     element={isLogin && profile ? <Navigate to={'/profile'} /> : <Login />}
