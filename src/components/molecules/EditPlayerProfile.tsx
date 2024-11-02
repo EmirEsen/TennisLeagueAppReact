@@ -1,4 +1,4 @@
-import { Avatar, Badge, Box, Button, Card, CircularProgress, Container, FormControl, Grid, Modal, styled, TextField, Typography } from '@mui/material';
+import { Avatar, Badge, Box, Button, Card, CircularProgress, Container, FormControl, Grid, IconButton, Modal, styled, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { logout } from '../../store/feature/authSlice';
 import { IPlayerProfile } from '../../models/IPlayerProfile';
 import toast from 'react-hot-toast';
-import { IconButton } from '@mui/joy';
+import GenderRadioButton from '../atoms/GenderRadioButton';
 
 interface EditPlayerProfileProps {
     playerProfile: IPlayerProfile;
@@ -34,6 +34,7 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
     const [formState, setFormState] = useState<IUpdatePlayerProfile>({
         firstname: playerProfile.firstname,
         lastname: playerProfile.lastname,
+        gender: playerProfile.gender,
         dob: initialDob.toISOString(),
         heightInCm: playerProfile.heightInCm,
         weightInKg: playerProfile.weightInKg,
@@ -77,6 +78,12 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
         });
     };
 
+    const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setFormState({
+            ...formState,
+            gender: event.target.value  // Update gender when selected
+        });
+    };
 
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -137,7 +144,7 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
     });
 
     return (
-        <Card sx={{ width: '100%', marginTop: 2, maxWidth: 950, padding: 4, borderRadius: '16px' }} elevation={2}>
+        <Card sx={{ width: '100%', marginTop: 2, maxWidth: 750, padding: 4, borderRadius: '16px' }} elevation={2}>
             <Container maxWidth="sm">
                 <Typography variant="h4" gutterBottom align='center'>
                     Update Profile
@@ -148,7 +155,7 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
                         sx={{
                             display: 'flex',
                             flexDirection: 'column',
-                            maxWidth: 800,
+                            maxWidth: 700,
                             margin: 'auto',
                             alignItems: 'center',
                         }}
@@ -203,6 +210,20 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
                             />
                         </Grid>
                         <Grid item xs={6}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker
+                                    label="Date of Birth"
+                                    value={dob}
+                                    onChange={handleDateChange}
+                                />
+                            </LocalizationProvider>
+                        </Grid>
+                        <Grid item xs={5} mt={-1} ml={1}>
+                            <GenderRadioButton
+                                value={formState.gender}
+                                onChange={handleGenderChange} />
+                        </Grid>
+                        <Grid item xs={6}>
                             <TextField
                                 label="Height (cm)"
                                 name="heightInCm"
@@ -221,15 +242,6 @@ const EditPlayerProfile = ({ playerProfile }: EditPlayerProfileProps) => {
                                 onChange={handleChange}
                                 fullWidth
                             />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker
-                                    label="Date of Birth"
-                                    value={dob}
-                                    onChange={handleDateChange}
-                                />
-                            </LocalizationProvider>
                         </Grid>
                         <Grid item xs={12}>
                             <Button type="submit" variant="contained" color="primary" fullWidth>

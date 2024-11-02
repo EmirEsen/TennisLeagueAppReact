@@ -4,12 +4,14 @@ import dayjs from 'dayjs';
 import { useDispatch } from 'react-redux';
 import { AppDispatch, useAppSelector } from '../../../store';
 import { IPostTournament } from '../../../models/post/IPostTournament';
-import { addNewTournament } from '../../../store/feature/tournamentSlice';
+import { addNewTournament, getComunityTournamentList } from '../../../store/feature/tournamentSlice';
 import MultipleSelectCheckmarks from '../../atoms/MultipleSelectCheckmarks';
 import { logout } from '../../../store/feature/authSlice';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-
+import TournamentPrivacyRadioButton from '../../atoms/TournamentPrivacyRadioButton';
+import { TournamentPrivacy } from '../../../models/enums/TournamentPrivacy';
+import TournamentDurationSwitch from '../../atoms/TournamentDurationSwitch';
 
 const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
     const dispatch = useDispatch<AppDispatch>();
@@ -20,7 +22,8 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
     const [formState, setFormState] = useState<IPostTournament>({
         title: '',
         info: '',
-        isDateDesignated: false,
+        privacy: TournamentPrivacy.PUBLIC,
+        isDurationFinite: true,
         startDate: dayjs().format('YYYY-MM-DD'),
         endDate: dayjs().format('YYYY-MM-DD'),
         createdById: loggedInProfile?.id || '',
@@ -30,14 +33,36 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
 
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    const today = dayjs().format('YYYY-MM-DD');
     const validateForm = () => {
         const newErrors: Record<string, string> = {};
         if (!formState.title) newErrors.title = 'Title is required.';
+        if (dayjs(formState.startDate).isBefore(today)) {
+            newErrors.startDate = 'Start date cannot be before today.';
+        }
         if (dayjs(formState.startDate).isAfter(dayjs(formState.endDate))) {
             newErrors.endDate = 'End date cannot be before start date.';
         }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
+    };
+
+    const handlePrivacyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value as TournamentPrivacy;
+        setFormState({
+            ...formState,
+            privacy: value
+        });
+    };
+
+    const handleDurationSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const isFinite = event.target.checked;
+        setFormState({
+            ...formState,
+            isDurationFinite: isFinite,
+            startDate: isFinite ? formState.startDate : null,  // set to null if infinite duration
+            endDate: isFinite ? formState.endDate : null,      // set to null if infinite duration
+        });
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,16 +87,16 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
         e.preventDefault();
         if (!validateForm()) return;
         try {
-            await dispatch(addNewTournament(formState))
-                .then((response) => {
-                    if (addNewTournament.fulfilled.match(response)) {
-                        toast.success('Tournament Added Successfully!');
-                    }
-                });
-            onClose();
+            const response = await dispatch(addNewTournament(formState)).unwrap();;
+            if (response) {
+                toast.success('Tournament Added Successfully!')
+                dispatch(getComunityTournamentList());
+                onClose();
+            }
         } catch (error) {
+            console.log('Session Expired. Please log in again.');
+            console.log('bu hata ne ', error)
             dispatch(logout());
-            toast.error('Failed to Add Tournament!');
             navigate('/login');
         }
     };
@@ -117,10 +142,12 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
                                     label="Start Date"
                                     name="startDate"
                                     type="date"
-                                    value={formState.startDate}
+                                    value={formState.startDate || ''}
                                     onChange={handleChange}
                                     fullWidth
+                                    inputProps={{ min: dayjs().format('YYYY-MM-DD') }}
                                     InputLabelProps={{ shrink: true }}
+                                    disabled={!formState.isDurationFinite}
                                 />
                             </Grid>
 
@@ -130,11 +157,20 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
                                     label="End Date"
                                     name="endDate"
                                     type="date"
-                                    value={formState.endDate}
+                                    value={formState.endDate || ''}
                                     onChange={handleChange}
                                     fullWidth
+                                    inputProps={{ min: dayjs().format('YYYY-MM-DD') }}
                                     InputLabelProps={{ shrink: true }}
                                     helperText={errors.endDate}
+                                    disabled={!formState.isDurationFinite}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', margin: 1, my: -2 }}>
+                                <TournamentDurationSwitch
+                                    isFiniteDuration={formState.isDurationFinite}
+                                    handleSwitchChange={handleDurationSwitchChange}
                                 />
                             </Grid>
 
@@ -146,7 +182,11 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
                                     onChange={handleParticipantChange}
                                 />
                             </Grid>
-
+                            <Grid item xs={12}>
+                                <TournamentPrivacyRadioButton
+                                    value={formState.privacy}
+                                    onChange={handlePrivacyChange} />
+                            </Grid>
                             {/* Submit Button */}
                             <Grid item xs={12}>
                                 <Button type="submit" variant="contained" color="primary" fullWidth>

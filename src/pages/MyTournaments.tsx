@@ -1,4 +1,4 @@
-import { Alert, Box, Button, CircularProgress, Container, Fab, Grid, useMediaQuery } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, Container, Fab, Grid, Typography, useMediaQuery } from '@mui/material';
 import { AppDispatch, useAppSelector } from '../store';
 import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -8,13 +8,14 @@ import { Toaster } from 'react-hot-toast';
 import { fetchSendConfirmationEmail } from '../store/feature/authSlice';
 import AddIcon from '@mui/icons-material/Add';
 import Tournament from '../components/molecules/Tournament/Tournament';
-import { getComunityTournamentList } from '../store/feature/tournamentSlice';
+import { getMyTournaments } from '../store/feature/tournamentSlice';
 import ModalAddNewTournament from '../components/molecules/Tournament/ModaNewTournament';
+import config from '../store/feature/config';
 import { IPlayerProfile } from '../models/IPlayerProfile';
 
-export default function Home() {
+export default function MyTournaments() {
 
-    const { tournamentList, isLoading: isTournamentLoading } = useAppSelector(state => state.tournament);
+    const { myTournaments, isLoading: isTournamentLoading } = useAppSelector(state => state.tournament);
     const { loggedInProfile } = useAppSelector(state => state.player);
     const isAuth = useAppSelector(state => state.auth.isAuth);
     const dispatch = useDispatch<AppDispatch>();
@@ -24,7 +25,7 @@ export default function Home() {
     useEffect(() => {
         dispatch(getPlayerProfileList());
         dispatch(getMatchList());
-        dispatch(getComunityTournamentList());
+        dispatch(getMyTournaments());
         if (isAuth) {
             dispatch(fetchPlayerProfile());
         }
@@ -39,10 +40,9 @@ export default function Home() {
     }, [loggedInProfile]);
 
     useEffect(() => {
-        // Fetch players for each tournament
         const fetchTournamentPlayers = async (tournamentId: string) => {
             try {
-                const response = await fetch(`/api/v1/tournament-player/${tournamentId}/players`);
+                const response = await fetch(`${config.BASE_URL}/api/v1/tournament-player/${tournamentId}/players`);
                 const players: IPlayerProfile[] = await response.json();
                 setTournamentPlayers((prevPlayers) => ({
                     ...prevPlayers,
@@ -53,12 +53,12 @@ export default function Home() {
             }
         };
 
-        tournamentList.forEach(tournament => {
+        myTournaments.forEach(tournament => {
             if (!tournamentPlayers[tournament.id]) {
                 fetchTournamentPlayers(tournament.id);
             }
         });
-    }, [tournamentList]);
+    }, [myTournaments]);
 
     const reSendConfirmationEmail = () => {
         dispatch(fetchSendConfirmationEmail(loggedInProfile?.email || ''))
@@ -91,7 +91,7 @@ export default function Home() {
     }
 
     const refreshTournamentList = () => {
-        dispatch(getComunityTournamentList());
+        dispatch(getMyTournaments());
     };
 
     if (isTournamentLoading) {
@@ -128,13 +128,25 @@ export default function Home() {
                         )}
                     </Grid>
                     <Grid item xs={12} md={9} sx={{ mt: -2 }}>
-                        {tournamentList.map((tournament) => (
-                            <Tournament
-                                key={tournament.id}
-                                tournament={tournament}
-                                tournamentPlayers={tournamentPlayers[tournament.id] || []}
-                            />
-                        ))}
+                        {myTournaments.length === 0 ? (
+                            <Box textAlign="left" mt={4}>
+                                <Typography variant="h6" color="textSecondary">
+                                    You currently have no tournaments.
+                                    <br />
+                                    <Typography variant="body1" component="span" sx={{ fontWeight: 'bold' }}>
+                                        You can start a new tournament or join one!
+                                    </Typography>
+                                </Typography>
+                            </Box>
+                        ) : (
+                            myTournaments.map((tournament) => (
+                                <Tournament
+                                    key={tournament.id}
+                                    tournament={tournament}
+                                    tournamentPlayers={tournamentPlayers[tournament.id] || []}
+                                />
+                            ))
+                        )}
                     </Grid>
                 </Grid>
             </Container>

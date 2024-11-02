@@ -173,11 +173,6 @@ const AddNewMatch = ({ onClose, tournamentId, tournamentPlayerList }:
         }
     };
 
-    // const timeParts = formState.time !== 'N/A' && formState.time !== undefined ? formState.time.split(':') : ['00', '00'];
-    // const timeValue = formState.time !== 'N/A'
-    //     ? dayjs().set('hour', parseInt(timeParts[0])).set('minute', parseInt(timeParts[1]))
-    //     : null;
-
     const timeSlots = Array.from(new Array(24 * 2)).map(
         (_, index) =>
             `${index < 20 ? '0' : ''}${Math.floor(index / 2)}:${index % 2 === 0 ? '00' : '30'

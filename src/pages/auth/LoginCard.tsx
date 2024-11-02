@@ -141,11 +141,11 @@ export default function LoginCard() {
                         fullWidth
                         name="password"
                         label="Password"
-                        type={showPassword ? 'text' : 'password'}
                         id="password"
                         autoComplete="current-password"
                         value={formData.password}
                         onChange={handleChange}
+                        type={showPassword ? 'text' : 'password'}
                         InputProps={{
                             endAdornment: (
                                 <InputAdornment position="end">
