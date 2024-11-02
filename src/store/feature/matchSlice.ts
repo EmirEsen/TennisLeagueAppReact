@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { IGetMatch } from "../../models/get/IGetMatch"
 import { IPostMatch } from "../../models/post/IPostMatch"
 import { IResponse } from "../../models/IResponse"
-import config from "./config"
 import { IPageDto } from "../../models/IPageDto"
 
 export interface IMatchState {
@@ -42,7 +41,7 @@ export const getMatchListByPlayerAndTournament = createAsyncThunk
             'match/getMatchListByPlayerAndTournament',
             async ({ tournamentId, playerId, page, size }) => {
                 const result: IPageDto<IGetMatch> = await fetch(
-                    `${config.BASE_URL}/api/v1/match/${tournamentId}/${playerId}/matches?page=${page}&size=${size}`
+                    `/api/v1/match/${tournamentId}/${playerId}/matches?page=${page}&size=${size}`
                 )
                     .then(data => data.json())
                 console.log('page slice', result);
