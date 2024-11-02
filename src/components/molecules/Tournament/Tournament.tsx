@@ -3,7 +3,8 @@ import { ITournament } from "../../../models/ITournament"
 import { useNavigate } from "react-router-dom";
 import StatusDot from "../../atoms/StatusDot";
 import { IPlayerProfile } from "../../../models/IPlayerProfile";
-import { AllInclusive } from "@mui/icons-material";
+import { AllInclusive, LockOutlined } from "@mui/icons-material";
+import { TournamentPrivacy } from "../../../models/enums/TournamentPrivacy";
 
 function formatTournamentDate(start: string | null, end: string | null, isDurationFinite: boolean): React.ReactNode {
     if (!isDurationFinite) {
@@ -56,6 +57,8 @@ const Tournament: React.FC<TournamentProps> = ({ tournament, tournamentPlayers }
                         <Box>
                             <Typography variant="h6">
                                 {tournament.title}
+                                {tournament.privacy === TournamentPrivacy.PRIVATE
+                                    && <LockOutlined fontSize="small" sx={{ marginLeft: 0.5 }} />}
                             </Typography>
                             <Typography variant="body2" color="textSecondary">
                                 Duration: {formattedDates}
@@ -103,6 +106,8 @@ const Tournament: React.FC<TournamentProps> = ({ tournament, tournamentPlayers }
                         <Box>
                             <Typography variant="h6">
                                 {tournament.title}
+                                {tournament.privacy === TournamentPrivacy.PRIVATE
+                                    && <LockOutlined fontSize="small" sx={{ marginLeft: 0.5, verticalAlign: 'middle' }} />}
                             </Typography>
                             <Typography variant="body2" color="textSecondary">
                                 Duration: {formattedDates}
