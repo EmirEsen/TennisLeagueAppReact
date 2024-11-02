@@ -37,7 +37,7 @@ export const addNewTournament = createAsyncThunk<IResponse, IPostTournament, { r
     }
 )
 
-export const getTournamentList = createAsyncThunk<ITournament[], void, { rejectValue: string }>(
+export const getComunityTournamentList = createAsyncThunk<ITournament[], void, { rejectValue: string }>(
     'tournament/getTournaments',
     async () => {
         const result = await fetch(`${config.BASE_URL}/api/v1/tournament/tournaments`)
@@ -91,10 +91,10 @@ const tournamentSlice = createSlice({
     reducers: {},
     extraReducers: (build) => {
         build
-            .addCase(getTournamentList.pending, (state) => {
+            .addCase(getComunityTournamentList.pending, (state) => {
                 state.isLoading = true;
             })
-            .addCase(getTournamentList.fulfilled, (state, action) => {
+            .addCase(getComunityTournamentList.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.tournamentList = action.payload;
                 console.log(action.payload)
@@ -119,6 +119,7 @@ const tournamentSlice = createSlice({
             })
             .addCase(getMyTournaments.fulfilled, (state, action) => {
                 state.isLoading = false;
+                console.log(action.payload)
                 state.myTournaments = action.payload;
             })
             .addCase(getMyTournaments.rejected, (state) => {

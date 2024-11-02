@@ -97,7 +97,7 @@ function PlayerView() {
                             </Grid>
                         ))
                     ) : (
-                        <Box>No matches found</Box>
+                        <Box>No Match Found</Box>
                     )}
                 </Grid>
 

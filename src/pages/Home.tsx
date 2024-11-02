@@ -8,7 +8,7 @@ import { Toaster } from 'react-hot-toast';
 import { fetchSendConfirmationEmail } from '../store/feature/authSlice';
 import AddIcon from '@mui/icons-material/Add';
 import Tournament from '../components/molecules/Tournament/Tournament';
-import { getTournamentList } from '../store/feature/tournamentSlice';
+import { getComunityTournamentList } from '../store/feature/tournamentSlice';
 import ModalAddNewTournament from '../components/molecules/Tournament/ModaNewTournament';
 import config from '../store/feature/config';
 import { IPlayerProfile } from '../models/IPlayerProfile';
@@ -25,7 +25,7 @@ export default function Home() {
     useEffect(() => {
         dispatch(getPlayerProfileList());
         dispatch(getMatchList());
-        dispatch(getTournamentList());
+        dispatch(getComunityTournamentList());
         if (isAuth) {
             dispatch(fetchPlayerProfile());
         }
@@ -92,7 +92,7 @@ export default function Home() {
     }
 
     const refreshTournamentList = () => {
-        dispatch(getTournamentList());
+        dispatch(getComunityTournamentList());
     };
 
     if (isTournamentLoading) {
