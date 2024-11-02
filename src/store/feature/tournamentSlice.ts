@@ -49,7 +49,7 @@ export const getMyTournaments = createAsyncThunk<ITournament[], void, { rejectVa
     'tournament/getMyTournaments',
     async (_, { rejectWithValue }) => {
         try {
-            const response = await fetch(`${config.BASE_URL}/api/v1/tournament/my-tournaments`, {
+            const response = await fetch(`/api/v1/tournament/my-tournaments`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
