@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { useDispatch } from 'react-redux';
 import { AppDispatch, useAppSelector } from '../../../store';
 import { IPostTournament } from '../../../models/post/IPostTournament';
-import { addNewTournament, getTournamentList } from '../../../store/feature/tournamentSlice';
+import { addNewTournament, getComunityTournamentList } from '../../../store/feature/tournamentSlice';
 import MultipleSelectCheckmarks from '../../atoms/MultipleSelectCheckmarks';
 import { logout } from '../../../store/feature/authSlice';
 import { useNavigate } from 'react-router-dom';
@@ -90,7 +90,7 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
             const response = await dispatch(addNewTournament(formState)).unwrap();;
             if (response) {
                 toast.success('Tournament Added Successfully!')
-                dispatch(getTournamentList());
+                dispatch(getComunityTournamentList());
                 onClose();
             }
         } catch (error) {

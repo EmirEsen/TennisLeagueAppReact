@@ -46,14 +46,14 @@ export default function RankList(props: { players: IGetTournamentPlayer[], tourn
                         <TableCell colSpan={titleColSpan} align="left" sx={{ fontSize: '1.25rem', p: 1 }} >
                             {title}
                         </TableCell>
-                        <TableCell colSpan={statusColSpan} align="right" sx={{ fontSize: '0.875rem', fontWeight: 'light', p: 1 }}>
+                        <TableCell colSpan={statusColSpan} align="right" sx={{ fontSize: '0.875rem', fontWeight: 'light', p: 0.5 }}>
                             {isDurationFinite ? (
                                 <>
                                     {`${dayjs(start).format('DD MMM YY')} - ${dayjs(end).format('DD MMM YY')}`}
                                     <AccessAlarmOutlined sx={{ ml: 1 }} />
                                 </>
                             ) : (
-                                <Box display="flex" alignItems="center">
+                                <Box display="flex" alignItems="center" justifyContent={'end'}>
                                     <Typography>{status}</Typography>
                                     <AllInclusive sx={{ fontSize: 20, ml: 1 }} />
                                     <AccessAlarmOutlined sx={{ ml: 1 }} />
