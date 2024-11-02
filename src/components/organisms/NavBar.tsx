@@ -34,7 +34,8 @@ export default function NavBar() {
 
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-    const [selectedPage, setSelectedPage] = React.useState<string>('Community'); // Default selected page
+    // const [anchorElNotification, setAnchorElNotification] = React.useState<null | HTMLElement>(null);
+    const [selectedPage, setSelectedPage] = React.useState<string>('Community');
     const isAuth = useAppSelector(state => state.auth.isAuth)
     const loggedInPlayer = useAppSelector(state => state.player.loggedInProfile)
 
@@ -45,15 +46,15 @@ export default function NavBar() {
         setAnchorElUser(event.currentTarget);
     };
 
+    // const handleOpenNotificationMenu = (event: React.MouseEvent<HTMLElement>) => {
+    //     setAnchorElNotification(event.currentTarget);
+    // };
+
     const handleCloseNavMenu = (page: string) => {
         setAnchorElNav(null);
         setSelectedPage(page);
         if (selectedPage !== page) {
-            if (page === 'Community') {
-                navigate('/');
-            } else if (page === 'My Tournaments') {
-                navigate('/my-tournaments');
-            }
+            navigate(page === 'Community' ? '/' : '/my-tournaments');
         }
     };
 
@@ -67,6 +68,10 @@ export default function NavBar() {
             navigate('/profile');
         }
     };
+
+    // const handleCloseNotificationMenu = () => {
+    //     setAnchorElNotification(null);
+    // };
 
     return (
         <ThemeProvider theme={tennis}>
@@ -174,6 +179,24 @@ export default function NavBar() {
                                 </Button>
                             ))}
                         </Box>
+
+                        {/* <Box sx={{ flexGrow: 0, mr: 3 }}>
+                            <Tooltip title="Notifications">
+                                <IconButton onClick={handleOpenNotificationMenu} color="inherit" size='small'>
+                                    <Badge badgeContent={4} color="error">
+                                        <Notifications />
+                                    </Badge>
+                                </IconButton>
+                            </Tooltip>
+                            <Menu
+                                anchorEl={anchorElNotification}
+                                open={Boolean(anchorElNotification)}
+                                onClose={handleCloseNotificationMenu}
+                                sx={{ mt: '45px' }}
+                            >
+                                <MenuItem onClick={handleCloseNotificationMenu}>No new notifications</MenuItem>
+                            </Menu>
+                        </Box> */}
 
                         <Box sx={{ flexGrow: 0 }}>
                             {isAuth ? (
