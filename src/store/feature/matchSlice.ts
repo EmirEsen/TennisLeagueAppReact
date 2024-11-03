@@ -94,6 +94,17 @@ const matchSlice = createSlice({
                 state.matchList = action.payload;
                 console.log(action.payload)
             })
+            .addCase(getTournamentMatchList.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(getTournamentMatchList.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.matchList = action.payload; // Update state with matches by tournament
+            })
+            .addCase(getTournamentMatchList.rejected, (state, action) => {
+                state.isLoading = false;
+                console.error(action.payload);
+            })
             .addCase(addNewMatch.pending, (state) => {
                 state.isLoading = true;
             })

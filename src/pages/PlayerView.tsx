@@ -92,7 +92,7 @@ function PlayerView() {
                     }}>
                     {matchList.length > 0 ? (
                         matchList.map((match) => (
-                            <Grid item key={match.id} sx={{ minWidth: '400px' }}>
+                            <Grid item key={match.id}>
                                 <MatchInfo match={match} tournamentPlayerList={tournamentPlayerList} />
                             </Grid>
                         ))
@@ -106,7 +106,7 @@ function PlayerView() {
                         <Pagination
                             count={paginationCount}
                             shape="rounded"
-                            page={currentPage + 1} // Pagination starts at 1
+                            page={currentPage + 1}
                             onChange={handlePageChange}
                         />
                     </Stack>

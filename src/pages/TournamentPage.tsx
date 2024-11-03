@@ -1,5 +1,5 @@
 import { Alert, Box, Button, Container, Fab, Grid, Skeleton, Typography, useMediaQuery } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AppDispatch, useAppSelector } from "../store";
@@ -79,12 +79,6 @@ const TournamentPage: React.FC = () => {
         return 'Add New Match';
     }
 
-    const sortedMatchList = useMemo(() => {
-        return [...tournamentMatchList].sort((a, b) => {
-            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        });
-    }, [tournamentMatchList]);
-
     useEffect(() => {
         if (loggedInProfile) {
             setIsEmailVerified(loggedInProfile.isEmailVerified);
@@ -113,10 +107,8 @@ const TournamentPage: React.FC = () => {
         dispatch(getTournamentMatchList({ tournamentId }))
             .then((action) => {
                 if (getTournamentMatchList.fulfilled.match(action)) {
-                    // Set the match list from the action's payload
                     setTournamentMatchList(action.payload);
                 } else {
-                    // Handle the case where the action is not fulfilled
                     console.error('Failed to fetch match list:', action.payload);
                 }
             });
@@ -124,10 +116,8 @@ const TournamentPage: React.FC = () => {
         dispatch(getPlayersOfTournament(tournamentId))
             .then((action) => {
                 if (getPlayersOfTournament.fulfilled.match(action)) {
-                    // Set the player list from the action's payload
                     setTournamentPlayerList(action.payload);
                 } else {
-                    // Handle the case where the action is not fulfilled
                     console.error('Failed to fetch player list:', action.payload);
                 }
             });
@@ -198,7 +188,7 @@ const TournamentPage: React.FC = () => {
                                 </Box>
                             ))
                         ) : (
-                            sortedMatchList.map((match, index) => (
+                            tournamentMatchList.map((match, index) => (
                                 <MatchInfo key={index} match={match} tournamentPlayerList={tournamentPlayerList} />
                             ))
                         )}
