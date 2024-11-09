@@ -75,7 +75,7 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
 
     const handleParticipantChange = (selectedIds: string[]) => {
         const updatedIds = loggedInProfile?.id
-            ? [...new Set([loggedInProfile.id, ...selectedIds])]
+            ? [...new Set([...selectedIds])]
             : selectedIds;
         setFormState({
             ...formState,
