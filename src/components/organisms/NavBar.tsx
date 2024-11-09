@@ -46,6 +46,16 @@ export default function NavBar() {
         setAnchorElUser(event.currentTarget);
     };
 
+    React.useEffect(() => {
+        if (location.pathname === '/my-tournaments') {
+            setSelectedPage('My Tournaments');
+        } else if (location.pathname === '/') {
+            setSelectedPage('Community');
+        } else {
+            setSelectedPage('');
+        }
+    }, [location.pathname]);
+
     // const handleOpenNotificationMenu = (event: React.MouseEvent<HTMLElement>) => {
     //     setAnchorElNotification(event.currentTarget);
     // };
