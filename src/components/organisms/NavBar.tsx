@@ -79,10 +79,6 @@ export default function NavBar() {
         }
     };
 
-    // const handleCloseNotificationMenu = () => {
-    //     setAnchorElNotification(null);
-    // };
-
     return (
         <ThemeProvider theme={tennis}>
             <AppBar position="sticky">
