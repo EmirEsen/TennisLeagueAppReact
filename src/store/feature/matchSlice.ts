@@ -15,7 +15,6 @@ const initialMatchState: IMatchState = {
     isLoading: false
 }
 
-
 export const getMatchList = createAsyncThunk<IGetMatch[], void, { rejectValue: string }>(
     'match/getMatchs',
     async () => {
@@ -59,6 +58,31 @@ export const getTournamentMatchList = createAsyncThunk<IGetMatch[], { tournament
     }
 )
 
+export const fetchMatchByTournamentIdAndMatchId = createAsyncThunk<IGetMatch, { tournamentId: string, matchId: string }, { rejectValue: string }>(
+    'match/getMatchByTournamentIdAndMatchId',
+    async ({ tournamentId, matchId }, { rejectWithValue }) => {
+        if (!tournamentId || !matchId) {
+            return rejectWithValue("Missing tournamentId or matchId");
+        }
+        try {
+            const response = await fetch(`${config.BASE_URL}/api/v1/match/${tournamentId}/${matchId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            if (!response.ok) throw new Error("Network response was not ok");
+
+            const result: IGetMatch = await response.json();
+            return result;
+        } catch (error) {
+            return rejectWithValue("Network error");
+        }
+    }
+);
+
+
 export const addNewMatch = createAsyncThunk<IResponse, IPostMatch, { rejectValue: string }>(
     'match/addNewMatch',
     async (payload: IPostMatch, { rejectWithValue }) => {
@@ -80,6 +104,58 @@ export const addNewMatch = createAsyncThunk<IResponse, IPostMatch, { rejectValue
     }
 )
 
+export const approveMatch = createAsyncThunk<IResponse, { tournamentId: string, matchId: string }, { rejectValue: string }>(
+    'match/approveMatch',
+    async ({ tournamentId, matchId }, { rejectWithValue }) => {
+        try {
+            const response = await fetch(`${config.BASE_URL}/api/v1/match/approve-match/${tournamentId}/${matchId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                return rejectWithValue(errorText || "Failed to approve match");
+            }
+
+            const result: IResponse = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Approve Match Error:", error);
+            return rejectWithValue("Network error");
+        }
+    }
+);
+
+export const revokeMatch = createAsyncThunk<IResponse, { tournamentId: string, matchId: string }, { rejectValue: string }>(
+    'match/revokeMatch',
+    async ({ tournamentId, matchId }, { rejectWithValue }) => {
+        try {
+            const response = await fetch(`${config.BASE_URL}/api/v1/match/revoke-match/${tournamentId}/${matchId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                return rejectWithValue(errorText || "Failed to revoke match");
+            }
+                        
+            const result: IResponse = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Revoke Match Error:", error);
+            return rejectWithValue("Network error");
+        }
+    }
+);
+
 const matchSlice = createSlice({
     name: 'match',
     initialState: initialMatchState,
@@ -99,7 +175,7 @@ const matchSlice = createSlice({
             })
             .addCase(getTournamentMatchList.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.matchList = action.payload; // Update state with matches by tournament
+                state.matchList = action.payload;
             })
             .addCase(getTournamentMatchList.rejected, (state, action) => {
                 state.isLoading = false;

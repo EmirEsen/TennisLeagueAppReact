@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { authSlice, matchSlice, playerSlice } from "./feature";
 import tournamentSlice from "./feature/tournamentSlice";
 import tournamentPlayerSlice from "./feature/tournamentPlayerSlice";
+import notificationSlice from "./feature/notificationSlice";
 
 const store = configureStore({
     reducer: {
@@ -10,7 +11,8 @@ const store = configureStore({
         player: playerSlice,
         match: matchSlice,
         tournament: tournamentSlice,
-        tournamentPlayer: tournamentPlayerSlice
+        tournamentPlayer: tournamentPlayerSlice,
+        Notification: notificationSlice
     }
 });
 

@@ -6,11 +6,12 @@ export interface score {
 }
 
 export interface IGetMatch {
+    id: string
+    isApproved: boolean
+    tournamentId: string
     court?: string
     date: string
     time?: string
-    id: string
-    tournamentId: string
     player1Id: string
     player2Id: string
     score: score[]
