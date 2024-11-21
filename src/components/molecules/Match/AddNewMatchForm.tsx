@@ -5,14 +5,13 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import { useDispatch } from 'react-redux';
 import { AppDispatch, useAppSelector } from '../../../store';
-import { addNewMatch, getMatchList } from '../../../store/feature/matchSlice';
+import { addNewMatch } from '../../../store/feature/matchSlice';
 import { useNavigate } from 'react-router-dom';
 import { IPostMatch, score } from '../../../models/post/IPostMatch';
 import SelectPlayerInput from '../../atoms/SelectPlayerInput';
 import { logout } from '../../../store/feature/authSlice';
 import toast from 'react-hot-toast';
 import { IGetTournamentPlayer } from '../../../models/get/IGetTournamentPlayer';
-import { getPlayersOfTournament } from '../../../store/feature/tournamentPlayerSlice';
 
 
 const AddNewMatch = ({ onClose, tournamentId, tournamentPlayerList }:
@@ -132,35 +131,29 @@ const AddNewMatch = ({ onClose, tournamentId, tournamentPlayerList }:
             const response = await dispatch(addNewMatch(formState)).unwrap();
 
             if (response) {
-                toast.success('Match Added Successfully!');
-
-                // Fetching the updated match list after adding the match
-                await dispatch(getMatchList());
-
-                // Fetching the tournament players to check updated matches for logged-in profile
-                const tournamentPlayers = await dispatch(getPlayersOfTournament(tournamentId)).unwrap();
-                const updatedProfile = tournamentPlayers.find(player => player.playerId === loggedInProfile?.id);
-
-                if (updatedProfile) {
-                    if (updatedProfile.matchPlayed < 3) {
-                        toast((t) => (
-                            <Grid container justifyContent={'space-between'}>
-                                <Grid item>
-                                    Congrats! 📣, {updatedProfile?.firstname}. After {3 - updatedProfile.matchPlayed} more matches, your Rating will be set!
-                                    <Button onClick={() => toast.dismiss(t.id)}>
-                                        Dismiss
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        ), {
-                            duration: 6000
-                        });
-                    } else if (updatedProfile.matchPlayed === 3) {
-                        toast(`Your rating has been revealed, ${updatedProfile?.rating}`, {
-                            icon: '✨',
-                        });
-                    }
-                }
+                // Find opponent's name from tournamentPlayerList
+                const opponent = tournamentPlayerList.find(player => player.playerId === formState.player2Id);
+                
+                toast((t) => (
+                    <Grid container direction="column" spacing={1}>
+                        <Grid item>
+                            Match Added Successfully! ✅
+                        </Grid>
+                        <Grid item>
+                            When {opponent?.firstname} approves the match, stats will be updated.
+                        </Grid>
+                        <Grid item sx={{ fontSize: '0.8em', color: 'gray' }}>
+                            Note: Match will be auto-approved in 15 minutes if not reviewed.
+                        </Grid>
+                        <Grid item>
+                            <Button onClick={() => toast.dismiss(t.id)}>
+                                Dismiss
+                            </Button>
+                        </Grid>
+                    </Grid>
+                ), {
+                    duration: 8000
+                });
 
                 onClose();
             }
