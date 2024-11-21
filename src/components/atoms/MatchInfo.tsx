@@ -45,13 +45,13 @@ function getRatingChangeDisplay(ratingChange: number) {
 }
 
 function MatchInfo({ match, tournamentPlayerList }: { match: IGetMatch; tournamentPlayerList?: IGetTournamentPlayer[] }) {
-    const { court, date, time, score, player1Id, player2Id, winnerId } = match;
+    const { isApproved, court, date, time, score, player1Id, player2Id, winnerId } = match;
 
     const player1 = tournamentPlayerList?.find((player) => player.playerId === player1Id);
     const player2 = tournamentPlayerList?.find((player) => player.playerId === player2Id);
 
     if (!player1 || !player2) {
-        return <div>mathes not found</div>;
+        return <div>Players not found</div>;
     }
 
     const isDraw = winnerId === 'draw';
@@ -68,7 +68,7 @@ function MatchInfo({ match, tournamentPlayerList }: { match: IGetMatch; tourname
             <Divider sx={{ marginY: 1 }} />
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
-                    {getRatingChangeDisplay(match.player1RatingChange)}
+                    {isApproved && getRatingChangeDisplay(match.player1RatingChange)}
                     <Typography variant="body1" fontWeight="bold" color="primary" sx={{ flexGrow: 1 }}>
                         {player1.firstname[0]}. {player1.lastname}
                         {!isDraw && winner === player1 && <span style={{ color: 'green' }}> ✔</span>}
@@ -78,7 +78,7 @@ function MatchInfo({ match, tournamentPlayerList }: { match: IGetMatch; tourname
                     </Typography>
                 </Grid>
                 <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
-                    {getRatingChangeDisplay(match.player2RatingChange)}
+                    {isApproved && getRatingChangeDisplay(match.player2RatingChange)}
                     <Typography variant="body1" fontWeight="bold" color="primary" sx={{ flexGrow: 1 }}>
                         {player2.firstname[0]}. {player2.lastname}
                         {!isDraw && winner === player2 && <span style={{ color: 'green' }}> ✔</span>}
