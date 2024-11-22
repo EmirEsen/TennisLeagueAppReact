@@ -49,13 +49,13 @@ const styles = {
 interface NotificationItemProps {
     notification: IMatchNotification;    
     onApprove: (id: string) => void;
-    onRevoke: (id: string) => void;
+    onReject: (id: string) => void;
 }
 
 const MatchApproveNotification: React.FC<NotificationItemProps> = ({
     notification,    
     onApprove,
-    onRevoke,
+    onReject,
 }) => {
     const dispatch = useDispatch<AppDispatch>();
     const [match, setMatch] = useState<IGetMatch | null>(null);
@@ -130,10 +130,10 @@ const MatchApproveNotification: React.FC<NotificationItemProps> = ({
                         color="error" 
                         onClick={(e) => {
                             e.stopPropagation(); // Prevent MenuItem onClick
-                            onRevoke(notification.id);
+                            onReject(notification.id);
                         }}
                     >
-                        Revoke
+                        Reject
                     </Button>
                 </Box>
             </Box>
