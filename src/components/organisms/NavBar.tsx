@@ -8,7 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import MenuIcon from '@mui/icons-material/Menu';
 import Menu from '@mui/material/Menu';
-import { Avatar, Badge, Button, Container, ThemeProvider, createTheme } from '@mui/material';
+import { Avatar, Badge, Button, Container, Grid, ThemeProvider, createTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { AppDispatch, useAppSelector } from '../../store';
@@ -16,8 +16,9 @@ import { logout } from '../../store/feature/authSlice';
 import { Notifications } from '@mui/icons-material';
 import { fetchNotification, fetchPlayerNotifications, markNotificationAsRead } from '../../store/feature/notificationSlice';
 import MatchApproveNotification from '../atoms/MatchApproveNotification';
-import { approveMatch, revokeMatch } from '../../store/feature/matchSlice';
+import { approveMatch, getMatchList, rejectMatch } from '../../store/feature/matchSlice';
 import toast from 'react-hot-toast';
+import { getPlayersOfTournament } from '../../store/feature/tournamentPlayerSlice';
 
 const tennis = createTheme({
     palette: {
@@ -74,8 +75,36 @@ export default function NavBar() {
             }
 
             const approveResponse = await dispatch(approveMatch({ tournamentId, matchId })).unwrap();
-            
+
             if (approveResponse.code === 200) {
+                // Fetch updated match list and tournament players
+                await dispatch(getMatchList());
+                const tournamentPlayers = await dispatch(getPlayersOfTournament(tournamentId)).unwrap();
+                const updatedProfile = tournamentPlayers.find(player => player.playerId === loggedInPlayer?.id);
+
+                // Show appropriate toast based on matches played
+                if (updatedProfile) {
+                    if (updatedProfile.matchPlayed < 3) {
+                        toast((t) => (
+                            <Grid container justifyContent={'space-between'}>
+                                <Grid item>
+                                    Congrats! 📣, {updatedProfile?.firstname}. After {3 - updatedProfile.matchPlayed} more matches, your Rating will be set!
+                                    <Button onClick={() => toast.dismiss(t.id)}>
+                                        Dismiss
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        ), {
+                            duration: 6000
+                        });
+                    } else if (updatedProfile.matchPlayed === 3) {
+                        toast(`Your rating has been revealed, ${updatedProfile?.rating}`, {
+                            icon: '✨',
+                        });
+                    }
+                }
+
+                // Mark notification as read and fetch updated notifications
                 await dispatch(markNotificationAsRead(notificationId));
                 if (loggedInPlayer) {
                     await dispatch(fetchPlayerNotifications(loggedInPlayer.id));
@@ -85,11 +114,12 @@ export default function NavBar() {
                 toast.error(approveResponse.message || 'Error approving match');
             }
         } catch (error) {
+            console.log('error', error);
             toast.error('Error handling approve notification');
         }
     };
 
-    const handleRevokeMatch = async(notificationId: string) => {
+    const handleRejectMatch = async(notificationId: string) => {
         try {
             const notification = await dispatch(fetchNotification(notificationId)).unwrap();
 
@@ -107,7 +137,7 @@ export default function NavBar() {
                 return;
             }
 
-            const revokeResponse = await dispatch(revokeMatch({ tournamentId, matchId })).unwrap();
+            const revokeResponse = await dispatch(rejectMatch({ tournamentId, matchId })).unwrap();
             console.log('revokeResponse', revokeResponse);
             if (revokeResponse.code === 200) {
                 await dispatch(markNotificationAsRead(notificationId));
@@ -302,7 +332,7 @@ export default function NavBar() {
                                                 key={notification.id}                                                
                                                 notification={notification}
                                                 onApprove={handleApproveMatch}
-                                                onRevoke={handleRevokeMatch}
+                                                onReject={handleRejectMatch}
                                             />
                                         ))
                                     )}
