@@ -1,3 +1,5 @@
+import { MatchStatus } from "../enums/MatchStatus"
+
 export interface score {
     player1Id: string
     player1Score: number
@@ -7,7 +9,7 @@ export interface score {
 
 export interface IGetMatch {
     id: string
-    isApproved: boolean
+    status: MatchStatus
     tournamentId: string
     court?: string
     date: string

@@ -152,7 +152,7 @@ const AddNewMatch = ({ onClose, tournamentId, tournamentPlayerList }:
                         </Grid>
                     </Grid>
                 ), {
-                    duration: 8000
+                    duration: 6000
                 });
 
                 onClose();

@@ -130,11 +130,11 @@ export const approveMatch = createAsyncThunk<IResponse, { tournamentId: string, 
     }
 );
 
-export const revokeMatch = createAsyncThunk<IResponse, { tournamentId: string, matchId: string }, { rejectValue: string }>(
-    'match/revokeMatch',
+export const rejectMatch = createAsyncThunk<IResponse, { tournamentId: string, matchId: string }, { rejectValue: string }>(
+    'match/rejectMatch',
     async ({ tournamentId, matchId }, { rejectWithValue }) => {
         try {
-            const response = await fetch(`${config.BASE_URL}/api/v1/match/revoke-match/${tournamentId}/${matchId}`, {
+            const response = await fetch(`${config.BASE_URL}/api/v1/match/reject-match/${tournamentId}/${matchId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -144,13 +144,13 @@ export const revokeMatch = createAsyncThunk<IResponse, { tournamentId: string, m
 
             if (!response.ok) {
                 const errorText = await response.text();
-                return rejectWithValue(errorText || "Failed to revoke match");
+                return rejectWithValue(errorText || "Failed to reject match");
             }
-                        
+
             const result: IResponse = await response.json();
             return result;
         } catch (error) {
-            console.error("Revoke Match Error:", error);
+            console.error("Reject Match Error:", error);
             return rejectWithValue("Network error");
         }
     }
