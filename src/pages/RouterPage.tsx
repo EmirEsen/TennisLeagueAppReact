@@ -16,6 +16,7 @@ import MyTournaments from "./MyTournaments";
 import NavBar from "../components/organisms/NavBar";
 import AuthGuard from "./auth/AuthGuard";
 import { Box, CircularProgress } from "@mui/material";
+import { Toaster } from "react-hot-toast";
 
 function AppContent() {
     const dispatch = useDispatch<AppDispatch>();
@@ -64,6 +65,7 @@ function AppContent() {
 
     return (
         <>
+            <Toaster />
             {!hideNavBar && <NavBar />}
             <Routes>
                 <Route

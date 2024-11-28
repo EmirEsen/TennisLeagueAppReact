@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { fetchPlayerProfile, getPlayerProfileList } from '../store/feature/playerSlice';
 import { getMatchList } from '../store/feature/matchSlice';
-import { Toaster } from 'react-hot-toast';
 import { fetchSendConfirmationEmail } from '../store/feature/authSlice';
 import AddIcon from '@mui/icons-material/Add';
 import Tournament from '../components/molecules/Tournament/Tournament';
@@ -103,8 +102,7 @@ export default function MyTournaments() {
     }
 
     return (
-        <>
-            <Toaster />
+        <>            
             <Container maxWidth="lg" style={{ marginTop: '20px' }}>
                 <Grid container spacing={2} flexDirection={{ md: 'row', xs: 'column' }}>
                     {isAuth && !isEmailVerified && (

@@ -1,7 +1,6 @@
 import { Alert, Box, Button, Container, Fab, Grid, Skeleton, Typography, useMediaQuery } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
 import { AppDispatch, useAppSelector } from "../store";
 import { useDispatch } from "react-redux";
 import { getTournamentMatchList } from "../store/feature/matchSlice";
@@ -15,6 +14,10 @@ import { IGetMatch } from "../models/get/IGetMatch";
 import { IGetTournamentPlayer } from "../models/get/IGetTournamentPlayer";
 import { ITournament } from "../models/ITournament";
 import { getTournamentById } from "../store/feature/tournamentSlice";
+import { MatchStatus } from "../models/enums/MatchStatus";
+import ApproveMatchButton from "../components/atoms/buttons/ApproveMatchButton";
+import RejectMatchButton from "../components/atoms/buttons/RejectMatchButton";
+import { useMatchActions } from "../components/atoms/actions/useMatchActions";
 
 const TournamentPage: React.FC = () => {
 
@@ -53,8 +56,8 @@ const TournamentPage: React.FC = () => {
                     setTournamentPlayerList(players);
 
                     setLoadingMatches(true)
-                    const matches = await dispatch(getTournamentMatchList({ tournamentId })).unwrap();
-                    console.log(matches)
+                    const matches = await dispatch(getTournamentMatchList({ tournamentId })).unwrap(); 
+                    console.log('matches on tournament page', matches)           
                     setTournamentMatchList(matches);
                 }
             } catch (error) {
@@ -123,9 +126,21 @@ const TournamentPage: React.FC = () => {
             });
     };
 
+    const { handleApproveMatch, handleRejectMatch } = useMatchActions(refreshRankListAndMatchList);
+
     const isFeaturesAvailable = () => {
         return isAuth && isEmailVerified;
     }
+
+    const isReviewer = (match: IGetMatch) => {
+        if (match.status !== MatchStatus.PENDING || !loggedInProfile?.id) {
+            return false;
+        }
+
+        // Since player2 is always the opponent/reviewer, they should be the only one able to review
+        return loggedInProfile.id === match.player2Id;
+    };
+
 
     const isPlayerInTournament = tournamentPlayerList.some(player => player.playerId === loggedInProfile?.id);
 
@@ -140,9 +155,6 @@ const TournamentPage: React.FC = () => {
 
     return (
         <>
-
-            <Toaster />
-
             <Container maxWidth="lg" style={{ marginTop: '20px' }}>
                 <Grid container spacing={2} flexDirection={{ md: 'row', xs: 'column' }}>
 
@@ -189,7 +201,21 @@ const TournamentPage: React.FC = () => {
                             ))
                         ) : (
                             tournamentMatchList.map((match, index) => (
-                                <MatchInfo key={index} match={match} tournamentPlayerList={tournamentPlayerList} />
+                                <MatchInfo key={index} 
+                                match={match} 
+                                tournamentPlayerList={tournamentPlayerList}
+                                actionButtons={
+                                    isReviewer(match) && (
+                                        <>
+                                            <RejectMatchButton 
+                                               onReject={() => handleRejectMatch(match.id, match.tournamentId)} 
+                                            />
+                                            <ApproveMatchButton 
+                                               onApprove={() => handleApproveMatch(match.id, match.tournamentId)} 
+                                            />
+                                        </>
+                                    )
+                                } />
                             ))
                         )}
                     </Grid>

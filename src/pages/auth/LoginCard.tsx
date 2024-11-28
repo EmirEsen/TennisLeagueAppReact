@@ -13,7 +13,6 @@ import Typography from '@mui/material/Typography';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store';
 import { fetchLogin } from '../../store/feature/authSlice';
-import { Toaster } from 'react-hot-toast';
 import { Icon as Iconf } from '@iconify/react';
 
 import { Alert, Collapse, IconButton, InputAdornment, Link as MUILink } from '@mui/material'
@@ -98,8 +97,7 @@ export default function LoginCard() {
     };
 
     return (
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-            <Toaster />
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>            
             <Box
                 sx={{
                     my: 8,

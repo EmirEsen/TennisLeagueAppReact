@@ -3,15 +3,12 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import federerserve from '../../images/federerserve.jpg';
 import LoginCard from './LoginCard';
-import { Toaster } from 'react-hot-toast';
-
 
 export default function Login() {
 
   return (
     <Grid container component="main" sx={{ height: '100vh' }}>
-      <CssBaseline />
-      <Toaster />
+      <CssBaseline />      
       <Grid
         item
         xs={false}
