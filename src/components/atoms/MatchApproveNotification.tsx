@@ -114,17 +114,7 @@ const MatchApproveNotification: React.FC<NotificationItemProps> = ({
                     match && <MatchInfo match={match} tournamentPlayerList={playerTournaments} />
                 )}
 
-                <Box sx={styles.buttonContainer}>
-                    <Button 
-                        variant="contained" 
-                        color="success" 
-                        onClick={(e) => {
-                            e.stopPropagation(); // Prevent MenuItem onClick
-                            onApprove(notification.id);
-                        }}
-                    >
-                        Approve
-                    </Button>
+                <Box sx={styles.buttonContainer}>                
                     <Button 
                         variant="contained" 
                         color="error" 
@@ -134,6 +124,16 @@ const MatchApproveNotification: React.FC<NotificationItemProps> = ({
                         }}
                     >
                         Reject
+                    </Button>
+                    <Button 
+                        variant="contained" 
+                        color="success" 
+                        onClick={(e) => {
+                            e.stopPropagation(); // Prevent MenuItem onClick
+                            onApprove(notification.id);
+                        }}
+                    >
+                        Approve
                     </Button>
                 </Box>
             </Box>
