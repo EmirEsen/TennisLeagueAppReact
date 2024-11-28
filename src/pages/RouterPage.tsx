@@ -15,7 +15,7 @@ import TournamentPage from "./TournamentPage";
 import MyTournaments from "./MyTournaments";
 import NavBar from "../components/organisms/NavBar";
 import AuthGuard from "./auth/AuthGuard";
-import { CircularProgress } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 
 function AppContent() {
     const dispatch = useDispatch<AppDispatch>();
@@ -45,7 +45,19 @@ function AppContent() {
     }, [dispatch, token, profile]);
 
     if (loading) {
-        return <CircularProgress />; // Loading screen while waiting for profile fetch
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: '100vh',
+                    width: '100%'
+                }}
+            >
+                <CircularProgress />
+            </Box>
+        ); // Loading screen while waiting for profile fetch
     }
 
     const hideNavBar = location.pathname === "/login" || location.pathname === "/register";
