@@ -8,7 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import MenuIcon from '@mui/icons-material/Menu';
 import Menu from '@mui/material/Menu';
-import { Avatar, Badge, Button, Container, Grid, ThemeProvider, createTheme } from '@mui/material';
+import { Avatar, Badge, Button, Container, ThemeProvider, createTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { AppDispatch, useAppSelector } from '../../store';
@@ -16,9 +16,8 @@ import { logout } from '../../store/feature/authSlice';
 import { Notifications } from '@mui/icons-material';
 import { fetchNotification, fetchPlayerNotifications, markNotificationAsRead } from '../../store/feature/notificationSlice';
 import MatchApproveNotification from '../atoms/MatchApproveNotification';
-import { approveMatch, getMatchList, rejectMatch } from '../../store/feature/matchSlice';
 import toast from 'react-hot-toast';
-import { getPlayersOfTournament } from '../../store/feature/tournamentPlayerSlice';
+import { useMatchActions } from '../atoms/actions/useMatchActions';
 
 const tennis = createTheme({
     palette: {
@@ -35,6 +34,7 @@ const settings = {
 };
 
 export default function NavBar() {
+    const { handleApproveMatch, handleRejectMatch } = useMatchActions();
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
@@ -56,97 +56,36 @@ export default function NavBar() {
         setAnchorElUser(event.currentTarget);
     };
 
-    const handleApproveMatch = async (notificationId: string) => {
+    const handleApproveMatchNotification = async (notificationId: string) => {
         try {
             const notification = await dispatch(fetchNotification(notificationId)).unwrap();
-
-            if (!notification) {
-                console.error("Notification not found");
-                toast.error('Notification not found');
-                return;
-            }
-
-            const { tournamentId, matchId } = notification;
-
-            if (!tournamentId || !matchId) {
-                console.error("Invalid notification data");
+            if (!notification || !notification.tournamentId || !notification.matchId) {
                 toast.error('Invalid notification data');
                 return;
             }
-
-            const approveResponse = await dispatch(approveMatch({ tournamentId, matchId })).unwrap();
-
-            if (approveResponse.code === 200) {
-                // Fetch updated match list and tournament players
-                await dispatch(getMatchList());
-                const tournamentPlayers = await dispatch(getPlayersOfTournament(tournamentId)).unwrap();
-                const updatedProfile = tournamentPlayers.find(player => player.playerId === loggedInPlayer?.id);
-
-                // Show appropriate toast based on matches played
-                if (updatedProfile) {
-                    if (updatedProfile.matchPlayed < 3) {
-                        toast((t) => (
-                            <Grid container justifyContent={'space-between'}>
-                                <Grid item>
-                                    Congrats! 📣, {updatedProfile?.firstname}. After {3 - updatedProfile.matchPlayed} more matches, your Rating will be set!
-                                    <Button onClick={() => toast.dismiss(t.id)}>
-                                        Dismiss
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        ), {
-                            duration: 6000
-                        });
-                    } else if (updatedProfile.matchPlayed === 3) {
-                        toast(`Your rating has been revealed, ${updatedProfile?.rating}`, {
-                            icon: '✨',
-                        });
-                    }
-                }
-
-                // Mark notification as read and fetch updated notifications
-                await dispatch(markNotificationAsRead(notificationId));
-                if (loggedInPlayer) {
-                    await dispatch(fetchPlayerNotifications(loggedInPlayer.id));
-                }
-                toast.success('Match approved successfully');
-            } else {
-                toast.error(approveResponse.message || 'Error approving match');
+            
+            await handleApproveMatch(notification.matchId, notification.tournamentId);
+            await dispatch(markNotificationAsRead(notificationId));
+            if (loggedInPlayer) {
+                await dispatch(fetchPlayerNotifications(loggedInPlayer.id));
             }
         } catch (error) {
-            console.log('error', error);
             toast.error('Error handling approve notification');
         }
     };
 
-    const handleRejectMatch = async(notificationId: string) => {
+    const handleRejectMatchNotification = async(notificationId: string) => {
         try {
             const notification = await dispatch(fetchNotification(notificationId)).unwrap();
-
-            if (!notification) {
-                console.error("Notification not found");
-                toast.error('Notification not found');
-                return;
-            }
-
-            const { tournamentId, matchId } = notification;
-
-            if (!tournamentId || !matchId) {
-                console.error("Invalid notification data");
+            if (!notification || !notification.tournamentId || !notification.matchId) {
                 toast.error('Invalid notification data');
                 return;
             }
 
-            const revokeResponse = await dispatch(rejectMatch({ tournamentId, matchId })).unwrap();
-            console.log('revokeResponse', revokeResponse);
-            if (revokeResponse.code === 200) {
-                await dispatch(markNotificationAsRead(notificationId));
-                if (loggedInPlayer) {
-                    await dispatch(fetchPlayerNotifications(loggedInPlayer.id));
-                }
-                toast.error('Match Revoked!');
-            } else {
-                toast.error(revokeResponse.message || 'Error revoking match');
+            await handleRejectMatch(notification.matchId, notification.tournamentId);
+            await dispatch(markNotificationAsRead(notificationId));
+            if (loggedInPlayer) {
+                await dispatch(fetchPlayerNotifications(loggedInPlayer.id));
             }
         } catch (error) {
             toast.error('Error handling revoke notification');
@@ -331,8 +270,8 @@ export default function NavBar() {
                                             <MatchApproveNotification
                                                 key={notification.id}                                                
                                                 notification={notification}
-                                                onApprove={handleApproveMatch}
-                                                onReject={handleRejectMatch}
+                                                onApprove={handleApproveMatchNotification}
+                                                onReject={handleRejectMatchNotification}
                                             />
                                         ))
                                     )}
