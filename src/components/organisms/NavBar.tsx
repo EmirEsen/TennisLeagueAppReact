@@ -8,16 +8,13 @@ import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import MenuIcon from '@mui/icons-material/Menu';
 import Menu from '@mui/material/Menu';
-import { Avatar, Badge, Button, Container, ThemeProvider, createTheme } from '@mui/material';
+import { Avatar, Button, Container, ThemeProvider, createTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { AppDispatch, useAppSelector } from '../../store';
 import { logout } from '../../store/feature/authSlice';
-import { Notifications } from '@mui/icons-material';
-import { fetchNotification, fetchPlayerNotifications, markNotificationAsRead } from '../../store/feature/notificationSlice';
-import MatchApproveNotification from '../atoms/MatchApproveNotification';
-import toast from 'react-hot-toast';
-import { useMatchActions } from '../atoms/actions/useMatchActions';
+import { fetchPlayerNotifications } from '../../store/feature/notificationSlice';
+import NotificationMenu from '../molecules/Notifications/NotificationMenu';
 
 const tennis = createTheme({
     palette: {
@@ -33,63 +30,23 @@ const settings = {
     signedOut: ['Sign In']
 };
 
-export default function NavBar() {
-    const { handleApproveMatch, handleRejectMatch } = useMatchActions();
+export default function NavBar() {    
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
-    const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-    const [anchorElNotification, setAnchorElNotification] = React.useState<null | HTMLElement>(null);
+    const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);    
     const [selectedPage, setSelectedPage] = React.useState<string>('Community');
     const isAuth = useAppSelector(state => state.auth.isAuth)
     const loggedInPlayer = useAppSelector(state => state.player.loggedInProfile);
 
     const notifications = useAppSelector(state => state.Notification.notificationList) || [];
-    const unreadCount = notifications.filter(notif => !notif.isRead).length;
-
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
     };
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
-    };
-
-    const handleApproveMatchNotification = async (notificationId: string) => {
-        try {
-            const notification = await dispatch(fetchNotification(notificationId)).unwrap();
-            if (!notification || !notification.tournamentId || !notification.matchId) {
-                toast.error('Invalid notification data');
-                return;
-            }
-            
-            await handleApproveMatch(notification.matchId, notification.tournamentId);
-            await dispatch(markNotificationAsRead(notificationId));
-            if (loggedInPlayer) {
-                await dispatch(fetchPlayerNotifications(loggedInPlayer.id));
-            }
-        } catch (error) {
-            toast.error('Error handling approve notification');
-        }
-    };
-
-    const handleRejectMatchNotification = async(notificationId: string) => {
-        try {
-            const notification = await dispatch(fetchNotification(notificationId)).unwrap();
-            if (!notification || !notification.tournamentId || !notification.matchId) {
-                toast.error('Invalid notification data');
-                return;
-            }
-
-            await handleRejectMatch(notification.matchId, notification.tournamentId);
-            await dispatch(markNotificationAsRead(notificationId));
-            if (loggedInPlayer) {
-                await dispatch(fetchPlayerNotifications(loggedInPlayer.id));
-            }
-        } catch (error) {
-            toast.error('Error handling revoke notification');
-        }
     };
 
     React.useEffect(() => {
@@ -108,14 +65,6 @@ export default function NavBar() {
             console.log('here is notifications', notifications);
         }
     }, [isAuth, loggedInPlayer, dispatch]);
-
-    const handleOpenNotificationMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorElNotification(event.currentTarget);
-    };
-
-    const handleCloseNotificationMenu = () => {
-        setAnchorElNotification(null);
-    };
 
     const handleCloseNavMenu = (page: string) => {
         setAnchorElNav(null);
@@ -243,41 +192,7 @@ export default function NavBar() {
                             ))}
                         </Box>
 
-                        {isAuth && (
-                            <Box sx={{ flexGrow: 0, mr: 3 }}>
-                                <Tooltip title="Notifications">
-                                    <IconButton onClick={handleOpenNotificationMenu} color="inherit" size='small'>
-                                        <Badge badgeContent={unreadCount} color="error">
-                                            <Notifications />
-                                        </Badge>
-                                    </IconButton>
-                                </Tooltip>
-                                <Menu
-                                    anchorEl={anchorElNotification}
-                                    open={Boolean(anchorElNotification)}
-                                    onClose={handleCloseNotificationMenu}
-                                    sx={{                                                                           
-                                        mt: 4,
-                                        '& .MuiMenu-paper': { // Ensure paper element also has the styling
-                                            borderRadius: '16px',
-                                        },
-                                    }}
-                                >
-                                    {notifications.length === 0 ? (
-                                        <MenuItem onClick={handleCloseNotificationMenu}>No new notification</MenuItem>
-                                    ) : (
-                                        notifications.map((notification) => (
-                                            <MatchApproveNotification
-                                                key={notification.id}                                                
-                                                notification={notification}
-                                                onApprove={handleApproveMatchNotification}
-                                                onReject={handleRejectMatchNotification}
-                                            />
-                                        ))
-                                    )}
-                                </Menu>
-                            </Box>
-                        )}
+                        {isAuth && <NotificationMenu />}
 
                         <Box sx={{ flexGrow: 0 }}>
                             {isAuth ? (
