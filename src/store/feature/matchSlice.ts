@@ -24,8 +24,7 @@ export const getMatchList = createAsyncThunk<IGetMatch[], void, { rejectValue: s
     }
 )
 
-export const getPlayerMatchList = createAsyncThunk<IGetMatch[],
-    { playerId: string; page: number; size: number }, { rejectValue: string }>(
+export const getPlayerMatchList = createAsyncThunk<IGetMatch[],{ playerId: string; page: number; size: number }, { rejectValue: string }>(
         'match/getPlayerMatchs',
         async ({ playerId, page, size }) => {
             const result = await fetch(`${config.BASE_URL}/api/v1/match/matches?playerId=${playerId}?page=${page}&size=${size}`)
@@ -139,6 +138,31 @@ export const rejectMatch = createAsyncThunk<IResponse, { tournamentId: string, m
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                return rejectWithValue(errorText || "Failed to reject match");
+            }
+
+            const result: IResponse = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Reject Match Error:", error);
+            return rejectWithValue("Network error");
+        }
+    }
+);
+
+export const autoRejectMatch = createAsyncThunk<IResponse, { tournamentId: string, matchId: string }, { rejectValue: string }>(
+    'match/autoRejectMatch',
+    async ({ tournamentId, matchId }, { rejectWithValue }) => {
+        try {
+            const response = await fetch(`${config.BASE_URL}/api/v1/match/auto-reject-match/${tournamentId}/${matchId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',                    
                 }
             });
 
