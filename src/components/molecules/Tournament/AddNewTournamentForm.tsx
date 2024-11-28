@@ -9,9 +9,10 @@ import MultipleSelectCheckmarks from '../../atoms/MultipleSelectCheckmarks';
 import { logout } from '../../../store/feature/authSlice';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import TournamentPrivacyRadioButton from '../../atoms/TournamentPrivacyRadioButton';
+
 import { TournamentPrivacy } from '../../../models/enums/TournamentPrivacy';
 import TournamentDurationSwitch from '../../atoms/TournamentDurationSwitch';
+import TournamentPrivacyRadioButton from '../../atoms/buttons/TournamentPrivacyRadioButton';
 
 const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
     const dispatch = useDispatch<AppDispatch>();
@@ -89,13 +90,12 @@ const AddNewTournament = ({ onClose }: { onClose: () => void }) => {
         try {
             const response = await dispatch(addNewTournament(formState)).unwrap();;
             if (response) {
-                toast.success('Tournament Added Successfully!')
-                dispatch(getComunityTournamentList());
+                await dispatch(getComunityTournamentList());
                 onClose();
+                toast.success('Tournament Added Successfully!')
             }
         } catch (error) {
-            console.log('Session Expired. Please log in again.');
-            console.log('bu hata ne ', error)
+            console.log('Session Expired. Please log in again.');            
             dispatch(logout());
             navigate('/login');
         }
