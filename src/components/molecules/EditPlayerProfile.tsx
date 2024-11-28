@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { logout } from '../../store/feature/authSlice';
 import { IPlayerProfile } from '../../models/IPlayerProfile';
 import toast from 'react-hot-toast';
-import GenderRadioButton from '../atoms/GenderRadioButton';
+import GenderRadioButton from '../atoms/buttons/GenderRadioButton';
 
 interface EditPlayerProfileProps {
     playerProfile: IPlayerProfile;
