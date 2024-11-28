@@ -37,7 +37,7 @@ export default function ModalAddNewTournament({
     isActive?: boolean,
     infoText?: string,
     customButton?: React.ReactNode,
-    onTournamentAdded?: () => void  // Add the prop
+    onTournamentAdded?: () => void
 }) {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
@@ -51,7 +51,7 @@ export default function ModalAddNewTournament({
     };
 
     return (
-        <>
+        <>            
             {customButton ? (
                 React.cloneElement(customButton as React.ReactElement, { onClick: handleOpen })
             ) : (
