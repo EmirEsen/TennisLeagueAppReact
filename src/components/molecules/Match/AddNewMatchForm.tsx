@@ -142,8 +142,10 @@ const AddNewMatch = ({ onClose, tournamentId, tournamentPlayerList }:
                         <Grid item>
                             When {opponent?.firstname} approves the match, stats will be updated.
                         </Grid>
-                        <Grid item sx={{ fontSize: '0.8em', color: 'gray' }}>
-                            Note: Match will be auto-approved in 15 minutes if not reviewed.
+                        <Grid item sx={{ fontSize: '0.85em', color: 'gray' }}>
+                            Note: Match will be autotomatically rejected in 
+                            <br/>
+                            ⏱️ 15 minutes if not reviewed.
                         </Grid>
                         <Grid item>
                             <Button onClick={() => toast.dismiss(t.id)}>
@@ -152,7 +154,7 @@ const AddNewMatch = ({ onClose, tournamentId, tournamentPlayerList }:
                         </Grid>
                     </Grid>
                 ), {
-                    duration: 6000
+                    duration: 6500
                 });
 
                 onClose();
@@ -210,7 +212,7 @@ const AddNewMatch = ({ onClose, tournamentId, tournamentPlayerList }:
                                     renderInput={(params) => (
                                         <TextField
                                             {...params}
-                                            label="Play Time"
+                                            label="Start Time"
                                             error={!!errors.time}
                                             helperText={errors.time}
                                         />
