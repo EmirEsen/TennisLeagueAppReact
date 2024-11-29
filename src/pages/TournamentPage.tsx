@@ -11,7 +11,6 @@ import { fetchSendConfirmationEmail } from "../store/feature/authSlice";
 import RankList from "../components/molecules/RankList";
 import { getPlayersOfTournament } from "../store/feature/tournamentPlayerSlice";
 import { IGetMatch } from "../models/get/IGetMatch";
-import { IGetTournamentPlayer } from "../models/get/IGetTournamentPlayer";
 import { ITournament } from "../models/ITournament";
 import { getTournamentById } from "../store/feature/tournamentSlice";
 import { MatchStatus } from "../models/enums/MatchStatus";
@@ -33,9 +32,9 @@ const TournamentPage: React.FC = () => {
         return <div>Error: Tournament ID is not defined.</div>;
     }
 
-    const [tournamentMatchList, setTournamentMatchList] = useState<IGetMatch[]>([]);
-    const [tournamentPlayerList, setTournamentPlayerList] = useState<IGetTournamentPlayer[]>([]);
     const [tournament, setTournament] = useState<ITournament | null>(null);
+    const tournamentMatchList = useAppSelector(state => state.match.matchList);
+    const tournamentPlayerList = useAppSelector(state => state.tournamentPlayer.tournamentPlayerList);
 
     const [loadingPlayers, setLoadingPlayers] = useState<boolean>(true);
     const [loadingMatches, setLoadingMatches] = useState<boolean>(true);
@@ -52,13 +51,10 @@ const TournamentPage: React.FC = () => {
                     const tournament = await dispatch(getTournamentById(tournamentId)).unwrap();
                     setTournament(tournament)
 
-                    const players = await dispatch(getPlayersOfTournament(tournamentId)).unwrap();
-                    setTournamentPlayerList(players);
-
+                    await dispatch(getPlayersOfTournament(tournamentId)).unwrap();
+                    
                     setLoadingMatches(true)
-                    const matches = await dispatch(getTournamentMatchList({ tournamentId })).unwrap(); 
-                    console.log('matches on tournament page', matches)           
-                    setTournamentMatchList(matches);
+                    await dispatch(getTournamentMatchList({ tournamentId })).unwrap();
                 }
             } catch (error) {
                 setError((error as Error).message);
@@ -74,7 +70,7 @@ const TournamentPage: React.FC = () => {
 
     const getInfoText = () => {
         if (!isAuth) {
-            return 'Sign In To Start New Match';
+            return 'Sign In To Add New Match';
         }
         if (isAuth && !isEmailVerified) {
             return 'Verify Email To Add New Match';
@@ -107,23 +103,8 @@ const TournamentPage: React.FC = () => {
     }
 
     const refreshRankListAndMatchList = () => {
-        dispatch(getTournamentMatchList({ tournamentId }))
-            .then((action) => {
-                if (getTournamentMatchList.fulfilled.match(action)) {
-                    setTournamentMatchList(action.payload);
-                } else {
-                    console.error('Failed to fetch match list:', action.payload);
-                }
-            });
-
-        dispatch(getPlayersOfTournament(tournamentId))
-            .then((action) => {
-                if (getPlayersOfTournament.fulfilled.match(action)) {
-                    setTournamentPlayerList(action.payload);
-                } else {
-                    console.error('Failed to fetch player list:', action.payload);
-                }
-            });
+        dispatch(getTournamentMatchList({ tournamentId }));
+        dispatch(getPlayersOfTournament(tournamentId));
     };
 
     const { handleApproveMatch, handleRejectMatch } = useMatchActions(refreshRankListAndMatchList);
@@ -133,7 +114,7 @@ const TournamentPage: React.FC = () => {
     }
 
     const isReviewer = (match: IGetMatch) => {
-        if (match.status !== MatchStatus.PENDING || !loggedInProfile?.id) {
+        if (!isAuth || match.status !== MatchStatus.PENDING || !loggedInProfile?.id) {
             return false;
         }
 
