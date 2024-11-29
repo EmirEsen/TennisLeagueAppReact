@@ -3,17 +3,38 @@ import { IResponse } from "../../models/IResponse"
 import config from "./config"
 import { IPostTournament } from "../../models/post/IPostTournament"
 import { ITournament } from "../../models/ITournament"
+import { IGetMatch } from "../../models/get/IGetMatch"
+import { IGetTournamentPlayer } from "../../models/get/IGetTournamentPlayer"
+import { getTournamentMatchList } from './matchSlice';
 
 export interface ITournamentState {
     tournamentList: ITournament[],
     myTournaments: ITournament[],
-    isLoading: boolean
+    isLoading: boolean,
+    currentTournament: ITournament | null,
+    tournamentPlayers: IGetTournamentPlayer[],
+    tournamentMatches: IGetMatch[],
+    loading: {
+        players: boolean,
+        matches: boolean,
+        tournament: boolean
+    },
+    error: string | null
 }
 
 const initialTournamentState: ITournamentState = {
     tournamentList: [],
     myTournaments: [],
-    isLoading: false
+    isLoading: false,
+    currentTournament: null,
+    tournamentPlayers: [],
+    tournamentMatches: [],
+    loading: {
+        players: false,
+        matches: false,
+        tournament: false
+    },
+    error: null
 }
 
 export const addNewTournament = createAsyncThunk<IResponse, IPostTournament, { rejectValue: string }>(
@@ -124,6 +145,19 @@ const tournamentSlice = createSlice({
             })
             .addCase(getMyTournaments.rejected, (state) => {
                 state.isLoading = false;
+            })
+            .addCase(getTournamentMatchList.pending, (state) => {
+                state.loading.matches = true;
+                state.error = null;
+            })
+            .addCase(getTournamentMatchList.fulfilled, (state, action) => {
+                state.loading.matches = false;
+                state.tournamentMatches = action.payload;
+                state.error = null;
+            })
+            .addCase(getTournamentMatchList.rejected, (state, action) => {
+                state.loading.matches = false;
+                state.error = action.payload || 'Failed to fetch tournament matches';
             });
     }
 })
