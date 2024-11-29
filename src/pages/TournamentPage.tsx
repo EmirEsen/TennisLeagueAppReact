@@ -200,23 +200,25 @@ const TournamentPage: React.FC = () => {
                                 </Box>
                             ))
                         ) : (
-                            tournamentMatchList.map((match, index) => (
-                                <MatchInfo key={index} 
-                                match={match} 
-                                tournamentPlayerList={tournamentPlayerList}
-                                actionButtons={
-                                    isReviewer(match) && (
-                                        <>
-                                            <RejectMatchButton 
-                                               onReject={() => handleRejectMatch(match.id, match.tournamentId)} 
-                                            />
-                                            <ApproveMatchButton 
-                                               onApprove={() => handleApproveMatch(match.id, match.tournamentId)} 
-                                            />
-                                        </>
-                                    )
-                                } />
-                            ))
+                            <Box sx={{ mt: !isMobile && isPlayerInTournament ? 6 : 0 }}>
+                                {tournamentMatchList.map((match, index) => (
+                                    <MatchInfo key={index}
+                                        match={match}
+                                        tournamentPlayerList={tournamentPlayerList}
+                                        actionButtons={
+                                            isReviewer(match) && (
+                                                <>
+                                                    <RejectMatchButton
+                                                        onReject={() => handleRejectMatch(match.id, match.tournamentId)}
+                                                    />
+                                                    <ApproveMatchButton
+                                                        onApprove={() => handleApproveMatch(match.id, match.tournamentId)}
+                                                    />
+                                                </>
+                                            )
+                                        } />
+                                ))}
+                            </Box>
                         )}
                     </Grid>
                 </Grid>
