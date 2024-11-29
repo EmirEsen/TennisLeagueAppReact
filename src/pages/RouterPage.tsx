@@ -82,8 +82,12 @@ function AppContent() {
                     path="/register"
                     element={<Register />} />
                 <Route element={<AuthGuard redirectTo="/login" />}>
-                    <Route path="/my-tournaments" element={<MyTournaments />} />
-                    <Route path="/profile" element={<Profile profile={profile!} />} />
+                    <Route
+                        path="/my-tournaments"
+                        element={<MyTournaments />} />
+                    <Route
+                        path="/profile"
+                        element={<Profile profile={profile!} />} />
                 </Route>
                 <Route
                     path="/player-view"
