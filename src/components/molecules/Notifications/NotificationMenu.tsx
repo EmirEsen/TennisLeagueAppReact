@@ -16,8 +16,7 @@ const NotificationMenu = () => {
     const unreadCount = notifications.filter(notif => !notif.isRead).length;
 
     // Get match action handlers with a custom refresh callback
-    const { handleApproveMatch, handleRejectMatch } = useMatchActions(async () => {
-        // Close menu after action
+    const { handleApproveMatch, handleRejectMatch } = useMatchActions(async () => {        
         setAnchorEl(null);
     });
 

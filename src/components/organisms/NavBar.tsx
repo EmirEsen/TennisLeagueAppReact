@@ -24,7 +24,12 @@ const tennis = createTheme({
     }
 })
 
-const pages = ['Clubs', 'Community', 'My Tournaments'];
+const pages = [
+    // 'Clubs',
+    'My Tournaments', 
+    'Community'    
+];
+
 const settings = {
     signedIn: ['Profile', 'Logout'],
     signedOut: ['Sign In']
