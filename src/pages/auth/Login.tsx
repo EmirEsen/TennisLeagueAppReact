@@ -1,4 +1,3 @@
-
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import federerserve from '../../images/federerserve.jpg';
@@ -20,7 +19,7 @@ export default function Login() {
           backgroundColor: (t) =>
             t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
           backgroundSize: 'cover',
-          backgroundPosition: 'left',
+          backgroundPosition: 'left',          
         }}
       />
       <LoginCard />
