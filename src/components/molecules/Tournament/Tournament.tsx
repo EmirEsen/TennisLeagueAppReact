@@ -46,8 +46,14 @@ const Tournament: React.FC<TournamentProps> = ({ tournament, tournamentPlayers }
                     border: '1px solid #E0E0E0',
                     position: 'relative'
                 }}>
-                    <StatusDot status={tournament.status} />
-                    <Stack direction="row" alignItems="center" spacing={2}>
+                    <Box sx={{ 
+                        display: 'flex', 
+                        alignItems: 'flex-start', 
+                        marginBottom: 2 
+                    }}>
+                        <StatusDot status={tournament.status} />
+                    </Box>
+                    <Stack direction="row" alignItems="flex-start" spacing={2}>
                         <Avatar
                             variant="square"
                             src={'someimage'}
@@ -95,7 +101,9 @@ const Tournament: React.FC<TournamentProps> = ({ tournament, tournamentPlayers }
                     position: 'relative',
                     minHeight: '110px'
                 }}>
-                    <StatusDot status={tournament.status} />
+                    <Box sx={{ marginBottom: 1 }}>
+                        <StatusDot status={tournament.status} />
+                    </Box>
                     <Stack direction="row" alignItems="center" spacing={2} sx={{ flexDirection: isMobile ? 'column' : 'row', width: '100%' }}>
                         <Avatar
                             variant="square"
