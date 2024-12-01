@@ -116,6 +116,31 @@ export default function RegisterCard() {
                     alignItems: 'center',
                 }}
             >
+                     <Typography
+                    variant="h6"
+                    noWrap
+                    component="h1"
+                    onClick={() => navigate('/')}
+                    sx={{
+                        mb: 4,
+                        display: 'flex',
+                        fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        textTransform: 'uppercase',
+                        '& span.emoji': {
+                            marginLeft: '4px',
+                            marginRight: '4px',
+                            fontSize: '0.5em',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            verticalAlign: 'middle',
+                        },
+                    }}
+                >
+                    GAME<span className="emoji">-</span>SET<span className="emoji">-</span>MATCH
+                </Typography>
                 <Avatar sx={{ m: 1, bgcolor: '#606c38' }}>
                     <SportsTennis />
                 </Avatar>

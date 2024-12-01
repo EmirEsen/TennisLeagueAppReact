@@ -5,7 +5,6 @@ import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { Link, useNavigate } from 'react-router-dom';
-import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -97,7 +96,7 @@ export default function LoginCard() {
     };
 
     return (
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>            
+        <Grid item xs={12} sm={8} md={5}>
             <Box
                 sx={{
                     my: 8,
@@ -105,14 +104,46 @@ export default function LoginCard() {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
+                    fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",                    
                 }}
-            >
+            >            
+                <Typography
+                    variant="h6"
+                    noWrap
+                    component="h1"
+                    onClick={() => navigate('/')}
+                    sx={{
+                        mb: 4,
+                        display: 'flex',
+                        fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        textTransform: 'uppercase',
+                        '& span.emoji': {
+                            marginLeft: '4px',
+                            marginRight: '4px',
+                            fontSize: '0.5em',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            verticalAlign: 'middle',
+                        },
+                    }}
+                >
+                    GAME<span className="emoji">-</span>SET<span className="emoji">-</span>MATCH
+                </Typography>
                 <Avatar sx={{ m: 1, bgcolor: '#bc6c25' }}>
                     <LockOutlinedIcon />
                 </Avatar>
-                <Typography component="h1" variant="h5">
+                <Typography 
+                    component="h1" 
+                    variant="h5"
+                    sx={{                        
+                        letterSpacing: '0.02em'
+                    }}
+                >
                     Log in
-                </Typography>
+                </Typography>                
                 <Collapse sx={{ width: '100%' }} in={isError}>
                     <Box sx={{ width: '100%', mt: 2 }}>
                         <Alert severity="error">
