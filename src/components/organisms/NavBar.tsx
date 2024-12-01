@@ -21,6 +21,21 @@ const tennis = createTheme({
         primary: {
             main: '#081223'
         }
+    },
+    typography: {
+        fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
+        h6: {
+            fontWeight: 800,
+            letterSpacing: '0.02em'
+        },
+        h5: {
+            fontWeight: 800,
+            letterSpacing: '0.02em'
+        },
+        button: {
+            fontWeight: 600,
+            letterSpacing: '0.01em'
+        }
     }
 })
 
@@ -71,11 +86,13 @@ export default function NavBar() {
         }
     }, [isAuth, loggedInPlayer, dispatch]);
 
-    const handleCloseNavMenu = (page: string) => {
+    const handleCloseNavMenu = (page?: string) => {
         setAnchorElNav(null);
-        setSelectedPage(page);
-        if (selectedPage !== page) {
-            navigate(page === 'Community' ? '/' : '/my-tournaments');
+        if (page) {
+            setSelectedPage(page);
+            if (selectedPage !== page) {
+                navigate(page === 'Community' ? '/' : '/my-tournaments');
+            }
         }
     };
 
@@ -99,17 +116,29 @@ export default function NavBar() {
                             variant="h6"
                             noWrap
                             component="h1"
+                            onClick={() => navigate('/')}
                             sx={{
                                 mr: 2,
                                 display: { xs: 'none', md: 'flex' },
-                                fontFamily: 'monospace',
-                                fontWeight: 600,
-                                letterSpacing: '.2rem',
+                                fontFamily: 'inherit',
+                                fontWeight: 800,
+                                letterSpacing: '0.02em',
                                 color: 'inherit',
                                 textDecoration: 'none',
+                                cursor: 'pointer',
+                                textTransform: 'uppercase',
+                                '& span.emoji': {
+                                    marginLeft: '4px',
+                                    marginRight: '4px',
+                                    fontSize: '0.5em',                                    
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    verticalAlign: 'middle',
+                                },
                             }}
                         >
-                            Tennis Club
+                            GAME<span className="emoji">🎾</span>SET<span className="emoji">🎾</span>MATCH
                         </Typography>
 
                         <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -136,6 +165,7 @@ export default function NavBar() {
                                     horizontal: 'left',
                                 }}
                                 open={Boolean(anchorElNav)}
+                                onClose={() => handleCloseNavMenu()}
                                 sx={{
                                     display: { xs: 'block', md: 'none' },
                                 }}
@@ -151,19 +181,31 @@ export default function NavBar() {
                             variant="h5"
                             noWrap
                             component="a"
-                            href="#app-bar-with-responsive-menu"
+                            onClick={() => navigate('/')}
                             sx={{
                                 mr: 2,
                                 display: { xs: 'flex', md: 'none' },
                                 flexGrow: 1,
-                                fontFamily: 'monospace',
-                                fontWeight: 600,
-                                letterSpacing: '.2rem',
+                                fontFamily: 'inherit',
+                                fontWeight: 800,
+                                letterSpacing: '0.02em',
+                                fontSize: '1.2rem',
                                 color: 'inherit',
                                 textDecoration: 'none',
+                                cursor: 'pointer',
+                                textTransform: 'uppercase',
+                                '& span.emoji': {
+                                    marginLeft: '2px',
+                                    marginRight: '2px',
+                                    fontSize: '0.5em',                                    
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    verticalAlign: 'middle',
+                                },
                             }}
                         >
-                            TENNIS CLUB
+                            G<span className="emoji">🎾</span>S<span className="emoji">🎾</span>M
                         </Typography>
                         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                             {pages.map((page) => (
