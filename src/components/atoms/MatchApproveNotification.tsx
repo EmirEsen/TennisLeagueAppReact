@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, MenuItem, Typography, LinearProgress } from '@mui/material';
+import { Box, Button, MenuItem, Typography, LinearProgress, IconButton } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { markNotificationAsRead } from '../../store/feature/notificationSlice';
 import { AppDispatch } from '../../store';
@@ -10,6 +10,8 @@ import { IGetTournamentPlayer } from '../../models/get/IGetTournamentPlayer';
 import { fetchMatchByTournamentIdAndMatchId } from '../../store/feature/matchSlice';
 import { getPlayersOfTournament } from '../../store/feature/tournamentPlayerSlice';
 import { logout } from '../../store/feature/authSlice';
+import { useNavigate } from 'react-router-dom';
+import  {PageviewOutlined} from '@mui/icons-material';
 
 // Add styles object for better organization
 const styles = {
@@ -36,13 +38,23 @@ const styles = {
         textOverflow: 'ellipsis',
         wordBreak: 'break-word',
         mb: 1,
-        maxWidth: '380px',
+        maxWidth: '340px',
         fontWeight: (props: { isRead: boolean }) => props.isRead ? 'normal' : 'bold',
     },
     buttonContainer: {
         display: 'flex', 
         justifyContent: 'space-evenly',        
         mb: 1,
+    },
+    tournamentLink: {
+        color: 'primary.main',
+        textDecoration: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 1,
+        '&:hover': {
+            textDecoration: 'underline',
+        },
     }
 };
 
@@ -58,6 +70,7 @@ const MatchApproveNotification: React.FC<NotificationItemProps> = ({
     onReject,
 }) => {
     const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
     const [match, setMatch] = useState<IGetMatch | null>(null);
     const [playerTournaments, setPlayerTournaments] = useState<IGetTournamentPlayer[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -98,14 +111,27 @@ const MatchApproveNotification: React.FC<NotificationItemProps> = ({
         }
     };
 
+    const handleTournamentClick = (tournamentId: string) => {
+        navigate(`/tournament/${tournamentId}`);
+    };
+
     return (
         <MenuItem 
             onClick={handleMarkAsRead}
             sx={styles.menuItem(notification.isRead)}
         >
             <Box sx={styles.notificationBox}>
-                <Typography sx={{ ...styles.message, fontWeight: notification.isRead ? 'normal' : 'bold' }}>
-                    {notification.message}
+                <Typography 
+                    sx={{ ...styles.message, fontWeight: notification.isRead ? 'normal' : 'bold' }}>
+                    <Box sx={styles.tournamentLink} onClick={(e) => {
+                        e.stopPropagation();
+                        handleTournamentClick(notification.tournamentId);
+                    }}>
+                        {notification.message}
+                        <IconButton size="small">
+                            <PageviewOutlined fontSize="small" />
+                        </IconButton>
+                    </Box>
                 </Typography>
 
                 {loading ? (

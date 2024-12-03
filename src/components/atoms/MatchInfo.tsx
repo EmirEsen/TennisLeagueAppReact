@@ -70,7 +70,7 @@ function MatchInfo({ match, tournamentPlayerList, actionButtons }: { match: IGet
     useEffect(() => {
         if (match.status === MatchStatus.PENDING && match.createdAt) {
             // Calculate end time (15 minutes from creation)
-            const endTime = new Date(new Date(match.createdAt).getTime() + 3 * 60000);
+            const endTime = new Date(new Date(match.createdAt).getTime() + 15 * 60000);
             
             const timer = setInterval(() => {
                 const remaining = formatTimeRemaining(endTime);
