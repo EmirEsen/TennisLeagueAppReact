@@ -46,10 +46,10 @@ const Tournament: React.FC<TournamentProps> = ({ tournament, tournamentPlayers }
                     border: '1px solid #E0E0E0',
                     position: 'relative'
                 }}>
-                    <Box sx={{ 
-                        display: 'flex', 
-                        alignItems: 'flex-start', 
-                        marginBottom: 2 
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        marginBottom: 2
                     }}>
                         <StatusDot status={tournament.status} />
                     </Box>
@@ -99,7 +99,8 @@ const Tournament: React.FC<TournamentProps> = ({ tournament, tournamentPlayers }
                     borderRadius: 2,
                     border: '1px solid #E0E0E0',
                     position: 'relative',
-                    minHeight: '110px'
+                    minHeight: '110px',
+                    backgroundColor: 'rgba(243, 244, 246, 0.8)'
                 }}>
                     <Box sx={{ marginBottom: 1 }}>
                         <StatusDot status={tournament.status} />
