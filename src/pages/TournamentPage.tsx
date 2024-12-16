@@ -52,7 +52,7 @@ const TournamentPage: React.FC = () => {
                     setTournament(tournament)
 
                     await dispatch(getPlayersOfTournament(tournamentId)).unwrap();
-                    
+
                     setLoadingMatches(true)
                     await dispatch(getTournamentMatchList({ tournamentId })).unwrap();
                 }
@@ -146,7 +146,7 @@ const TournamentPage: React.FC = () => {
                                     Resend Email
                                 </Button>
                             }>
-                                Your email is not verified. Please verify your email to use all features.
+                                Just a reminder that to access all the features of Game-Set-Match, you'll need to verify your email.
                             </Alert>
                         </Grid>
                     )}

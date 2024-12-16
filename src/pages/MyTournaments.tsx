@@ -102,7 +102,7 @@ export default function MyTournaments() {
     }
 
     return (
-        <>            
+        <>
             <Container maxWidth="lg" style={{ marginTop: '20px' }}>
                 <Grid container spacing={2} flexDirection={{ md: 'row', xs: 'column' }}>
                     {isAuth && !isEmailVerified && (
@@ -112,7 +112,7 @@ export default function MyTournaments() {
                                     Resend Email
                                 </Button>
                             }>
-                                Your email is not verified. Please verify your email to use all features.
+                                Just a reminder that to access all the features of Game-Set-Match, you'll need to verify your email.
                             </Alert>
                         </Grid>
                     )}
